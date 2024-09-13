@@ -13,6 +13,25 @@
         android:theme="@style/Theme.Sspurt"
         tools:targetApi="31" >
         <activity
+            android:name=".fragments.MyAccountActivity"
+            android:exported="false" />
+        <activity
+            android:name=".fragments.LookUpFragmentActivity"
+            android:exported="false" />
+        <activity
+            android:name=".fragments.NearByFragmentActivity"
+            android:exported="false" />
+        <activity
+            android:name=".fragments.HomeFragmenetActivity"
+            android:exported="false" />
+        <activity
+            android:name=".fragments.MainActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.MainActivity2"
+            android:exported="false"
+            android:theme="@style/Theme.Sspurt" />
+        <activity
             android:name=".activities.login.CreateAcountActivity"
             android:exported="false" />
         <activity

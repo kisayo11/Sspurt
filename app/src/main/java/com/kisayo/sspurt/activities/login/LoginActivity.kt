@@ -3,6 +3,7 @@ package com.kisayo.sspurt.activities.login
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.kisayo.sspurt.activities.MainActivity
 import com.kisayo.sspurt.databinding.ActivityLoginBinding
 
 class LoginActivity : AppCompatActivity() {
@@ -12,6 +13,12 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+
+
+        binding.loginIv.setOnClickListener {
+            startActivity(Intent(this,MainActivity::class.java))
+            finish()
+        }
 
         binding.createAcountTv.setOnClickListener {
             startActivity(Intent(this,CreateAcountActivity::class.java))
