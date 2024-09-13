@@ -1,36 +1,188 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:clipToOutline="true"
-    android:background="#FFFFFF"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.LoginActivity">
+    android:background="#FFFFFF"
+    tools:context=".activities.login.LoginActivity">
 
-    <!-- Auto layout, variables, and unit scale are not yet supported -->
     <TextView
         android:id="@+id/hello"
-        android:layout_width="203dp"
-        android:layout_height="83dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="113dp"
-        android:layout_marginTop="113dp"
+        android:layout_width="200dp"
+        android:layout_height="90dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="105dp"
+        android:layout_marginTop="105dp"
+        android:layout_marginBottom="50dp"
         android:gravity="center_horizontal|top"
         android:text="@string/hello"
         android:textAppearance="@style/hello" />
-    <!--
-      Font family: Lato
-      Line height: 77sp
-      -->
 
-    <!-- styles.xml -->
+    <EditText
+        android:id="@+id/username_signUp_et"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/hello"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="50dp"
+        android:background="@drawable/rectangle_1"
+        android:drawableStart="@drawable/baseline_person_24"
+        android:elevation="30dp"
+        android:hint="Username"
+        android:inputType="text"
+        android:paddingStart="16dp"
+        android:paddingEnd="8dp" />
 
+    <EditText
+        android:id="@+id/password_signUp_et"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/username_signUp_et"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/rectangle_1"
+        android:drawableStart="@drawable/baseline_person_24"
+        android:elevation="30dp"
+        android:hint="Password"
+        android:inputType="textPassword"
+        android:paddingStart="16dp"
+        android:paddingEnd="8dp" />
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/password_signUp_et"
+        android:orientation="vertical">
 
+        <LinearLayout
+            android:id="@+id/autologin"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:layout_marginLeft="250dp"
+            android:layout_marginRight="55dp"
+            android:orientation="horizontal">
 
+            <TextView
+                android:id="@+id/autologin_cbtv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:fontFamily="@font/pureunjeonnam"
+                android:text="Auto Login" />
 
+            <androidx.appcompat.widget.AppCompatCheckBox
+                android:id="@+id/autologin_cb"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:buttonTint="@color/black"
+                android:checked="true" />
+        </LinearLayout>
 
+        <TextView
+            android:id="@+id/pwreset"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/autologin"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="4dp"
+            android:layout_marginRight="57dp"
+            android:paddingBottom="4dp"
+            android:text="비밀번호 재설정"
+            android:textColor="@color/pwreset"
+            android:textSize="18sp" />
+
+        <RelativeLayout
+            android:id="@+id/login"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/pwreset"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/autologin_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_gravity="center"
+                android:layout_marginStart="201dp"
+                android:layout_marginTop="6dp"
+                android:fontFamily="@font/pureunjeonnam_bold"
+                android:text="Login"
+                android:textSize="28sp" />
+
+            <ImageView
+                android:id="@+id/autologin_iv"
+                android:layout_width="65dp"
+                android:layout_height="45dp"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="57dp"
+                android:layout_marginBottom="36dp"
+                android:buttonTint="@color/black"
+                android:checked="true"
+                android:src="@drawable/loginbutton" />
+
+            <LinearLayout
+                android:id="@+id/login_other"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/autologin_iv"
+                android:layout_marginLeft="80dp"
+                android:layout_marginRight="80dp"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:weightSum="3">
+
+                <ImageView
+                    android:id="@+id/kakao_login"
+                    android:layout_width="75dp"
+                    android:layout_height="75dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_weight="1"
+                    android:src="@drawable/icon_kakako" />
+
+                <ImageView
+                    android:id="@+id/kakao_naver"
+                    android:layout_width="75dp"
+                    android:layout_height="75dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_weight="1"
+                    android:src="@drawable/icon_naver" />
+
+                <ImageView
+                    android:id="@+id/kakao_google"
+                    android:layout_width="75dp"
+                    android:layout_height="75dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_weight="1"
+                    android:src="@drawable/icon_google" />
+            </LinearLayout>
+            <TextView
+                android:id="@+id/easylogin_tv"
+                android:gravity="center"
+                android:layout_below="@id/login_other"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:fontFamily="@font/pureunjeonnam"
+                android:text="간편하게 로그인"
+                android:textColor="@color/pwreset"/>
+            <TextView
+                android:id="@+id/createAcount_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="계정이 없으세요? E-mail로 계정생성"
+                android:layout_below="@id/easylogin_tv"
+                android:layout_marginTop="20dp"
+                android:fontFamily="@font/pureunjeonnam"
+                android:autoLink="none"
+                android:textSize="18sp"
+                android:layout_centerHorizontal="true"
+                />
+        </RelativeLayout>
+    </RelativeLayout>
 </RelativeLayout>
