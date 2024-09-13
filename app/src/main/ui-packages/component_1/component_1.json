@@ -1,0 +1,921 @@
+{
+  "name": "component_1",
+  "version": 33,
+  "source-key": {
+    "type": "figma",
+    "file": "PDGHaktvmnlJPYyK0bru77",
+    "node": "27:422",
+    "version": "6622871899",
+    "component-id": "8973bd32b7f41a919241bb3e2a88470c54deb1c3"
+  },
+  "default": "Component 1",
+  "design": {
+    "atoms": [
+      {
+        "type": "group",
+        "id": "top_level",
+        "root": "true"
+      },
+      {
+        "type": "group",
+        "id": "Login Activity"
+      },
+      {
+        "type": "text",
+        "id": "Hello"
+      },
+      {
+        "type": "group",
+        "id": "Group 1"
+      },
+      {
+        "type": "group",
+        "id": "Group 5"
+      },
+      {
+        "type": "text",
+        "id": "비밀번호 재설정"
+      },
+      {
+        "type": "text",
+        "id": "Login"
+      },
+      {
+        "type": "text",
+        "id": "Auto Login"
+      },
+      {
+        "type": "group",
+        "id": "Group 6"
+      },
+      {
+        "type": "group",
+        "id": "check_box"
+      },
+      {
+        "type": "text",
+        "id": "계정이 없으세요? E-mail 로 계정생성"
+      },
+      {
+        "type": "group",
+        "id": "Plugin icon - 1"
+      },
+      {
+        "type": "group",
+        "id": "Plugin icon - 2"
+      },
+      {
+        "type": "group",
+        "id": "Plugin icon - 3"
+      },
+      {
+        "type": "text",
+        "id": "naver"
+      },
+      {
+        "type": "text",
+        "id": "kakao"
+      },
+      {
+        "type": "text",
+        "id": "apple"
+      },
+      {
+        "type": "vector",
+        "id": "Rectangle 1"
+      },
+      {
+        "type": "group",
+        "id": "Frame 1"
+      },
+      {
+        "type": "group",
+        "id": "profile"
+      },
+      {
+        "type": "text",
+        "id": "@ Email"
+      },
+      {
+        "type": "group",
+        "id": "Group"
+      },
+      {
+        "type": "vector",
+        "id": "Vector"
+      },
+      {
+        "type": "vector",
+        "id": "Vector1"
+      },
+      {
+        "type": "vector",
+        "id": "Rectangle 2"
+      },
+      {
+        "type": "vector",
+        "id": "Vector2"
+      },
+      {
+        "type": "text",
+        "id": "Password"
+      },
+      {
+        "type": "vector",
+        "id": "Rectangle 3"
+      },
+      {
+        "type": "vector",
+        "id": "Vector3"
+      },
+      {
+        "type": "vector",
+        "id": "icon"
+      }
+    ],
+    "modes": {
+      "Component 1": {
+        "rules": [
+          {
+            "id": "top_level",
+            "is-structured": false,
+            "children": [
+              "Login Activity",
+              "Hello",
+              "Group 1",
+              "Group 5",
+              "비밀번호 재설정",
+              "Login",
+              "Auto Login",
+              "Group 6",
+              "check_box"
+            ],
+            "clip-content": false
+          },
+          {
+            "id": "Login Activity",
+            "is-structured": false,
+            "children": [
+              "계정이 없으세요? E-mail 로 계정생성",
+              "Plugin icon - 1",
+              "Plugin icon - 2",
+              "Plugin icon - 3"
+            ],
+            "background-color": {
+              "alpha": 1.0,
+              "hue": 0.0,
+              "saturation": 0.0,
+              "value": 1.0
+            }
+          },
+          {
+            "id": "Hello",
+            "margin": {
+              "left": 82.0,
+              "top": 49.0,
+              "right": 75.0,
+              "bottom": 508.0
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "proportional",
+                "value": 1.0
+              },
+              "height-constraints": {
+                "sizing-mode": "proportional",
+                "value": 1.0
+              }
+            },
+            "font-weight": 700.0,
+            "color": {
+              "alpha": 1.0,
+              "hue": 0.0,
+              "saturation": 0.0,
+              "value": 0.14901960784313725
+            },
+            "text-content": "Hello",
+            "overflow": "visible",
+            "max-lines": -1,
+            "text-size": 64.0,
+            "line-height": 1.2000000476837158,
+            "typeface": "Lato"
+          },
+          {
+            "id": "Group 1",
+            "margin": {
+              "left": 30.0,
+              "top": 203.0,
+              "right": 30.0,
+              "bottom": 387.0
+            },
+            "is-structured": false,
+            "children": [
+              "Rectangle 1",
+              "Frame 1"
+            ],
+            "clip-content": false
+          },
+          {
+            "id": "Group 5",
+            "margin": {
+              "left": 30.0,
+              "top": 285.0,
+              "right": 30.0,
+              "bottom": 305.0
+            },
+            "is-structured": false,
+            "children": [
+              "Rectangle 2",
+              "Vector2",
+              "Password"
+            ],
+            "clip-content": false
+          },
+          {
+            "id": "비밀번호 재설정",
+            "margin": {
+              "left": 221.0,
+              "top": 372.0,
+              "right": 30.0,
+              "bottom": 249.0
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "proportional",
+                "value": 1.0
+              },
+              "height-constraints": {
+                "sizing-mode": "proportional",
+                "value": 1.0
+              }
+            },
+            "color": {
+              "alpha": 1.0,
+              "hue": 0.0,
+              "saturation": 0.0,
+              "value": 0.7450980392156863
+            },
+            "text-content": "비밀번호 재설정",
+            "overflow": "visible",
+            "max-lines": -1,
+            "text-align": "left",
+            "text-size": 15.0,
+            "line-height": 1.2,
+            "typeface": "Lato"
+          },
+          {
+            "id": "Login",
+            "margin": {
+              "left": 198.0,
+              "top": 418.0,
+              "right": 90.0,
+              "bottom": 188.0
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "proportional",
+                "value": 1.0
+              },
+              "height-constraints": {
+                "sizing-mode": "proportional",
+                "value": 1.0
+              }
+            },
+            "font-weight": 700.0,
+            "color": {
+              "alpha": 1.0,
+              "hue": 0.0,
+              "saturation": 0.0,
+              "value": 0.14901960784313725
+            },
+            "text-content": "Login",
+            "overflow": "visible",
+            "max-lines": -1,
+            "text-align": "left",
+            "text-size": 25.0,
+            "line-height": 1.2000000762939453,
+            "typeface": "Lato"
+          },
+          {
+            "id": "Auto Login",
+            "margin": {
+              "left": 240.0,
+              "top": 346.0,
+              "right": 60.0,
+              "bottom": 278.0
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "proportional",
+                "value": 1.0
+              },
+              "height-constraints": {
+                "sizing-mode": "proportional",
+                "value": 1.0
+              }
+            },
+            "font-weight": 300.0,
+            "color": {
+              "alpha": 1.0,
+              "hue": 0.0,
+              "saturation": 0.0,
+              "value": 0.14901960784313725
+            },
+            "text-content": "Auto Login",
+            "overflow": "visible",
+            "max-lines": -1,
+            "text-align": "left",
+            "text-size": 12.0,
+            "line-height": 1.2000000476837158,
+            "typeface": "Lato"
+          },
+          {
+            "id": "Group 6",
+            "margin": {
+              "left": 272.0,
+              "top": 417.0,
+              "right": 32.0,
+              "bottom": 189.0
+            },
+            "is-structured": false,
+            "children": [
+              "Rectangle 3",
+              "Vector3"
+            ],
+            "clip-content": false
+          },
+          {
+            "id": "check_box",
+            "margin": {
+              "left": 304.0,
+              "top": 342.0,
+              "right": 32.0,
+              "bottom": 274.0
+            },
+            "is-structured": false,
+            "children": [
+              "icon"
+            ],
+            "clip-content": false
+          },
+          {
+            "id": "계정이 없으세요? E-mail 로 계정생성",
+            "alignment": {
+              "horizontal": {
+                "attachment": "start",
+                "offset": 61.0
+              },
+              "vertical": {
+                "attachment": "start",
+                "offset": 577.0
+              }
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "fixed",
+                "value": 238.0
+              },
+              "height-constraints": {
+                "sizing-mode": "fixed",
+                "value": 20.0
+              }
+            },
+            "color": {
+              "alpha": 1.0,
+              "hue": 0.0,
+              "saturation": 0.0,
+              "value": 0.14901960784313725
+            },
+            "annotated-text-content": {
+              "text": "계정이 없으세요? E-mail 로 계정생성",
+              "annotated-text-span-list": [
+                {
+                  "span-start": 0,
+                  "span-length": 10
+                },
+                {
+                  "span-start": 10,
+                  "span-length": 7,
+                  "annotated-text-style": {
+                    "underline": true,
+                    "color": {
+                      "alpha": 1.0,
+                      "hue": 0.0,
+                      "saturation": 0.0,
+                      "value": 0.14901960784313725
+                    }
+                  }
+                },
+                {
+                  "span-start": 17,
+                  "span-length": 6
+                }
+              ]
+            },
+            "overflow": "visible",
+            "max-lines": -1,
+            "text-size": 15.0,
+            "line-height": 1.2,
+            "typeface": "Lato"
+          },
+          {
+            "id": "Plugin icon - 1",
+            "alignment": {
+              "horizontal": {
+                "attachment": "start",
+                "offset": 75.0
+              },
+              "vertical": {
+                "attachment": "start",
+                "offset": 490.0
+              }
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "fixed",
+                "value": 53.0
+              },
+              "height-constraints": {
+                "sizing-mode": "fixed",
+                "value": 43.0
+              }
+            },
+            "stroke-width": 1.0,
+            "stroke-color": {
+              "alpha": 1.0,
+              "hue": 0.0,
+              "saturation": 0.0,
+              "value": 0.0
+            },
+            "is-structured": false,
+            "children": [
+              "naver"
+            ],
+            "background-color": {
+              "alpha": 1.0,
+              "hue": 0.0,
+              "saturation": 0.0,
+              "value": 1.0
+            }
+          },
+          {
+            "id": "Plugin icon - 2",
+            "alignment": {
+              "horizontal": {
+                "attachment": "start",
+                "offset": 153.0
+              },
+              "vertical": {
+                "attachment": "start",
+                "offset": 490.0
+              }
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "fixed",
+                "value": 53.0
+              },
+              "height-constraints": {
+                "sizing-mode": "fixed",
+                "value": 43.0
+              }
+            },
+            "stroke-width": 1.0,
+            "stroke-color": {
+              "alpha": 1.0,
+              "hue": 0.0,
+              "saturation": 0.0,
+              "value": 0.0
+            },
+            "is-structured": false,
+            "children": [
+              "kakao"
+            ],
+            "background-color": {
+              "alpha": 1.0,
+              "hue": 0.0,
+              "saturation": 0.0,
+              "value": 1.0
+            }
+          },
+          {
+            "id": "Plugin icon - 3",
+            "alignment": {
+              "horizontal": {
+                "attachment": "start",
+                "offset": 231.0
+              },
+              "vertical": {
+                "attachment": "start",
+                "offset": 490.0
+              }
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "fixed",
+                "value": 53.0
+              },
+              "height-constraints": {
+                "sizing-mode": "fixed",
+                "value": 43.0
+              }
+            },
+            "stroke-width": 1.0,
+            "stroke-color": {
+              "alpha": 1.0,
+              "hue": 0.0,
+              "saturation": 0.0,
+              "value": 0.0
+            },
+            "is-structured": false,
+            "children": [
+              "apple"
+            ],
+            "background-color": {
+              "alpha": 1.0,
+              "hue": 0.0,
+              "saturation": 0.0,
+              "value": 1.0
+            }
+          },
+          {
+            "id": "naver",
+            "alignment": {
+              "horizontal": {
+                "attachment": "start",
+                "offset": 8.0
+              },
+              "vertical": {
+                "attachment": "start",
+                "offset": 13.0
+              }
+            },
+            "text-content": "naver",
+            "overflow": "visible",
+            "text-align": "left",
+            "text-size": 15.0,
+            "line-height": 1.2,
+            "typeface": "Lato"
+          },
+          {
+            "id": "kakao",
+            "alignment": {
+              "horizontal": {
+                "attachment": "start",
+                "offset": 8.0
+              },
+              "vertical": {
+                "attachment": "start",
+                "offset": 13.0
+              }
+            },
+            "text-content": "kakao",
+            "overflow": "visible",
+            "text-align": "left",
+            "text-size": 15.0,
+            "line-height": 1.2,
+            "typeface": "Lato"
+          },
+          {
+            "id": "apple",
+            "alignment": {
+              "horizontal": {
+                "attachment": "start",
+                "offset": 8.0
+              },
+              "vertical": {
+                "attachment": "start",
+                "offset": 13.0
+              }
+            },
+            "text-content": "apple",
+            "overflow": "visible",
+            "text-align": "left",
+            "text-size": 15.0,
+            "line-height": 1.2,
+            "typeface": "Lato"
+          },
+          {
+            "id": "Rectangle 1",
+            "border-radius": 40.0,
+            "drop-shadow": {
+              "color": {
+                "alpha": 0.09803921568627451,
+                "hue": 0.0,
+                "saturation": 0.0,
+                "value": 0.0
+              },
+              "blur": 20.0,
+              "offset-x": 0.0,
+              "offset-y": 8.0,
+              "spread": 0.0,
+              "blend-mode": "normal"
+            },
+            "alignment": {
+              "horizontal": {
+                "attachment": "start",
+                "offset": -20.0
+              },
+              "vertical": {
+                "attachment": "start",
+                "offset": -12.0
+              }
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "proportional",
+                "value": 1.0
+              },
+              "height-constraints": {
+                "sizing-mode": "proportional",
+                "value": 1.0
+              }
+            },
+            "vector-content": "rectangle_1.svg"
+          },
+          {
+            "id": "Frame 1",
+            "margin": {
+              "left": 14.0,
+              "top": 13.0,
+              "right": 143.0,
+              "bottom": 13.0
+            },
+            "is-structured": false,
+            "children": [
+              "profile",
+              "@ Email"
+            ],
+            "clip-content": false
+          },
+          {
+            "id": "profile",
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "fixed",
+                "value": 24.0
+              },
+              "height-constraints": {
+                "sizing-mode": "fixed",
+                "value": 24.0
+              }
+            },
+            "is-structured": false,
+            "children": [
+              "Group"
+            ]
+          },
+          {
+            "id": "@ Email",
+            "alignment": {
+              "horizontal": {
+                "attachment": "start",
+                "offset": 27.0
+              },
+              "vertical": {
+                "attachment": "start",
+                "offset": 3.0
+              }
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "fixed",
+                "value": 115.0
+              },
+              "height-constraints": {
+                "sizing-mode": "fixed",
+                "value": 18.0
+              }
+            },
+            "color": {
+              "alpha": 1.0,
+              "hue": 0.0,
+              "saturation": 0.0,
+              "value": 0.7803921568627451
+            },
+            "text-content": "@ Email ",
+            "overflow": "visible",
+            "max-lines": -1,
+            "text-align": "left",
+            "text-size": 15.0,
+            "line-height": 1.2,
+            "typeface": "Lato"
+          },
+          {
+            "id": "Group",
+            "margin": {
+              "left": 4.0,
+              "top": 2.5,
+              "right": 5.81453800201416,
+              "bottom": 3.5
+            },
+            "is-structured": false,
+            "children": [
+              "Vector",
+              "Vector1"
+            ],
+            "clip-content": false
+          },
+          {
+            "id": "Vector",
+            "margin": {
+              "left": 2.623046875,
+              "right": 2.614255905151367,
+              "bottom": 9.051840782165527
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "proportional",
+                "value": 1.0
+              },
+              "height-constraints": {
+                "sizing-mode": "proportional",
+                "value": 1.0
+              }
+            },
+            "vector-content": "vector.svg"
+          },
+          {
+            "id": "Vector1",
+            "margin": {
+              "top": 12.3466796875
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "proportional",
+                "value": 1.0
+              },
+              "height-constraints": {
+                "sizing-mode": "proportional",
+                "value": 1.0
+              }
+            },
+            "vector-content": "vector1.svg"
+          },
+          {
+            "id": "Rectangle 2",
+            "border-radius": 40.0,
+            "drop-shadow": {
+              "color": {
+                "alpha": 0.09803921568627451,
+                "hue": 0.0,
+                "saturation": 0.0,
+                "value": 0.0
+              },
+              "blur": 20.0,
+              "offset-x": 0.0,
+              "offset-y": 8.0,
+              "spread": 0.0,
+              "blend-mode": "normal"
+            },
+            "alignment": {
+              "horizontal": {
+                "attachment": "start",
+                "offset": -20.0
+              },
+              "vertical": {
+                "attachment": "start",
+                "offset": -12.0
+              }
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "proportional",
+                "value": 1.0
+              },
+              "height-constraints": {
+                "sizing-mode": "proportional",
+                "value": 1.0
+              }
+            },
+            "vector-content": "rectangle_2.svg"
+          },
+          {
+            "id": "Vector2",
+            "margin": {
+              "left": 18.0,
+              "top": 14.0,
+              "right": 268.0,
+              "bottom": 18.5
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "proportional",
+                "value": 1.0
+              },
+              "height-constraints": {
+                "sizing-mode": "proportional",
+                "value": 1.0
+              }
+            },
+            "vector-content": "vector2.svg"
+          },
+          {
+            "id": "Password",
+            "margin": {
+              "left": 45.0,
+              "top": 14.0,
+              "right": 140.0,
+              "bottom": 19.0
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "proportional",
+                "value": 1.0
+              },
+              "height-constraints": {
+                "sizing-mode": "proportional",
+                "value": 1.0
+              }
+            },
+            "color": {
+              "alpha": 1.0,
+              "hue": 0.0,
+              "saturation": 0.0,
+              "value": 0.7803921568627451
+            },
+            "text-content": "Password",
+            "overflow": "visible",
+            "max-lines": -1,
+            "text-align": "left",
+            "text-size": 15.0,
+            "line-height": 1.2,
+            "typeface": "Lato"
+          },
+          {
+            "id": "Rectangle 3",
+            "border-radius": 17.0,
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "proportional",
+                "value": 1.0
+              },
+              "height-constraints": {
+                "sizing-mode": "proportional",
+                "value": 1.0
+              }
+            },
+            "vector-content": "rectangle_3.svg"
+          },
+          {
+            "id": "Vector3",
+            "margin": {
+              "left": 19.0,
+              "top": 8.0,
+              "right": 19.0,
+              "bottom": 8.0
+            },
+            "alignment": {
+              "horizontal": {
+                "attachment": "start",
+                "offset": 0.0
+              },
+              "vertical": {
+                "attachment": "start",
+                "offset": 0.4658203125
+              }
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "proportional",
+                "value": 1.0
+              },
+              "height-constraints": {
+                "sizing-mode": "proportional",
+                "value": 1.0
+              }
+            },
+            "vector-content": "vector3.svg"
+          },
+          {
+            "id": "icon",
+            "margin": 3.0,
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "proportional",
+                "value": 1.0
+              },
+              "height-constraints": {
+                "sizing-mode": "proportional",
+                "value": 1.0
+              }
+            },
+            "vector-content": "icon.svg"
+          }
+        ]
+      }
+    }
+  },
+  "previews": [
+    {
+      "design": "Component 1",
+      "size": {
+        "width": 360.0,
+        "height": 640.0
+      }
+    }
+  ],
+  "adin-component-search-paths": [],
+  "image-search-paths": [],
+  "vector-search-paths": []
+}
