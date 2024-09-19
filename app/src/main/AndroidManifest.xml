@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" >
+    xmlns:tools="http://schemas.android.com/tools">
 
     <application
         android:allowBackup="true"
@@ -11,7 +11,28 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Sspurt"
-        tools:targetApi="31" >
+        tools:targetApi="31">
+        <activity
+            android:name=".fragments.MyAccountFragment"
+            android:exported="false" />
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="YOUR_API_KEY" />
+        <activity
+            android:name=".LocationRecordActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.TrackingSaveActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.TrackerActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.GpsConfirmActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.TrackingStartActivity"
+            android:exported="false" />
         <activity
             android:name=".fragments.MyAccountActivity"
             android:exported="false" />
@@ -25,13 +46,6 @@
             android:name=".fragments.HomeFragmenetActivity"
             android:exported="false" />
         <activity
-            android:name=".fragments.MainActivity"
-            android:exported="false" />
-        <activity
-            android:name=".activities.MainActivity2"
-            android:exported="false"
-            android:theme="@style/Theme.Sspurt" />
-        <activity
             android:name=".activities.login.CreateAcountActivity"
             android:exported="false" />
         <activity
@@ -39,7 +53,7 @@
             android:exported="false" />
         <activity
             android:name=".activities.login.IntroActivity"
-            android:exported="true" >
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
