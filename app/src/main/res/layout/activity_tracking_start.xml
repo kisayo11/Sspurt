@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".activities.TrackingStartActivity">
+
+    <TextView
+        android:id="@+id/tv_latest"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="150dp"
+        android:layout_marginBottom="4dp"
+        android:fontFamily="@font/pureunjeonnam_bold"
+        android:text="선택확인"
+        android:textSize="24sp" />
+
+    <ImageView
+        android:id="@+id/iv_pick"
+        android:layout_width="125dp"
+        android:layout_height="125dp"
+        android:layout_below="@id/tv_latest"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="16dp"
+        android:src="@drawable/icon_kakako" />
+
+    <LinearLayout
+        android:id="@+id/ib_layout"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_below="@id/iv_pick"
+        android:layout_centerHorizontal="true"
+        android:orientation="horizontal"
+        android:weightSum="2">
+
+        <RelativeLayout
+
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/trackingstartbg">
+
+            <ImageButton
+                android:id="@+id/ib_hiking"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_margin="24dp"
+                android:src="@drawable/icon_naver" />
+
+            <ImageButton
+                android:id="@+id/ib_running"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_margin="24dp"
+                android:layout_toRightOf="@id/ib_hiking"
+                android:src="@drawable/icon_google" />
+
+            <ImageButton
+                android:id="@+id/ib_trailrunning"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_below="@id/ib_hiking"
+                android:layout_margin="24dp"
+                android:src="@drawable/icon_google" />
+
+            <ImageButton
+                android:id="@+id/ib_cycling"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_below="@id/ib_running"
+                android:layout_margin="24dp"
+                android:layout_toRightOf="@id/ib_trailrunning"
+                android:src="@drawable/icon_naver" />
+        </RelativeLayout>
+    </LinearLayout>
+
+    <com.google.android.material.materialswitch.MaterialSwitch
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ib_layout"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="24dp"
+        android:layout_marginRight="55dp"
+        android:checked="true"
+        android:fontFamily="@font/pureunjeonnam"
+        android:text="위치확인 skip"
+        android:textSize="18sp" />
+    <!--    틴트를 바꾸고 싶은데 안됨... ㅠㅠ-->
+</RelativeLayout>

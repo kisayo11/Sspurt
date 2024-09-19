@@ -15,6 +15,7 @@
         android:layout_marginStart="105dp"
         android:layout_marginTop="105dp"
         android:layout_marginBottom="50dp"
+        android:fontFamily="@font/pureunjeonnam_bold"
         android:gravity="center_horizontal|top"
         android:text="@string/hello"
         android:textAppearance="@style/hello" />
