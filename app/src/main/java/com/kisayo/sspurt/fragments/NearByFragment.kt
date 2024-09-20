@@ -5,18 +5,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.kisayo.sspurt.databinding.FragmentMyAccountBinding
+import com.kisayo.sspurt.databinding.FragmentNearByBinding
 
-
-class MyAccountFragment : Fragment(){
+class NearByFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding=FragmentMyAccountBinding.inflate(inflater,container,false)
+        binding=FragmentNearByBinding.inflate(inflater,container,false)
         return binding.root
     }
-    lateinit var binding:FragmentMyAccountBinding
+    lateinit var binding:FragmentNearByBinding
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+    }
 }
