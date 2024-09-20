@@ -35,21 +35,21 @@
         </com.google.android.material.appbar.MaterialToolbar>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewByMyFav"
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:layout_below="@id/appbar_layout"
-        android:padding="8dp"
-        android:background="@color/white"
-        android:layout_marginBottom="16dp"
-        />
+<!--    <androidx.recyclerview.widget.RecyclerView-->
+<!--        android:id="@+id/recyclerViewByMyFav"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="100dp"-->
+<!--        android:layout_below="@id/appbar_layout"-->
+<!--        android:padding="8dp"-->
+<!--        android:background="@color/white"-->
+<!--        android:layout_marginBottom="16dp"-->
+<!--        />-->
 
     <FrameLayout
-        android:id="@+id/home_fragment_container"
+        android:id="@+id/fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/recyclerViewByMyFav"
+        android:layout_below="@id/appbar_layout"
         android:layout_above="@id/bottomNavigationView"
         />
 

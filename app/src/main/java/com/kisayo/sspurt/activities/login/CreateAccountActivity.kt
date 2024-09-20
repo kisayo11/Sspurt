@@ -1,14 +1,10 @@
 package com.kisayo.sspurt.activities.login
 
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import com.kisayo.sspurt.R
 import com.kisayo.sspurt.databinding.ActivityCreateAcountBinding
 
-class CreateAcountActivity : AppCompatActivity() {
+class CreateAccountActivity : AppCompatActivity() {
 
     val binding by lazy { ActivityCreateAcountBinding.inflate(layoutInflater) }
 

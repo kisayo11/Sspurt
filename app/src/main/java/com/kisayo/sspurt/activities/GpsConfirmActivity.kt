@@ -1,5 +1,6 @@
 package com.kisayo.sspurt.activities
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -15,5 +16,10 @@ class GpsConfirmActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+
+        binding.ibPause.setOnClickListener { startActivity(Intent(this,TrackingSaveActivity::class.java))
+
         }
+        }
+
     }

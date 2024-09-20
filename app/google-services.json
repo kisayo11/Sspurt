@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "153682344935",
+    "project_id": "sspurt-3e1a9",
+    "storage_bucket": "sspurt-3e1a9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:153682344935:android:8d546fca2ae3bde6621b42",
+        "android_client_info": {
+          "package_name": "com.kisayo.sspurt"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB4bm_PKHQsTeC7iBPbuJdcRat5YpDYCUs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

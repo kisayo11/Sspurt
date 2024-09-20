@@ -6,7 +6,7 @@
     android:background="#FFFFFF"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.login.CreateAcountActivity">
+    tools:context=".activities.login.CreateAccountActivity">
 
     <TextView
         android:id="@+id/ca_tv"

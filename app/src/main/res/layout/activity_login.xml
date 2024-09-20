@@ -88,6 +88,7 @@
             android:layout_alignParentRight="true"
             android:layout_marginTop="4dp"
             android:layout_marginRight="57dp"
+            android:layout_marginBottom="48dp"
             android:paddingBottom="4dp"
             android:text="비밀번호 재설정"
             android:textColor="@color/pwreset"
@@ -145,7 +146,7 @@
                     android:src="@drawable/icon_kakako" />
 
                 <ImageView
-                    android:id="@+id/kakao_naver"
+                    android:id="@+id/naver_login"
                     android:layout_width="75dp"
                     android:layout_height="75dp"
                     android:layout_marginLeft="16dp"
@@ -154,7 +155,7 @@
                     android:src="@drawable/icon_naver" />
 
                 <ImageView
-                    android:id="@+id/kakao_google"
+                    android:id="@+id/google_login"
                     android:layout_width="75dp"
                     android:layout_height="75dp"
                     android:layout_marginLeft="16dp"
@@ -165,7 +166,7 @@
             <TextView
                 android:id="@+id/easylogin_tv"
                 android:gravity="center"
-                android:layout_below="@id/login_other"
+                android:layout_above="@id/login_other"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="16sp"
@@ -173,13 +174,13 @@
                 android:text="간편하게 로그인"
                 android:textColor="@color/pwreset"/>
             <TextView
-                android:id="@+id/createAcount_tv"
+                android:id="@+id/createEmailAcount_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="계정이 없으세요? E-mail로 계정생성"
-                android:layout_below="@id/easylogin_tv"
-                android:layout_marginTop="20dp"
+                android:layout_below="@id/login_other"
+                android:layout_marginTop="24dp"
                 android:fontFamily="@font/pureunjeonnam"
+                android:text="계정이 없으세요? E-mail로 생성하기"
                 android:autoLink="none"
                 android:textSize="18sp"
                 android:layout_centerHorizontal="true"
