@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.kisayo.sspurt.R
-import com.kisayo.sspurt.activities.login.CreateAcountActivity
 import com.kisayo.sspurt.databinding.ActivityMainBinding
 import com.kisayo.sspurt.fragments.HomeFragment
 import com.kisayo.sspurt.fragments.LookUpFragment

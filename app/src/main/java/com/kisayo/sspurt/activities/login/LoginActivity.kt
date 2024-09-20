@@ -23,15 +23,17 @@ class LoginActivity : AppCompatActivity() {
         setContentView(binding.root)
 
 
+
+
         //로그인 버튼 클릭
         binding.loginIv.setOnClickListener {
             startActivity(Intent(this, MainActivity::class.java))
             finish()
         }
 
-        //가입후 초기화면으로 돌아올수 있게 finish()를 하지 않을 것
-        binding.createAcountTv.setOnClickListener {
-            startActivity(Intent(this, CreateAcountActivity::class.java))
+        //email 가입 버튼 클릭
+        binding.createEmailAcountTv.setOnClickListener {
+            startActivity(Intent(this,CreateAccountActivity::class.java))
         }
 
         //로그인 api 연동 버튼 처리
@@ -80,10 +82,11 @@ class LoginActivity : AppCompatActivity() {
         }
 
     }//clickKokao
-
-
     private fun clickNaver() {}
     private fun clickGoogle() {}
+
+
+
 
 
 }

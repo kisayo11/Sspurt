@@ -174,13 +174,13 @@
                 android:text="간편하게 로그인"
                 android:textColor="@color/pwreset"/>
             <TextView
-                android:id="@+id/createAcount_tv"
+                android:id="@+id/createEmailAcount_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="계정이 없으세요? E-mail로 계정생성"
                 android:layout_below="@id/login_other"
                 android:layout_marginTop="24dp"
                 android:fontFamily="@font/pureunjeonnam"
+                android:text="계정이 없으세요? E-mail로 생성하기"
                 android:autoLink="none"
                 android:textSize="18sp"
                 android:layout_centerHorizontal="true"
