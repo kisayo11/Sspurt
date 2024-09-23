@@ -17,3 +17,9 @@ class G {
         var userAccount: UserAccount?=null
     }
 }
+
+class Constants{
+    companion object{
+        const val ACCOUNT_COLLECTION = "account"
+    }
+}
