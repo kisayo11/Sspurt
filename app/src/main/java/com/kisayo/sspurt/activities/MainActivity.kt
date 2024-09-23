@@ -18,10 +18,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        //homefragment
+        //homefragment 설정
         supportFragmentManager.beginTransaction().add(R.id.fragment_container,HomeFragment()).commit()
 
-        //bottomNavigationView
+        //bottomNavigationView 설정
         binding.bottomNavigationView.setOnItemSelectedListener { menuItem ->
             when(menuItem.itemId){
                 R.id.nav_home->supportFragmentManager.beginTransaction()
@@ -35,11 +35,6 @@ class MainActivity : AppCompatActivity() {
             }//when
             true
         }//setItemSelected
-
-
-
-
-
 
 
 

@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "153682344935",
+    "firebase_url": "https://sspurt-3e1a9-default-rtdb.asia-southeast1.firebasedatabase.app",
     "project_id": "sspurt-3e1a9",
     "storage_bucket": "sspurt-3e1a9.appspot.com"
   },
@@ -12,7 +13,20 @@
           "package_name": "com.kisayo.sspurt"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "153682344935-3qeebp5ff7aa2mq6c9vanea470i6iuna.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.kisayo.sspurt",
+            "certificate_hash": "b1c21a1928ab6de752557121e2db551783920ffd"
+          }
+        },
+        {
+          "client_id": "153682344935-c72069nhg1npok0vt79o8h64ehpkgniv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyB4bm_PKHQsTeC7iBPbuJdcRat5YpDYCUs"
@@ -20,7 +34,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "153682344935-c72069nhg1npok0vt79o8h64ehpkgniv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

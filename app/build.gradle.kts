@@ -54,23 +54,24 @@ dependencies {
     implementation(libs.circleimageview)
     implementation(libs.glide)
     implementation(libs.play.services.maps)
+    implementation(libs.converter.scalars)
+    implementation(libs.firebase.auth)
+    implementation(libs.firebase.database)
+    implementation(libs.firebase.firestore.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
     implementation("com.kakao.sdk:v2-user-rx:2.20.6") // 카카오 로그인 API 모듈
+    implementation("com.navercorp.nid:oauth:5.10.0") // 네이버 로그인 API 모듈
 
-    // Import the Firebase BoM
+    //Firebase BoM
     implementation(platform("com.google.firebase:firebase-bom:33.3.0"))
-
-
-    // TODO: Add the dependencies for Firebase products you want to use
-    // When using the BoM, don't specify versions in Firebase dependencies
     implementation("com.google.firebase:firebase-analytics")
 
-
-    // Add the dependencies for any other desired Firebase products
-    // https://firebase.google.com/docs/android/setup#available-libraries
+    //Firebase Authentication
+    implementation("com.google.firebase:firebase-auth-ktx")
+    implementation("com.google.android.gms:play-services-auth:20.5.0")
 }
 
 
