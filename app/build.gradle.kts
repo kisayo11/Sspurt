@@ -72,6 +72,10 @@ dependencies {
     //Firebase Authentication
     implementation("com.google.firebase:firebase-auth-ktx")
     implementation("com.google.android.gms:play-services-auth:20.5.0")
+
+    //animation - intro 
+    implementation("com.airbnb.android:lottie:6.5.2")
+
 }
 
 

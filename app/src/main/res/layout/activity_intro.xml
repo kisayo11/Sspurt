@@ -10,11 +10,25 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="350dp"
-        android:src="@drawable/logo_sspurt"
         android:layout_marginBottom="150dp"
+        android:src="@drawable/logo_sspurt"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/run_ani"
+        android:layout_width="366dp"
+        android:layout_height="427dp"
+        android:layout_marginEnd="20dp"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        app:lottie_rawRes="@raw/run_ani"
+        tools:layout_editor_absoluteY="250dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
