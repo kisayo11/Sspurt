@@ -58,6 +58,7 @@ dependencies {
     implementation(libs.firebase.auth)
     implementation(libs.firebase.database)
     implementation(libs.firebase.firestore.ktx)
+    implementation(libs.play.services.location)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -72,6 +73,14 @@ dependencies {
     //Firebase Authentication
     implementation("com.google.firebase:firebase-auth-ktx")
     implementation("com.google.android.gms:play-services-auth:20.5.0")
+
+    //animation - intro 
+    implementation("com.airbnb.android:lottie:6.5.2")
+    //googlemaps
+    implementation("com.google.android.gms:play-services-maps:19.0.0")
+
+
+
 }
 
 
