@@ -18,6 +18,6 @@ class IntroActivity : AppCompatActivity() {
         android.os.Handler(Looper.getMainLooper()).postDelayed({
             startActivity(Intent(this, LoginActivity::class.java))
             finish()
-        }, 3000) // 개발모드땐 1초, 최종세팅은 3초
+        }, 4000) // 개발모드땐 1초, 최종세팅은 3초
         }
     }
