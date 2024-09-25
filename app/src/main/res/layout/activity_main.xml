@@ -65,24 +65,5 @@
         app:labelVisibilityMode="labeled"
         app:menu="@menu/navigation_bar_view">
     </com.google.android.material.bottomnavigation.BottomNavigationView>
-    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-        android:id="@+id/start_fab"
-        android:layout_width="170dp"
-        android:layout_height="50dp"
-        android:layout_marginBottom="120dp"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:text="Start"
-        android:textColor="@color/white"
-        android:textSize="24sp"
-        android:fontFamily="@font/pureunjeonnam_bold"
-        android:drawableStart="@drawable/baseline_play_arrow_24">
-
-        <!--        android:background="@drawable/gradient45"   안먹힘... ㅠㅠㅠㅠㅠㅠ-->
-    </com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton>
-
-
-
-
 
 </RelativeLayout>
