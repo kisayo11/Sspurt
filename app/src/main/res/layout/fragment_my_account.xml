@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 
-<ScrollView
-    android:id="@+id/fragment_my_account"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragment_my_account"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -124,9 +123,9 @@
 
                     <TextView
                         android:id="@+id/logOut_tv"
+                        style="@style/basicFontStyle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        style="@style/basicFontStyle"
                         android:layout_marginLeft="48dp"
                         android:paddingBottom="8dp"
                         android:text="로그아웃"
@@ -135,9 +134,9 @@
 
                     <TextView
                         android:id="@+id/resetPassword_tv"
+                        style="@style/basicFontStyle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        style="@style/basicFontStyle"
                         android:layout_marginLeft="48dp"
                         android:paddingBottom="8dp"
                         android:text="비밀번호변경"
@@ -146,10 +145,10 @@
 
                     <TextView
                         android:id="@+id/deleteId_tv"
+                        style="@style/basicFontStyle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="48dp"
-                        style="@style/basicFontStyle"
                         android:text="회원탈퇴"
                         android:textColor="#3F51B5"
                         android:textSize="16sp" />
@@ -211,7 +210,7 @@
                     android:textSize="18sp" />
             </LinearLayout>
 
-            <LinearLayout
+            <RelativeLayout
                 android:id="@+id/bugReport_layout_click"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -220,14 +219,17 @@
                 android:orientation="horizontal">
 
                 <ImageView
+                    android:id="@+id/bugReport_iv"
                     style="@style/basicFontStyle"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
+                    android:layout_alignParentLeft="true"
                     android:gravity="center"
                     android:padding="8dp"
                     android:src="@drawable/baseline_report_gmailerrorred_24" />
 
                 <TextView
+                    android:layout_toRightOf="@id/bugReport_iv"
                     style="@style/basicFontStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="50dp"
@@ -235,17 +237,30 @@
                     android:padding="8dp"
                     android:text="Error report"
                     android:textSize="18sp" />
-            </LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/bugReport_content"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/bugReport_iv"
+                    android:layout_margin="8dp"
+                    android:orientation="vertical">
 
-                <!-- 버그 리포트 확장 내용 추가 -->
+                    <TextView
+                        android:id="@+id/bugReport_tv"
+                        style="@style/basicFontStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="48dp"
+                        android:paddingBottom="8dp"
+                        android:text="글 남기기"
+                        android:textColor="#3F51B5"
+                        android:textSize="16sp" />
 
-            </LinearLayout>
+
+                </LinearLayout>
+
+
+            </RelativeLayout>
 
 
         </LinearLayout>

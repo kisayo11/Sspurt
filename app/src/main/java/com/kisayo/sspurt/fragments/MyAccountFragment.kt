@@ -21,6 +21,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.signature.ObjectKey
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.kisayo.sspurt.BugReportActivity
 import com.kisayo.sspurt.activities.login.LoginActivity
 import com.kisayo.sspurt.databinding.FragmentMyAccountBinding
 import com.kisayo.sspurt.utils.ImageUploader
@@ -65,6 +66,12 @@ class MyAccountFragment : Fragment() {
         binding.resetPasswordTv.setOnClickListener {showResetPasswordDialog()}
         //유저네임 변경 리스너
         binding.changeUsername.setOnClickListener { changeUsernameDialog() }
+        //버그리포트 이동 리스너
+        binding.bugReportTv.setOnClickListener {
+            val intent = Intent(requireActivity(), BugReportActivity::class.java) // requireActivity() 사용
+            startActivity(intent)
+        }
+
 
         //사용자 데이터 로드
         fetchUserData()
