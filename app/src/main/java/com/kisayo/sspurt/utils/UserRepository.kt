@@ -24,7 +24,7 @@ class UserRepository(private val context : Context) {
                     val imageUrl = document.getString("profileImageUrl")
                     onSuccess(imageUrl)
                 } else {
-                    onSuccess(null)
+                    onSuccess(null)`1
                 }
             }
     }
