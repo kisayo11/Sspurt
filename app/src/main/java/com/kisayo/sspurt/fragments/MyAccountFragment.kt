@@ -1,5 +1,6 @@
 package com.kisayo.sspurt.fragments
 
+import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Bitmap
@@ -42,6 +43,9 @@ class MyAccountFragment : Fragment() {
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // SharedPreferences 초기화
+        sharedPreferences = requireContext().getSharedPreferences("LoginInfo", Context.MODE_PRIVATE)
 
         // UserRepository 초기화
         userRepository = UserRepository(requireContext())
