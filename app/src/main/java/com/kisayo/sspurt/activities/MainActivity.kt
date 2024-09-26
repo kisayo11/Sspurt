@@ -39,10 +39,7 @@ class MainActivity : AppCompatActivity() {
 
 
 
-        // 플로팅버튼 "Start" 클릭리스너
-        binding.startFab.setOnClickListener {
-            startActivity(Intent(this,TrackingStartActivity::class.java))
-        }
+
 
 
         }

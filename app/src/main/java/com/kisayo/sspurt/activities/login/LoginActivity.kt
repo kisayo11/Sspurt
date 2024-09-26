@@ -183,7 +183,7 @@ class LoginActivity : AppCompatActivity() {
             if (task.isSuccessful) {
                 Toast.makeText(this, "로그인 성공", Toast.LENGTH_SHORT).show()
 
-                //체크박스 상태에 따라 sharedpreferencesㅇ에 저장
+                //체크박스 상태에 따라 sharedpreferences에 저장
                 val editor = sharedPreferences.edit()
                 if (binding.autoIdCb.isChecked) {
                     editor.putString("savedEmail", email) // 이메일 저장
