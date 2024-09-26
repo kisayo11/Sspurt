@@ -7,17 +7,19 @@ import android.util.Log // 로그 클래스
 class PathTracker(private val firestore: FirebaseFirestore) {
     private val pathPoints: MutableList<LatLng> = mutableListOf() // 경로 포인트 리스트
 
+    // LatLng 포인트 추가 및 Firestore에 경로 저장
     fun addPoint(point: LatLng) {
         pathPoints.add(point) // 포인트 추가
         savePathToFirestore() // Firestore에 경로 저장
     }
 
+    // 경로 반환
     fun getPath(): List<LatLng> {
         return pathPoints // 경로 반환
     }
 
+    // 경로 데이터를 Firestore에 저장
     private fun savePathToFirestore() {
-        // 경로 데이터를 Firestore에 저장
         val pathData = mapOf(
             "points" to pathPoints.map { mapOf("lat" to it.latitude, "lng" to it.longitude) }
         )

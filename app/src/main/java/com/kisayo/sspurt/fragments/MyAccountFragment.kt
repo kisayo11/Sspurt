@@ -16,15 +16,13 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.signature.ObjectKey
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.kisayo.sspurt.BugReportActivity
+import com.kisayo.sspurt.activities.preference.BugReportActivity
 import com.kisayo.sspurt.activities.login.LoginActivity
 import com.kisayo.sspurt.databinding.FragmentMyAccountBinding
-import com.kisayo.sspurt.utils.ImageUploader
 import com.kisayo.sspurt.utils.UserRepository
 import java.io.File
 import java.io.FileOutputStream
@@ -37,7 +35,6 @@ class MyAccountFragment : Fragment() {
 
     private lateinit var imageUri: Uri
     private lateinit var userRepository: UserRepository
-    private val imageUploader = ImageUploader()
     private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreateView(

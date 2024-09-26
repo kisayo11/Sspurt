@@ -19,20 +19,11 @@
         android:theme="@style/Theme.Sspurt"
         tools:targetApi="31">
         <activity
-            android:name=".BugReportActivity"
-            android:exported="false" />
-        <activity
             android:name=".activities.preference.BugReportActivity"
-            android:exported="false"
-            android:theme="@style/Theme.Sspurt" />
-        <activity
-            android:name=".activities.preference.ProfileActivity"
             android:exported="false" />
-
-        <meta-data
+       <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyCVo9XW8gGSyTrj-qOg4uPj9-f4SjMKcXM" />
-
+            android:value="AIzaSyB4bm_PKHQsTeC7iBPbuJdcRat5YpDYCUs" />
         <activity
             android:name=".LocationRecordActivity"
             android:exported="false" />

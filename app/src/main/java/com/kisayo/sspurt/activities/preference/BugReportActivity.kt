@@ -1,4 +1,4 @@
-package com.kisayo.sspurt
+package com.kisayo.sspurt.activities.preference
 
 import android.graphics.Paint
 import android.os.Bundle
