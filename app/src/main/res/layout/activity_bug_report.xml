@@ -1,33 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:background="@color/white"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
     tools:context=".activities.preference.BugReportActivity">
 
-    <com.google.android.material.appbar.AppBarLayout
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fitsSystemWindows="true">
+        app:navigationIcon="@drawable/ic_action_back_arrow"/>
 
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize" />
 
-    </com.google.android.material.appbar.AppBarLayout>
+    <TextView
+        android:id="@+id/reporter"
+        style="@style/basicFontStyle"
+        android:layout_width="96dp"
+        android:layout_height="48dp"
+        android:layout_above="@+id/board"
+        android:layout_alignLeft="@id/board"
+        android:gravity="center"
+        android:text="reporter : " />
 
-    <include layout="@layout/content_bug_report" />
+    <TextView
+        android:id="@+id/showId"
+        style="@style/basicFontStyle"
+        android:textSize="18sp"
+        android:maxLines="2"
+        android:textColor="#3F51B5"
+        android:layout_width="205dp"
+        android:layout_height="48dp"
+        android:gravity="center"
+        android:text="your@e-mail"
+        android:layout_above="@id/board"
+        android:layout_toRightOf="@id/reporter"
+     />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/board"
+        android:padding="8dp"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+        android:layout_width="340dp"
+        android:layout_height="600dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true">
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/reportText"
+        android:hint="여기에 입력해주세요"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="top|start"
+        android:lines="30"
+        android:inputType="textMultiLine"/>
+</com.google.android.material.textfield.TextInputLayout>
+
+    <Button
+        android:id="@+id/button"
+        android:padding="8dp"
+        android:layout_alignRight="@id/board"
+        android:layout_below="@id/board"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_marginEnd="@dimen/fab_margin"
-        android:layout_marginBottom="16dp"
-        app:srcCompat="@android:drawable/ic_dialog_email" />
+        android:text="완료"
+         />
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</RelativeLayout>
