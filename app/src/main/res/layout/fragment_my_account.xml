@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    android:id="@+id/fragment_my_account"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -16,7 +18,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/profile_layout"
             android:layout_width="match_parent"
-            android:layout_height="250dp"
+            android:layout_height="280dp"
             android:layout_marginBottom="24dp"
             android:background="@color/white">
 
@@ -41,6 +43,7 @@
                 tools:ignore="MissingConstraints">
 
                 <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/changeUsername"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:src="@drawable/edit_96" />
@@ -52,7 +55,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="user_name"
+                android:text="닉네임을 설정해주세요"
                 android:textColor="@color/black"
                 android:textSize="20sp"
                 android:textStyle="bold"
@@ -66,7 +69,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:text="google.com@google.com"
+                android:text="E-mail을 설정해주세요"
                 android:textColor="@color/pwreset"
                 android:textSize="18sp"
                 app:layout_constraintLeft_toLeftOf="@id/tv_user_name"

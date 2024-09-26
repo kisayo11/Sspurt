@@ -59,13 +59,15 @@ class CreateAccountActivity : AppCompatActivity() {
                                     val user = auth.currentUser
                                     user?.let {
                                         val userInfo = hashMapOf(
-                                            "eamil" to email,
+                                            "email" to email,
                                             "username" to username,
-                                            "mobile" to mobile
+                                            "mobile" to mobile,
+                                            "profileImageUrl" to ""
                                         )
 
                                         firestore.collection(Constants.ACCOUNT_COLLECTION)
-                                            .document(user.uid).set(userInfo)
+                                            .document(email)
+                                            .set(userInfo)
                                             .addOnCompleteListener { saveTask ->
                                                 if (saveTask.isSuccessful) {
                                                     AlertDialog.Builder(this)
