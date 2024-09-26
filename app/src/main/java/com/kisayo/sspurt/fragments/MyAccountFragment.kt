@@ -18,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
+import com.bumptech.glide.signature.ObjectKey
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.kisayo.sspurt.activities.login.LoginActivity
@@ -227,7 +228,10 @@ class MyAccountFragment : Fragment() {
                 IMAGE_PICK_CODE -> {
                     val imageUri = data?.data // 선택한 이미지 URI
                     if (imageUri != null) {
-                        uploadProfileImage(imageUri)
+                        // 이미지 URI를 비트맵으로 변환하고 압축
+                        val bitmap = MediaStore.Images.Media.getBitmap(requireContext().contentResolver, imageUri)
+                        val getImageUri = getImageUri(bitmap) // 압축된 이미지 URI
+                        uploadProfileImage(getImageUri) // 이미지 업로드
                     } // 이미지 업로드
                 }
                 CAMERA_REQUEST_CODE -> {
@@ -242,7 +246,7 @@ class MyAccountFragment : Fragment() {
     private fun getImageUri(bitmap: Bitmap): Uri {
         val file = File(requireContext().cacheDir, "temp_image.jpg")
         FileOutputStream(file).use { out ->
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out) // 비트맵을 JPEG 형식으로 저장
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 30, out) // 비트맵을 JPEG 형식으로 저장
         }
         return Uri.fromFile(file) // 파일의 URI 반환
     }
@@ -252,10 +256,26 @@ class MyAccountFragment : Fragment() {
         val userId = FirebaseAuth.getInstance().currentUser?.uid // 사용자 ID 가져오기
 
         if (email != null && userId != null) {
-            userRepository.uploadProfileImage(userId, imageUri, email) { success ->
+            // 비트맵으로 변환하여 크기 줄이기
+            val bitmap = MediaStore.Images.Media.getBitmap(requireContext().contentResolver, imageUri)
+            val compressedUri = getImageUri(bitmap) // 압축된 이미지 URI 얻기
+
+            // SharedPreferences에 URI 저장
+            val editor = sharedPreferences.edit()
+            editor.putString("profileImageUrl", compressedUri.toString())
+            editor.apply()
+
+            // UI 업데이트
+            Glide.with(this).load(compressedUri).into(binding.profileCv)
+
+            // Firestore에 이미지 업로드
+            userRepository.uploadProfileImage(userId, compressedUri, email) { success ->
                 if (success) {
                     // 이미지 뷰 업데이트
-                    Glide.with(this).load(imageUri).into(binding.profileCv)
+                    Glide.with(this)
+                        .load(imageUri)
+                        .signature(ObjectKey(System.currentTimeMillis().toString())) // 캐시 무효화
+                        .into(binding.profileCv)
                     Toast.makeText(requireContext(), "프로필 사진이 업데이트되었습니다.", Toast.LENGTH_SHORT).show()
                 } else {
                     Toast.makeText(requireContext(), "이미지 업로드 실패", Toast.LENGTH_SHORT).show()
