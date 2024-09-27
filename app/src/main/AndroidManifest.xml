@@ -7,6 +7,13 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
 
+    <!--헬스 커넥트 퍼미션 -->
+    <uses-permission android:name="android.permission.BODY_SENSORS"/>
+
+    <!-- Health Connect 설치 여부 확인 -->
+    <queries>
+        <package android:name="com.google.android.apps.healthdata" />
+    </queries>
 
     <application
         android:name=".GlobalApplication"
@@ -73,6 +80,9 @@
                     android:scheme="kakaod777f8da9e5e1cb2fd20e1fc3f3f2181" />
             </intent-filter>
         </activity>
+
+
+
     </application>
 
 </manifest>

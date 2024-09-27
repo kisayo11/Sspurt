@@ -21,6 +21,7 @@ class GpsConfirmActivity : AppCompatActivity() {
     private var currentTime = 10_000L // 10sec
 
 
+
     companion object {
         const val LOCATION_PERMISSION_REQUEST_CODE = 1 // const로 선언
     }

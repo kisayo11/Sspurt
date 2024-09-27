@@ -47,32 +47,40 @@
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:layout_margin="24dp"
-                android:src="@drawable/icon_naver" />
+                android:background="@android:color/transparent"
+                android:adjustViewBounds="true"
+                android:src="@drawable/icon_treckking100" />
 
             <ImageButton
                 android:id="@+id/ib_running"
+                android:background="@android:color/transparent"
+                android:adjustViewBounds="true"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:layout_margin="24dp"
                 android:layout_toRightOf="@id/ib_hiking"
-                android:src="@drawable/icon_google" />
+                android:src="@drawable/icon_running100" />
 
             <ImageButton
                 android:id="@+id/ib_trailrunning"
                 android:layout_width="100dp"
+                android:background="@android:color/transparent"
+                android:adjustViewBounds="true"
                 android:layout_height="100dp"
                 android:layout_below="@id/ib_hiking"
                 android:layout_margin="24dp"
-                android:src="@drawable/icon_google" />
+                android:src="@drawable/icon_trail100" />
 
             <ImageButton
                 android:id="@+id/ib_cycling"
+                android:background="@android:color/transparent"
+                android:adjustViewBounds="true"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:layout_below="@id/ib_running"
                 android:layout_margin="24dp"
                 android:layout_toRightOf="@id/ib_trailrunning"
-                android:src="@drawable/icon_naver" />
+                android:src="@drawable/icon_ridding100" />
         </RelativeLayout>
     </LinearLayout>
 
