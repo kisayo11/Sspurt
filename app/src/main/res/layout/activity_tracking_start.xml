@@ -15,7 +15,7 @@
         android:layout_marginTop="150dp"
         android:layout_marginBottom="4dp"
         android:fontFamily="@font/pureunjeonnam_bold"
-        android:text="선택확인"
+        android:text="선택확인 클릭"
         android:textSize="24sp" />
 
     <ImageView
@@ -25,7 +25,7 @@
         android:layout_below="@id/tv_latest"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="16dp"
-        android:src="@drawable/icon_kakako" />
+        android:src="@drawable/logo_sspurt" />
 
     <LinearLayout
         android:id="@+id/ib_layout"

@@ -106,8 +106,7 @@ class GpsConfirmActivity : AppCompatActivity() {
                 binding.tvCountDown.text = (currentTime / 1000).toString() // 남은 시간 업데이트
 
                 //카운트다운 에이메이션 효과
-                binding.tvCountDown.translationX = (10 - (currentTime / 1000)) * 10f // 이동 효과
-                if (currentTime <= 5000) {
+                if (currentTime <= 6000) {
                     binding.tvCountDown.setTextColor(resources.getColor(android.R.color.holo_red_light)) // 색상 변경
                 } else {
                     binding.tvCountDown.setTextColor(resources.getColor(android.R.color.black)) // 기본 색상
@@ -115,7 +114,7 @@ class GpsConfirmActivity : AppCompatActivity() {
             }
 
             override fun onFinish() {
-                binding.tvCountDown.text = "0" // 카운트다운 완료 시 텍스트 설정
+                binding.tvCountDown.text = "" // 카운트다운 완료 시 텍스트 설정
                 countDownTimer = null // 타이머 종료
 
 
