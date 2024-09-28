@@ -15,7 +15,7 @@
         android:layout_marginTop="150dp"
         android:layout_marginBottom="4dp"
         android:fontFamily="@font/pureunjeonnam_bold"
-        android:text="선택확인 클릭"
+        android:text="운동 시작"
         android:textSize="24sp" />
 
     <ImageView
