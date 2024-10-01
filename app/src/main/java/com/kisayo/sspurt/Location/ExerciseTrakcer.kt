@@ -6,18 +6,32 @@ import com.kisayo.sspurt.data.ExerciseRecord
 class ExerciseTracker {
     // 사용자 체중 및 MET 값 기본값
     private var userWeight: Double = 70.0 // 기본 체중 (kg)
-    private var metValue: Double = 8.0 // 기본 MET 값 (예시: 격렬한 운동)
+
+    private val metValues = mapOf(
+        "running" to 8.0,
+        "hiking" to 5.0,
+        "trailrunning" to 9.0,
+        "cycling" to 6.0
+    )
 
     // 칼로리 계산
-    fun calculateCalories(elapsedTime: Long): Double {
+    fun calculateCalories(elapsedTime: Long, exerciseType: String): Double {
+        val metValue = metValues[exerciseType] ?: 8.0 // 기본값 8.0
         return (metValue * userWeight * (elapsedTime / 3600.0)) // 칼로리 계산
     }
 
+    // MET 값 가져오기
+    fun getMetValue(exerciseType: String): Double {
+        return metValues[exerciseType] ?: 8.0 // 기본값
+    }
+
+
     // 심장 강화 점수 계산
     fun calculateHeartHealthScore(
-        averageSpeed: Double, // 평균 속도 (km/h)
-        duration: Long, // 운동 시간 (초 단위)
-        caloriesBurned: Double // 소모 칼로리
+        averageSpeed: Double,
+        duration: Long,
+        caloriesBurned: Double,
+        metValue: Double // MET 값 추가
     ): Int {
         var score = 0
 
@@ -61,8 +75,6 @@ class ExerciseTracker {
     fun elapsedTimeInHours(elapsedTime: Long): Double {
         return elapsedTime / 3600.0
     }
-
-
 
 
 }

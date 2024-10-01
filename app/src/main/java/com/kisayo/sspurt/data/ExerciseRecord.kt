@@ -21,9 +21,14 @@ data class ExerciseRecord(
     var temperature: Double = 0.0, // 기온
     var exerciseType: String = "", // 운동 종류
     var userFeedback: String = "", // 사용자 피드백
-    var currentLocation: LatLng? = null, // 현재 위치 정보
+    var currentLocation: LatLngWrapper? = null, // 현재 위치 정보
     var date: Timestamp = Timestamp.now(), // 현재 날짜
-    var geoPoint: GeoPoint? = null, //저장 위치값
     var photoUrl: String? = null, // 사진 URL (옵션)
-    var exerciseJournal: String? = null // 운동 일지 (옵션)
+    var exerciseJournal: String? = null, // 운동 일지 (옵션)
+    var metValue: Double = 0.0 // MET 값 추가
+)
+
+data class LatLngWrapper(
+    var latitude: Double = 0.0,
+    var longitude: Double = 0.0
 )

@@ -4,6 +4,7 @@ import android.Manifest
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
@@ -32,6 +33,7 @@ import com.google.firebase.firestore.GeoPoint
 import com.kisayo.sspurt.Location.ExerciseTracker
 import com.kisayo.sspurt.activities.TrackingSaveActivity
 import com.kisayo.sspurt.data.ExerciseRecord
+import com.kisayo.sspurt.data.LatLngWrapper
 import com.kisayo.sspurt.databinding.FragmentHealthRecordBinding
 import com.kisayo.sspurt.utils.FirestoreHelper
 import com.kisayo.sspurt.utils.UserRepository
@@ -49,6 +51,7 @@ class HealthRecordFragment : Fragment() {
     private lateinit var userRepository: UserRepository
     private var previousLocation: Location? = null // 이전 위치
     private var totalDistance: Double = 0.0 // 총 이동 거리
+    private var exerciseType: String? = null // 운동 유형을 저장할 변수
 
 
 
@@ -59,6 +62,7 @@ class HealthRecordFragment : Fragment() {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity()) // 초기화
         healthConnectClient = HealthConnectClient.getOrCreate(requireContext())
         userRepository = UserRepository(requireContext())
+        exerciseData = ExerciseRecord() // 초기화
 
         return binding.root
     }
@@ -123,11 +127,24 @@ class HealthRecordFragment : Fragment() {
         }
     }
 
+    // 운동 유형 불러오기
+    private fun getSelectedExerciseType() {
+        val sharedPreferences = requireContext().getSharedPreferences("activityPickSave", Context.MODE_PRIVATE)
+        exerciseType = sharedPreferences.getString("selected_icon", "running") ?: "running"
+    }
+
     private fun startRecording() {
         exerciseData.isRecording = true
         exerciseData.isPaused = false
         exerciseData.elapsedTime = 0 // 경과 시간 초기화
+
+        getSelectedExerciseType() // 운동 유형 불러오기
+        exerciseData.exerciseType = exerciseType ?: "" // 운동 유형 설정 (null일 경우 빈 문자열로 초기화)
+
         startTimer() // 타이머 시작
+        exerciseData.metValue = exerciseTracker.getMetValue(exerciseData.exerciseType) // 운동 유형에 따라 MET 값 설정
+
+
         //exerciseTracker.startTracking(lastLocation ?: return) // 운동 추적 시작
         requestCurrentLocation() // 현재 위치 요청
         Toast.makeText(requireContext(), "운동이 시작되었습니다!", Toast.LENGTH_SHORT).show() // 운동 시작 알림
@@ -193,7 +210,9 @@ class HealthRecordFragment : Fragment() {
 
     private fun saveExerciseData() {
         val email = userRepository.getCurrentUserEmail() ?: ""
-        fun LatLng.toGeoPoint() : GeoPoint = GeoPoint(this.latitude, this.longitude)
+        val currentLocation = exerciseData.currentLocation?.let {
+            LatLngWrapper(it.latitude, it.longitude)
+        }
         val exerciseRecord = ExerciseRecord(
             isRecording = exerciseData.isRecording,
             elapsedTime = exerciseData.elapsedTime,
@@ -206,9 +225,8 @@ class HealthRecordFragment : Fragment() {
             temperature = exerciseData.temperature,
             exerciseType = exerciseData.exerciseType,
             userFeedback = exerciseData.userFeedback,
-            currentLocation = exerciseData.currentLocation, // LatLng 타입으로 변경 필요
+            currentLocation = currentLocation, // LatLng 타입으로 변경 필요
             date = Timestamp.now(),
-            geoPoint = exerciseData.currentLocation?.toGeoPoint(),
             photoUrl = exerciseData.photoUrl,
             exerciseJournal = exerciseData.exerciseJournal
         )
@@ -252,7 +270,7 @@ class HealthRecordFragment : Fragment() {
                 // 가장 최근의 위치 가져오기
                 val currentLocation = locationResult.locations.last()
                 exerciseData.currentLocation =
-                    LatLng(currentLocation.latitude, currentLocation.longitude)
+                    LatLngWrapper(currentLocation.latitude, currentLocation.longitude)
 
                 // 이동 거리 계산
                 // 일시 정지 상태에서 거리 계산을 하지 않음
@@ -296,15 +314,19 @@ class HealthRecordFragment : Fragment() {
 
         binding.tv3.text = exerciseTracker.formatElapsedTime(exerciseData.elapsedTime) // 이동 시간
 
-        // 칼로리 계산 (필요시)
-        exerciseData.calories = exerciseTracker.calculateCalories(exerciseData.elapsedTime)
-         binding.tv6.text = String.format("%.2f", exerciseData.calories) // 칼로리
+        // 칼로리 계산
+        val calories = exerciseTracker.calculateCalories(exerciseData.elapsedTime, exerciseData.exerciseType)
+        exerciseData.calories = calories
+        binding.tv6.text = String.format("%.2f", exerciseData.calories)
 
-        // 심장 강화 점수 계산 (필요시)
-        val heartHealthScore = exerciseTracker.calculateHeartHealthScore(averageSpeedKmh, exerciseData.elapsedTime, exerciseData.calories)
+        val heartHealthScore = exerciseTracker.calculateHeartHealthScore(
+            exerciseData.averageSpeed,
+            exerciseData.elapsedTime,
+            exerciseData.calories,
+            exerciseData.metValue // MET 값 전달
+        )
         binding.tv5.text = heartHealthScore.toString() // 심장 강화 점수
     }
-
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == 1) {
@@ -315,4 +337,6 @@ class HealthRecordFragment : Fragment() {
             }
         }
     }
+
+
 }

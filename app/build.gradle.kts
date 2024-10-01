@@ -86,6 +86,10 @@ dependencies {
     //health connect
     implementation("androidx.health.connect:connect-client:1.1.0-alpha08")
 
+    //MPAndoridChart
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
+
+
 
 }
 
