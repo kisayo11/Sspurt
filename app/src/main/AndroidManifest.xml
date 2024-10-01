@@ -9,6 +9,8 @@
 
     <!--헬스 커넥트 퍼미션 -->
     <uses-permission android:name="android.permission.BODY_SENSORS"/>
+    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION"/>
+
 
     <!-- Health Connect 설치 여부 확인 -->
     <queries>
