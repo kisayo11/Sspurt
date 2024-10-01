@@ -53,7 +53,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                 for (location in locationResult.locations) {
                     // 위치 업데이트가 있을 때마다 카메라를 이동
                     val latLng = LatLng(location.latitude, location.longitude)
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16f))
                 }
             }
         }
@@ -78,7 +78,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         fusedLocationClient.lastLocation.addOnSuccessListener { location ->
             if (location != null) {
                 val currentLocation = LatLng(location.latitude, location.longitude)
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15f))
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 16f))
             }
         }
 
@@ -87,14 +87,15 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     }
 
     private fun startLocationUpdates() {
-        val locationRequest = LocationRequest.create().apply {
-            interval = 10000 // 10초마다 업데이트
-            fastestInterval = 5000 // 5초
-            priority = LocationRequest.PRIORITY_HIGH_ACCURACY // 고정밀도
-        }
+        val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 1000)
+            .setIntervalMillis(1000)
+            .build()
 
         if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
+        } else {
+            // 권한 요청 코드 추가
+            ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), LOCATION_PERMISSION_REQUEST_CODE)
         }
     }
 
