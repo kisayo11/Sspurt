@@ -1,204 +1,247 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/white"
-    tools:context=".activities.TrackingSaveActivity">
+    android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/tv_saveq"
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:background="@color/white"
-        android:fontFamily="@font/pureunjeonnam_bold"
-        android:gravity="center"
-        android:text="기록을 저장?"
-        android:textSize="36dp" />
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/design_default_color_primary"
+        android:title="Exercise Records"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
 
-    <com.google.android.material.divider.MaterialDivider
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/lineChart"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/tv_saveq" />
-
-    <LinearLayout
-        android:id="@+id/record_layout"
-        android:layout_width="300dp"
         android:layout_height="300dp"
-        android:layout_centerHorizontal="true"
-        android:orientation="horizontal"
-        android:weightSum="2"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_below="@id/toolbar" />
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/trackingstartbg">
-
-            <LinearLayout
-                android:id="@+id/avgTime_layout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="24dp"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/tv_avgTimetxt"
-                    android:layout_width="100dp"
-                    android:layout_height="50dp"
-                    android:fontFamily="@font/pureunjeonnam"
-                    android:gravity="center"
-                    android:text="평균 페이스"
-                    android:textColor="@color/pwreset"
-                    android:textSize="18sp" />
-
-                <TextView
-                    android:id="@+id/tv_avgTime"
-                    android:layout_width="100dp"
-                    android:layout_height="50dp"
-                    android:fontFamily="@font/pureunjeonnam"
-                    android:gravity="center"
-                    android:text="--:--:--"
-                    android:textSize="18sp" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/recordDistance_layout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="24dp"
-                android:layout_toRightOf="@id/avgTime_layout"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/tv_recordDistancetxt"
-                    android:layout_width="100dp"
-                    android:layout_height="50dp"
-                    android:fontFamily="@font/pureunjeonnam"
-                    android:gravity="center"
-                    android:text="거리(km)"
-                    android:textColor="@color/pwreset"
-                    android:textSize="18sp" />
-
-                <TextView
-                    android:id="@+id/tv_recordDistance"
-                    android:layout_width="100dp"
-                    android:layout_height="50dp"
-                    android:fontFamily="@font/pureunjeonnam"
-                    android:gravity="center"
-                    android:text="00.00"
-                    android:textSize="18sp" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/tv_recordTime_layout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/avgTime_layout"
-                android:layout_margin="24dp"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/tv_recordTimetxt"
-                    android:layout_width="100dp"
-                    android:layout_height="50dp"
-                    android:fontFamily="@font/pureunjeonnam"
-                    android:gravity="center"
-                    android:text="시간"
-                    android:textColor="@color/pwreset"
-                    android:textSize="18sp" />
-
-                <TextView
-                    android:id="@+id/tv_recordTime"
-                    android:layout_width="100dp"
-                    android:layout_height="50dp"
-                    android:fontFamily="@font/pureunjeonnam"
-                    android:gravity="center"
-                    android:text="--:--:--"
-                    android:textSize="18sp" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/tv_steps_layout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/avgTime_layout"
-                android:layout_margin="24dp"
-                android:layout_toRightOf="@id/tv_recordTime_layout"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/tv_stepstxt"
-                    android:layout_width="100dp"
-                    android:layout_height="50dp"
-                    android:fontFamily="@font/pureunjeonnam"
-                    android:gravity="center"
-                    android:text="걸음 수"
-                    android:textColor="@color/pwreset"
-                    android:textSize="18sp" />
-
-                <TextView
-                    android:id="@+id/tv_steps"
-                    android:layout_width="100dp"
-                    android:layout_height="50dp"
-                    android:fontFamily="@font/pureunjeonnam"
-                    android:gravity="center"
-                    android:text="00"
-                    android:textSize="18sp" />
-            </LinearLayout>
-        </RelativeLayout>
-    </LinearLayout>
-
-    <com.google.android.material.divider.MaterialDivider
-        android:id="@+id/dividerBottom"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="130dp"
-        android:background="@color/white"
-        app:layout_constraintTop_toBottomOf="@id/record_layout" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="4dp"
-        android:weightSum="2"
-        app:layout_constraintTop_toBottomOf="@id/dividerBottom">
-
-        <Button
-            android:id="@+id/upload_picture_btn"
-            style="?attr/materialIconButtonStyle"
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:layout_marginLeft="40dp"
-            android:layout_marginRight="30dp"
-            android:layout_weight="1"
-            android:fontFamily="@font/pureunjeonnam"
-            android:gravity="center"
-            android:text="  사진등록"
-            android:textColor="@color/black"
-            android:textSize="18sp"
-            app:icon="@drawable/ic_action_upload" />
-
-        <com.google.android.material.materialswitch.MaterialSwitch
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:layout_marginLeft="40dp"
-            android:layout_marginRight="50dp"
-            android:layout_weight="1"
-            android:checked="true"
-            android:fontFamily="@font/pureunjeonnam"
-            android:text="Post"
-            android:textSize="18sp" />
+        android:layout_height="match_parent"
+        android:layout_below="@id/lineChart" />
+</RelativeLayout>
 
 
-    </LinearLayout>
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!--<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--    xmlns:app="http://schemas.android.com/apk/res-auto"-->
+<!--    xmlns:tools="http://schemas.android.com/tools"-->
+<!--    android:id="@+id/main"-->
+<!--    android:layout_width="match_parent"-->
+<!--    android:layout_height="match_parent"-->
+<!--    android:background="@color/white"-->
+<!--    tools:context=".activities.TrackingSaveActivity">-->
+
+<!--    <TextView-->
+<!--        android:id="@+id/tv_saveq"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="150dp"-->
+<!--        android:background="@color/white"-->
+<!--        android:fontFamily="@font/pureunjeonnam_bold"-->
+<!--        android:gravity="center"-->
+<!--        android:text="기록을 저장?"-->
+<!--        android:textSize="36dp" />-->
+
+<!--    <com.google.android.material.divider.MaterialDivider-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/tv_saveq" />-->
+
+<!--    <LinearLayout-->
+<!--        android:id="@+id/record_layout"-->
+<!--        android:layout_width="300dp"-->
+<!--        android:layout_height="300dp"-->
+<!--        android:layout_centerHorizontal="true"-->
+<!--        android:orientation="horizontal"-->
+<!--        android:weightSum="2"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintLeft_toLeftOf="parent"-->
+<!--        app:layout_constraintRight_toRightOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent">-->
+
+<!--        <RelativeLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:background="@drawable/trackingstartbg">-->
+
+<!--            <LinearLayout-->
+<!--                android:id="@+id/avgTime_layout"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_margin="24dp"-->
+<!--                android:orientation="vertical">-->
+
+<!--                <TextView-->
+<!--                    android:id="@+id/tv_avgTimetxt"-->
+<!--                    android:layout_width="100dp"-->
+<!--                    android:layout_height="50dp"-->
+<!--                    android:fontFamily="@font/pureunjeonnam"-->
+<!--                    android:gravity="center"-->
+<!--                    android:text="평균 페이스"-->
+<!--                    android:textColor="@color/pwreset"-->
+<!--                    android:textSize="18sp" />-->
+
+<!--                <TextView-->
+<!--                    android:id="@+id/tv_avgTime"-->
+<!--                    android:layout_width="100dp"-->
+<!--                    android:layout_height="50dp"-->
+<!--                    android:fontFamily="@font/pureunjeonnam"-->
+<!--                    android:gravity="center"-->
+<!--                    android:text="&#45;&#45;:&#45;&#45;:&#45;&#45;"-->
+<!--                    android:textSize="18sp" />-->
+<!--            </LinearLayout>-->
+
+<!--            <LinearLayout-->
+<!--                android:id="@+id/recordDistance_layout"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_margin="24dp"-->
+<!--                android:layout_toRightOf="@id/avgTime_layout"-->
+<!--                android:orientation="vertical">-->
+
+<!--                <TextView-->
+<!--                    android:id="@+id/tv_recordDistancetxt"-->
+<!--                    android:layout_width="100dp"-->
+<!--                    android:layout_height="50dp"-->
+<!--                    android:fontFamily="@font/pureunjeonnam"-->
+<!--                    android:gravity="center"-->
+<!--                    android:text="거리(km)"-->
+<!--                    android:textColor="@color/pwreset"-->
+<!--                    android:textSize="18sp" />-->
+
+<!--                <TextView-->
+<!--                    android:id="@+id/tv_recordDistance"-->
+<!--                    android:layout_width="100dp"-->
+<!--                    android:layout_height="50dp"-->
+<!--                    android:fontFamily="@font/pureunjeonnam"-->
+<!--                    android:gravity="center"-->
+<!--                    android:text="00.00"-->
+<!--                    android:textSize="18sp" />-->
+<!--            </LinearLayout>-->
+
+<!--            <LinearLayout-->
+<!--                android:id="@+id/tv_recordTime_layout"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_below="@id/avgTime_layout"-->
+<!--                android:layout_margin="24dp"-->
+<!--                android:orientation="vertical">-->
+
+<!--                <TextView-->
+<!--                    android:id="@+id/tv_recordTimetxt"-->
+<!--                    android:layout_width="100dp"-->
+<!--                    android:layout_height="50dp"-->
+<!--                    android:fontFamily="@font/pureunjeonnam"-->
+<!--                    android:gravity="center"-->
+<!--                    android:text="시간"-->
+<!--                    android:textColor="@color/pwreset"-->
+<!--                    android:textSize="18sp" />-->
+
+<!--                <TextView-->
+<!--                    android:id="@+id/tv_recordTime"-->
+<!--                    android:layout_width="100dp"-->
+<!--                    android:layout_height="50dp"-->
+<!--                    android:fontFamily="@font/pureunjeonnam"-->
+<!--                    android:gravity="center"-->
+<!--                    android:text="&#45;&#45;:&#45;&#45;:&#45;&#45;"-->
+<!--                    android:textSize="18sp" />-->
+<!--            </LinearLayout>-->
+
+<!--            <LinearLayout-->
+<!--                android:id="@+id/tv_steps_layout"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_below="@id/avgTime_layout"-->
+<!--                android:layout_margin="24dp"-->
+<!--                android:layout_toRightOf="@id/tv_recordTime_layout"-->
+<!--                android:orientation="vertical">-->
+
+<!--                <TextView-->
+<!--                    android:id="@+id/tv_stepstxt"-->
+<!--                    android:layout_width="100dp"-->
+<!--                    android:layout_height="50dp"-->
+<!--                    android:fontFamily="@font/pureunjeonnam"-->
+<!--                    android:gravity="center"-->
+<!--                    android:text="걸음 수"-->
+<!--                    android:textColor="@color/pwreset"-->
+<!--                    android:textSize="18sp" />-->
+
+<!--                <TextView-->
+<!--                    android:id="@+id/tv_steps"-->
+<!--                    android:layout_width="100dp"-->
+<!--                    android:layout_height="50dp"-->
+<!--                    android:fontFamily="@font/pureunjeonnam"-->
+<!--                    android:gravity="center"-->
+<!--                    android:text="00"-->
+<!--                    android:textSize="18sp" />-->
+<!--            </LinearLayout>-->
+<!--        </RelativeLayout>-->
+<!--    </LinearLayout>-->
+
+<!--    <com.google.android.material.divider.MaterialDivider-->
+<!--        android:id="@+id/dividerBottom"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginTop="130dp"-->
+<!--        android:background="@color/white"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/record_layout" />-->
+
+<!--    <LinearLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:orientation="horizontal"-->
+<!--        android:padding="4dp"-->
+<!--        android:weightSum="2"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/dividerBottom">-->
+
+<!--        <Button-->
+<!--            android:id="@+id/upload_picture_btn"-->
+<!--            style="?attr/materialIconButtonStyle"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="100dp"-->
+<!--            android:layout_marginLeft="40dp"-->
+<!--            android:layout_marginRight="30dp"-->
+<!--            android:layout_weight="1"-->
+<!--            android:fontFamily="@font/pureunjeonnam"-->
+<!--            android:gravity="center"-->
+<!--            android:text="  사진등록"-->
+<!--            android:textColor="@color/black"-->
+<!--            android:textSize="18sp"-->
+<!--            app:icon="@drawable/ic_action_upload" />-->
+
+<!--        <com.google.android.material.materialswitch.MaterialSwitch-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:layout_gravity="center"-->
+<!--            android:layout_marginLeft="40dp"-->
+<!--            android:layout_marginRight="50dp"-->
+<!--            android:layout_weight="1"-->
+<!--            android:checked="true"-->
+<!--            android:fontFamily="@font/pureunjeonnam"-->
+<!--            android:text="Post"-->
+<!--            android:textSize="18sp" />-->
+
+
+<!--    </LinearLayout>-->
+
+
+<!--</androidx.constraintlayout.widget.ConstraintLayout>-->

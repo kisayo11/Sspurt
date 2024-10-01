@@ -4,6 +4,7 @@ import android.Manifest
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
@@ -27,9 +28,12 @@ import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.gms.maps.model.LatLng
+import com.google.firebase.Timestamp
+import com.google.firebase.firestore.GeoPoint
 import com.kisayo.sspurt.Location.ExerciseTracker
 import com.kisayo.sspurt.activities.TrackingSaveActivity
 import com.kisayo.sspurt.data.ExerciseRecord
+import com.kisayo.sspurt.data.LatLngWrapper
 import com.kisayo.sspurt.databinding.FragmentHealthRecordBinding
 import com.kisayo.sspurt.utils.FirestoreHelper
 import com.kisayo.sspurt.utils.UserRepository
@@ -41,11 +45,15 @@ class HealthRecordFragment : Fragment() {
     private var recordingTimer: CountDownTimer? = null
     private val firestoreHelper = FirestoreHelper() // FirestoreHelper 인스턴스
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private var lastLocation: Location? = null
     private var lastUpdateTime: Long = 0
     private lateinit var healthConnectClient: HealthConnectClient
     private val exerciseTracker = ExerciseTracker() // ExerciseTracker 인스턴스
     private lateinit var userRepository: UserRepository
+    private var previousLocation: Location? = null // 이전 위치
+    private var totalDistance: Double = 0.0 // 총 이동 거리
+    private var exerciseType: String? = null // 운동 유형을 저장할 변수
+
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -53,12 +61,16 @@ class HealthRecordFragment : Fragment() {
         binding = FragmentHealthRecordBinding.inflate(inflater, container, false)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity()) // 초기화
         healthConnectClient = HealthConnectClient.getOrCreate(requireContext())
+        userRepository = UserRepository(requireContext())
+        exerciseData = ExerciseRecord() // 초기화
 
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+
 
         // 레코드 버튼(animationview) 클릭 리스너
         binding.recordAni.setOnClickListener {
@@ -115,11 +127,24 @@ class HealthRecordFragment : Fragment() {
         }
     }
 
+    // 운동 유형 불러오기
+    private fun getSelectedExerciseType() {
+        val sharedPreferences = requireContext().getSharedPreferences("activityPickSave", Context.MODE_PRIVATE)
+        exerciseType = sharedPreferences.getString("selected_icon", "running") ?: "running"
+    }
+
     private fun startRecording() {
         exerciseData.isRecording = true
         exerciseData.isPaused = false
         exerciseData.elapsedTime = 0 // 경과 시간 초기화
+
+        getSelectedExerciseType() // 운동 유형 불러오기
+        exerciseData.exerciseType = exerciseType ?: "" // 운동 유형 설정 (null일 경우 빈 문자열로 초기화)
+
         startTimer() // 타이머 시작
+        exerciseData.metValue = exerciseTracker.getMetValue(exerciseData.exerciseType) // 운동 유형에 따라 MET 값 설정
+
+
         //exerciseTracker.startTracking(lastLocation ?: return) // 운동 추적 시작
         requestCurrentLocation() // 현재 위치 요청
         Toast.makeText(requireContext(), "운동이 시작되었습니다!", Toast.LENGTH_SHORT).show() // 운동 시작 알림
@@ -136,20 +161,25 @@ class HealthRecordFragment : Fragment() {
             recordingTimer?.cancel() // 타이머 일시 정지
             exerciseData.isPaused = true // 일시 중지 상태 업데이트
             lastUpdateTime = System.currentTimeMillis() // 일시 중지 시점 저장
+            fusedLocationClient.removeLocationUpdates(locationCallback) // 위치 업데이트 중단
+
         }
     }
 
     private fun resumeRecording() {
         if (exerciseData.isPaused) {
-            startTimer() // 타이머 재개
             exerciseData.isPaused = false // 일시 중지 해제
+            startTimer() // 타이머 재개
+            previousLocation = null // 이전 위치 초기화, 새로 시작할 때까지 대기
+            requestCurrentLocation() // 위치 요청 재개
         }
     }
 
     private fun stopRecording() {
         try {
-            recordingTimer?.cancel()
+            recordingTimer?.cancel() // 타이머 중지
             exerciseData.isRecording = false
+            fusedLocationClient.removeLocationUpdates(locationCallback) // 위치 업데이트 중단
             saveExerciseData() // 데이터 저장 시도
         } catch (e: Exception) {
             Log.e("HealthRecordFragment", "Error in stopRecording: ${e.message}")
@@ -158,14 +188,10 @@ class HealthRecordFragment : Fragment() {
     }
 
     private fun startTimer() {
-        Toast.makeText(requireContext(), "타이머가 시작되었습니다!", Toast.LENGTH_SHORT).show() // 타이머 시작 시 토스트 띄우기
-
         recordingTimer = object : CountDownTimer(Long.MAX_VALUE, 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 exerciseData.elapsedTime++ // 경과 시간 증가
-
-                // UI 업데이트는 여기서
-//                updateUI()
+                updateUI() // UI 업데이트 호출
             }
 
             override fun onFinish() {
@@ -184,19 +210,23 @@ class HealthRecordFragment : Fragment() {
 
     private fun saveExerciseData() {
         val email = userRepository.getCurrentUserEmail() ?: ""
+        val currentLocation = exerciseData.currentLocation?.let {
+            LatLngWrapper(it.latitude, it.longitude)
+        }
         val exerciseRecord = ExerciseRecord(
             isRecording = exerciseData.isRecording,
             elapsedTime = exerciseData.elapsedTime,
             distance = exerciseData.distance,
             currentSpeed = exerciseData.currentSpeed,
             averageSpeed = calculateAverageSpeed(), // 평균 속도 계산 추가
+            maxSpeed = exerciseData.maxSpeed,
             heartHealthScore = exerciseData.heartHealthScore,
             calories = exerciseData.calories,
             temperature = exerciseData.temperature,
             exerciseType = exerciseData.exerciseType,
             userFeedback = exerciseData.userFeedback,
-            currentLocation = exerciseData.currentLocation, // LatLng 타입으로 변경 필요
-            date = System.currentTimeMillis().toString(),
+            currentLocation = currentLocation, // LatLng 타입으로 변경 필요
+            date = Timestamp.now(),
             photoUrl = exerciseData.photoUrl,
             exerciseJournal = exerciseData.exerciseJournal
         )
@@ -217,22 +247,18 @@ class HealthRecordFragment : Fragment() {
     }
 
     private fun requestCurrentLocation() {
-        Log.d("LocationRequest", "Entering requestCurrentLocation()")
-        Toast.makeText(requireContext(), "위치 요청 중...", Toast.LENGTH_SHORT).show()
-
-        // 위치 권한 확인
+         // 위치 권한 확인
         if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
             return
         }
-
+        //위치요청 생성
         val locationRequest = createLocationRequest()
         fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null)
     }
 
     private fun createLocationRequest(): LocationRequest {
         Log.d("LocationRequest", "Requesting location updates")
-        Toast.makeText(requireContext(), "위치를 잡았습니다.", Toast.LENGTH_SHORT).show()
         return LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 1000)
             .setIntervalMillis(1000)
             .build()
@@ -240,56 +266,67 @@ class HealthRecordFragment : Fragment() {
 
     private val locationCallback = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
-            for (location in locationResult.locations) {
-                // 현재 위치가 업데이트되면
-                Log.d("LocationUpdate", "New location: ${location.latitude}, ${location.longitude}")
+            if (locationResult.locations.isNotEmpty()) {
+                // 가장 최근의 위치 가져오기
+                val currentLocation = locationResult.locations.last()
+                exerciseData.currentLocation =
+                    LatLngWrapper(currentLocation.latitude, currentLocation.longitude)
+
+                // 이동 거리 계산
+                // 일시 정지 상태에서 거리 계산을 하지 않음
+                if (!exerciseData.isPaused) {
+                    previousLocation?.let {
+                        val distance = it.distanceTo(currentLocation) // 두 위치 간의 거리 (미터)
+                        totalDistance += distance // 총 이동 거리 업데이트
+                        exerciseData.distance = totalDistance // ExerciseData에 총 거리 업데이트
+                    }
+                    // 현재 위치를 이전 위치로 업데이트
+                    previousLocation = currentLocation
+                } else {
+                    previousLocation = currentLocation
+                }
 
                 // 현재 속도 계산
-                val speed = exerciseTracker.calculateCurrentSpeed(location) // m/s
-                val speedKmh = speed * 3.6 // km/h로 변환
+                val speed = currentLocation.speed // m/s
+                val speedKmh = speed * 3.6f // km/h로 변환
+                exerciseData.currentSpeed = speedKmh.toDouble()
 
-                // 이동 거리 업데이트
-                exerciseTracker.updateDistance(location)
+                if (speedKmh > exerciseData.maxSpeed) {
+                    exerciseData.maxSpeed = speedKmh.toDouble() // 최고 속력 갱신
+                }
 
-                // 현재 시간 업데이트
-                val currentTime = System.currentTimeMillis()
-                exerciseTracker.updateTime(currentTime)
 
-                // 평균 속도 계산
-                val averageSpeedKmh = exerciseTracker.calculateAverageSpeed() // 인자 없이 호출
+                binding.tv4.text = String.format("%.2f", speedKmh) // 현재 속도 업데이트
 
-                // UI 업데이트
-                updateUI(speedKmh, exerciseTracker.getTotalDistance(), averageSpeedKmh)
+
+                // 이동 거리 및 평균 속도 업데이트
+                updateUI() // 이동 거리 및 평균 속도 업데이트 호출
             }
         }
     }
+    private fun updateUI() {
+        val totalDistanceInKm = totalDistance / 1000.0
+        binding.tv1.text = String.format("%.2f", totalDistanceInKm) // 이동 거리
 
-    private fun updateUI(averageSpeed: Double, totaldistance: Double, currentSpeed: Double) {
-        // 현재 속도 가져오기 (km/h로 변환)
-        binding.tv4.text = String.format("%.2f", currentSpeed) // 현재 속도
+        val totalTimeInHours = exerciseTracker.elapsedTimeInHours(exerciseData.elapsedTime)
+        val averageSpeedKmh = if (totalTimeInHours > 0) totalDistanceInKm / totalTimeInHours else 0.0
+        binding.tv2.text = String.format("%.2f", averageSpeedKmh) // 평균 속도
 
-        // 평균 속도 계산
-        binding.tv2.text = String.format("%.2f", averageSpeed) // 평균 속도 업데이트
-
-        // 이동 거리 업데이트
-        binding.tv1.text = String.format("%.2f", totaldistance) // 이동 거리
-
-
-        // 이동 시간 포맷팅
         binding.tv3.text = exerciseTracker.formatElapsedTime(exerciseData.elapsedTime) // 이동 시간
 
         // 칼로리 계산
-        exerciseData.calories = exerciseTracker.calculateCalories(exerciseData.elapsedTime)
-        binding.tv6.text = String.format("%.2f", exerciseData.calories) // 칼로리
+        val calories = exerciseTracker.calculateCalories(exerciseData.elapsedTime, exerciseData.exerciseType)
+        exerciseData.calories = calories
+        binding.tv6.text = String.format("%.2f", exerciseData.calories)
 
-        // 심장 강화 점수 계산
-        val heartHealthScore = exerciseTracker.calculateHeartHealthScore(averageSpeed, exerciseData.elapsedTime, exerciseData.calories)
+        val heartHealthScore = exerciseTracker.calculateHeartHealthScore(
+            exerciseData.averageSpeed,
+            exerciseData.elapsedTime,
+            exerciseData.calories,
+            exerciseData.metValue // MET 값 전달
+        )
         binding.tv5.text = heartHealthScore.toString() // 심장 강화 점수
-
-
-
     }
-
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == 1) {
@@ -300,4 +337,6 @@ class HealthRecordFragment : Fragment() {
             }
         }
     }
+
+
 }
