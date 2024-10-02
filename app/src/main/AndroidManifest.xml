@@ -41,9 +41,6 @@
             android:name=".activities.TrackingSaveActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.TrackerActivity"
-            android:exported="false" />
-        <activity
             android:name=".activities.GpsConfirmActivity"
             android:exported="false" />
         <activity

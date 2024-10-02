@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/record_data"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:orientation="vertical">
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="300dp">
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <TextView
+                android:id="@+id/ExersiceDate_tv"
+                android:layout_width="200dp"
+                android:layout_height="30dp"
+                android:layout_margin="16dp"
+                android:text="2024년 10월 02일 수요일"
+                android:textSize="18sp"
+                app:layout_constraintBottom_toBottomOf="@id/imageView"
+                app:layout_constraintLeft_toLeftOf="parent" />
+
+            <Button
+                android:id="@+id/upLoad_imageBtn"
+                android:layout_width="140dp"
+                android:layout_height="50dp"
+                android:layout_margin="8dp"
+                android:backgroundTint="@android:color/darker_gray"
+                android:drawableLeft="@drawable/ic_action_upload_white"
+                android:text="사진등록"
+                app:layout_constraintBottom_toBottomOf="@id/imageView"
+                app:layout_constraintRight_toRightOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <com.google.android.material.divider.MaterialDivider
+            android:id="@+id/top_divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            app:dividerColor="@android:color/darker_gray"
+            app:dividerThickness="1dp"
+            app:layout_constraintTop_toTopOf="@id/healthRecord_container" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp">
+
+            <TextView
+                android:id="@+id/address_tv"
+                style="@style/basicFontStyle"
+                android:layout_width="280dp"
+                android:layout_height="75dp"
+                android:layout_margin="8dp"
+                android:layout_marginBottom="16dp"
+                android:gravity="center_vertical"
+                android:maxLines="2"
+                android:text="서울시 성동구 성수동"
+                android:textColor="@color/black"
+                android:textSize="24sp" />
+
+            <ImageView
+                android:id="@+id/ExersiceType_iv"
+                android:layout_marginRight="5dp"
+                android:layout_width="100dp"
+                android:layout_height="75dp"
+                android:layout_toRightOf="@+id/address_tv"
+                android:background="#fff9f9"
+                android:src="@drawable/icon_running100" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/address_tv"
+                android:orientation="vertical"
+                android:weightSum="6">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+
+                    android:weightSum="3">
+
+                    <ImageView
+                        android:layout_width="80dp"
+                        android:layout_height="70dp"
+                        android:layout_margin="4dp"
+                        android:layout_weight="1"
+                        android:background="#fff9f9"
+                        android:src="@drawable/outline_timer_24" />
+
+                    <ImageView
+                        android:layout_width="80dp"
+                        android:layout_height="70dp"
+                        android:layout_margin="4dp"
+                        android:layout_weight="1"
+                        android:background="#fff9f9"
+                        android:src="@drawable/distance100" />
+
+                    <ImageView
+                        android:layout_width="80dp"
+                        android:layout_height="70dp"
+                        android:layout_margin="4dp"
+                        android:layout_weight="1"
+                        android:background="#fff9f9"
+                        android:src="@drawable/icons_speed100" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="3">
+
+                    <TextView
+                        android:id="@+id/ExersiceTime_tv"
+                        style="@style/basicFontStyle"
+                        android:layout_width="80dp"
+                        android:layout_height="60dp"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="1:50:00"
+                        android:textSize="24dp" />
+
+                    <TextView
+                        android:id="@+id/ExersiceDistance_tv"
+                        style="@style/basicFontStyle"
+                        android:layout_width="80dp"
+                        android:layout_height="60dp"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="20.05km"
+                        android:textSize="24dp" />
+
+                    <TextView
+                        android:id="@+id/ExersicePace_tv"
+                        style="@style/basicFontStyle"
+                        android:layout_width="80dp"
+                        android:layout_height="60dp"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="5'44"
+                        android:textSize="24dp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+
+                    android:weightSum="3">
+
+                    <ImageView
+                        android:layout_width="80dp"
+                        android:layout_height="70dp"
+                        android:layout_margin="4dp"
+                        android:layout_weight="1"
+                        android:background="#fff9f9"
+                        android:src="@drawable/icons_maxspeed100" />
+
+                    <ImageView
+                        android:layout_width="80dp"
+                        android:layout_height="70dp"
+                        android:layout_margin="4dp"
+                        android:layout_weight="1"
+                        android:background="#fff9f9"
+                        android:src="@drawable/icons_heart100" />
+
+                    <ImageView
+                        android:layout_width="80dp"
+                        android:layout_height="70dp"
+                        android:layout_margin="4dp"
+                        android:layout_weight="1"
+                        android:background="#fff9f9"
+                        android:src="@drawable/icons_calorie" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="3">
+
+                    <TextView
+                        android:id="@+id/ExersiceMaxspeed_tv"
+                        android:layout_width="80dp"
+                        android:layout_height="60dp"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="5'11"
+                        android:textSize="24dp" />
+
+                    <TextView
+                        android:id="@+id/ExersiceHeartScore_tv"
+                        android:layout_width="80dp"
+                        android:layout_height="60dp"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="12"
+                        android:textSize="24dp" />
+
+                    <TextView
+                        android:id="@+id/ExersiceCalorie_tv"
+                        android:layout_width="80dp"
+                        android:layout_height="60dp"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="155"
+                        android:textSize="24dp" />
+                </LinearLayout>
+
+                <TextView
+                    style="@style/basicFontStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:text="분당 페이스"
+                    android:textSize="24sp" />
+
+                <com.github.mikephil.charting.charts.BarChart
+                    android:id="@+id/barChart_avgspeedpermin"
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp" />
+
+                <TextView
+                    style="@style/basicFontStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:text="고도 그래프"
+                    android:textSize="24sp" />
+
+                <com.github.mikephil.charting.charts.LineChart
+                    android:id="@+id/higher_chart"
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    android:layout_marginBottom="8dp" />
+
+                <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/post_btn"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="36dp"
+                        android:layout_weight="1"
+                        android:text="저장하기" />
+                    <Button
+                        android:id="@+id/delete_btn"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="36dp"
+                        android:layout_weight="1"
+                        android:text="삭제하기" />
+                </LinearLayout>
+                <com.google.android.material.materialswitch.MaterialSwitch
+                    android:layout_marginTop="8dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:checked="true"
+                    android:fontFamily="@font/pureunjeonnam"
+                    android:text="Post"
+                    android:textSize="18sp" />
+            </LinearLayout>
+        </RelativeLayout>
+    </LinearLayout>
+</ScrollView>

@@ -41,7 +41,7 @@
                 android:layout_weight="1"
                 android:fontFamily="@font/pureunjeonnam_bold"
                 android:gravity="center"
-                android:text="-'--"
+                android:text="-'--&quot;"
                 android:textSize="28sp" />
 
             <TextView
@@ -114,7 +114,7 @@
                 android:layout_weight="1"
                 android:fontFamily="@font/pureunjeonnam_bold"
                 android:gravity="center"
-                android:text="0.00"
+                android:text="-'--&quot;"
                 android:textSize="28sp" />
 
             <TextView
