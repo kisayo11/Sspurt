@@ -1,12 +1,7 @@
 package com.kisayo.sspurt.data
 
-import android.location.Location
-import com.google.android.gms.maps.model.LatLng
+
 import com.google.firebase.Timestamp
-import com.google.firebase.firestore.GeoPoint
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 data class ExerciseRecord(
     var isRecording: Boolean = false, // 기록 중인지 여부
@@ -25,10 +20,17 @@ data class ExerciseRecord(
     var date: Timestamp = Timestamp.now(), // 현재 날짜
     var photoUrl: String? = null, // 사진 URL (옵션)
     var exerciseJournal: String? = null, // 운동 일지 (옵션)
-    var metValue: Double = 0.0 // MET 값 추가
+    var metValue: Double = 0.0, // MET 값 추가
+    var realTimeData: RealTimeData? =null
 )
 
 data class LatLngWrapper(
     var latitude: Double = 0.0,
     var longitude: Double = 0.0
+)
+
+data class RealTimeData(
+    var altitude: Double = 0.0,  // 고도
+    var incline: Double = 0.0,   // 인클라인
+    var decline: Double = 0.0     // 디클라인
 )
