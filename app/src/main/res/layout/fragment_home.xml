@@ -7,14 +7,13 @@
     
 
     <androidx.viewpager2.widget.ViewPager2
-        android:background="@drawable/rectangle_banner"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:id="@+id/home_banner_view"
         android:layout_margin="8dp"
         android:layout_width="match_parent"
-        android:layout_height="125dp"/>
+        android:layout_height="100dp"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:background="@drawable/rectangle_banner"

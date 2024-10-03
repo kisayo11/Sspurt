@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    android:background="@drawable/rectangle_banner"
+    app:cardCornerRadius="12dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:background="@color/white"
+        android:layout_height="100dp">
+
+
+        <ImageView
+            android:id="@+id/exersicePic_iv_item"
+            android:layout_width="120dp"
+            android:layout_height="150dp"
+            android:layout_alignParentRight="true"
+            android:scaleType="centerCrop"
+            android:background="@drawable/rectangle_picture" />
+
+        <ImageView
+            android:id="@+id/exersiceType_iv_item"
+            android:layout_width="75dp"
+            android:layout_height="100dp"
+            android:background="@android:color/holo_purple"
+            android:layout_alignParentLeft="true"
+            android:padding="24dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/icon_running100" />
+
+        <RelativeLayout
+            android:layout_width="200dp"
+            android:layout_height="150dp"
+            android:layout_toRightOf="@id/exersiceType_iv_item"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/ExersiceDistance_tv_item"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="4dp"
+                android:layout_weight="1"
+                android:fontFamily="@font/pureunjeonnam"
+                android:padding="8dp"
+                android:text="00.00km"
+                android:textSize="12dp" />
+
+            <TextView
+                android:id="@+id/ExersiceSpeed_tv_item"
+                android:layout_toRightOf="@id/ExersiceDistance_tv_item"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_weight="1"
+                android:fontFamily="@font/pureunjeonnam"
+                android:padding="8dp"
+                android:text="00'00"
+                android:textSize="12dp" />
+
+            <TextView
+                android:id="@+id/ExersiceTime_tv_item"
+                android:layout_toRightOf="@id/ExersiceSpeed_tv_item"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_weight="1"
+                android:fontFamily="@font/pureunjeonnam"
+                android:padding="8dp"
+                android:text="01:00:00"
+                android:textSize="12dp" />
+
+            <TextView
+                android:id="@+id/ExersiceLocation_tv_item"
+                android:layout_below="@id/ExersiceDistance_tv_item"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="@font/pureunjeonnam_bold"
+                android:padding="8dp"
+                android:text="서울특별시 도봉구 창동"
+                android:textSize="10dp" />
+
+            <TextView
+                android:id="@+id/ExersiceDate_tv_item"
+                android:layout_below="@id/ExersiceLocation_tv_item"
+                android:layout_alignLeft="@id/ExersiceLocation_tv_item"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="@font/pureunjeonnam"
+                android:padding="8dp"
+                android:text="2024년 10월 3일 목요일"
+                android:textSize="10dp" />
+
+            <LinearLayout
+                android:layout_width="75dp"
+                android:layout_height="50dp"
+                android:padding="4dp"
+                android:layout_toRightOf="@id/ExersiceDate_tv_item"
+                android:layout_alignParentBottom="true"
+                android:orientation="vertical"
+                android:weightSum="2">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="15dp"
+                        android:layout_height="15dp"
+                        android:src="@drawable/outline_remove_red_eye_24" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="15dp"
+                        android:textSize="10dp"
+                        android:text="100" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="15dp"
+                        android:layout_height="15dp"
+                        android:src="@drawable/baseline_favorite_border_24" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="15dp"
+                        android:textSize="10dp"
+                        android:text="100" />
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+
+
+
+    </RelativeLayout>
+
+
+</com.google.android.material.card.MaterialCardView>
