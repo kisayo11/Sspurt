@@ -1,13 +1,17 @@
 package com.kisayo.sspurt.fragments
 
+import android.content.Intent
 import android.graphics.Color
 import android.location.Geocoder
 import android.os.Bundle
 import android.text.format.DateUtils.formatElapsedTime
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.transition.Visibility
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.BarData
@@ -18,9 +22,11 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.toObject
 import com.kisayo.sspurt.R
+import com.kisayo.sspurt.activities.MainActivity
 import com.kisayo.sspurt.data.ExerciseRecord
 import com.kisayo.sspurt.data.LatLngWrapper
 import com.kisayo.sspurt.databinding.FragmentRecordDataBinding
+import com.kisayo.sspurt.utils.FirestoreHelper
 import com.kisayo.sspurt.utils.UserRepository
 import java.io.IOException
 import java.util.Locale
@@ -30,6 +36,8 @@ class RecordDataFragment : Fragment() {
     private lateinit var binding: FragmentRecordDataBinding
     private lateinit var userRepository : UserRepository
     private lateinit var barChart : BarChart
+    private val db = FirebaseFirestore.getInstance() // Firestore 인스턴스 초기화
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -47,13 +55,46 @@ class RecordDataFragment : Fragment() {
         barChart = binding.barChartAvgspeedpermin
         setupBarChartAvgspeedpermin()
 
-        binding.postBtn.setOnClickListener {  }
-        binding.deleteBtn.setOnClickListener {  }
+        //save button
+        binding.postBtn.setOnClickListener {
+            val postDialog = postDialogFragment()
+            postDialog.show(parentFragmentManager, "postDialogFragment")
+        }
+        //delete button
+        // 버튼 클릭 리스너 설정
+        binding.deleteBtn.setOnClickListener {
+            val email = userRepository.getCurrentUserEmail() // 사용자 이메일 가져오기
+            deleteRecentExerciseRecord(email!!)
+            binding.deleteBtn.visibility= View.INVISIBLE
 
+            // 현재 액티비티 종료
+            requireActivity().finish()
+
+            // 모든 액티비티 종료 후 메인 액티비티로 이동
+            val intent = Intent(requireContext(), MainActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent)
+
+        }
 
         val email = userRepository.getCurrentUserEmail()
         fetchExerciseRecord(email)
     }
+    private fun deleteRecentExerciseRecord(email: String) {
+        // FirestoreHelper 인스턴스 생성 및 삭제 로직
+        val firestoreHelper = FirestoreHelper()
+
+        firestoreHelper.deleteRecentExerciseRecord(email,
+            onSuccess = {
+                Toast.makeText(requireContext(), "최근 운동 기록이 삭제되었습니다.", Toast.LENGTH_SHORT).show()
+            },
+            onFailure = { e ->
+                Toast.makeText(requireContext(), "삭제 실패: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+        )
+    }
+
+
     private fun setupBarChartAvgspeedpermin(){
         barChart.description.text= ""
 

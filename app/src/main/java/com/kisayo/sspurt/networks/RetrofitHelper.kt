@@ -5,7 +5,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
 
 
-class RetrofitHelper {
+class
+RetrofitHelper {
 
     companion object{
         fun getRetofitInstance(baseUrl:String): Retrofit {

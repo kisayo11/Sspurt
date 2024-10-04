@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="운동기록을 공유하겠습니까?"
+        android:paddingTop="4dp"
+        android:fontFamily="@font/pureunjeonnam_bold"
+        android:textSize="18dp"
+        />
+
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/share_switch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="textEnd"
+        android:layout_marginBottom="4dp"
+        android:paddingRight="4dp"
+        android:text="공유하기  " />
+
+    <TextView
+        android:id="@+id/tag_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="장소 태그를 선택하세요*"
+        android:fontFamily="@font/pureunjeonnam"
+        android:textSize="18sp"
+        android:layout_marginBottom="8dp" />
+
+
+    <Spinner
+        android:id="@+id/location_spinner"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginBottom="8dp"/>
+
+
+
+    <!-- 사진 업로드 버튼 -->
+    <Button
+        android:id="@+id/upBtn"
+        android:layout_width="140dp"
+        android:layout_height="50dp"
+        android:backgroundTint="@android:color/darker_gray"
+        android:drawableLeft="@drawable/ic_action_upload_white"
+        android:text="사진등록"
+         />
+
+    <!-- 공유하기 스위치 추가 -->
+
+
+    <ImageView
+        android:id="@+id/selected_image_view"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_gravity="center"
+        android:scaleType="centerCrop"
+        android:visibility="gone" /> <!-- 기본적으로 숨김 -->
+    <Button
+        android:id="@+id/confirm_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/black"
+        android:text="확인"
+        android:layout_gravity="end"
+        />
+
+</LinearLayout>
