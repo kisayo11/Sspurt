@@ -42,10 +42,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:layout_marginBottom="4dp"
                 android:layout_weight="1"
                 android:fontFamily="@font/pureunjeonnam"
-                android:padding="8dp"
+                android:padding="4dp"
+                android:layout_marginRight="4dp"
                 android:text="00.00km"
                 android:textSize="12dp" />
 
@@ -55,9 +55,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
+                android:layout_marginRight="4dp"
                 android:layout_weight="1"
                 android:fontFamily="@font/pureunjeonnam"
-                android:padding="8dp"
+                android:padding="4dp"
                 android:text="00'00"
                 android:textSize="12dp" />
 
@@ -69,7 +70,7 @@
                 android:layout_marginTop="4dp"
                 android:layout_weight="1"
                 android:fontFamily="@font/pureunjeonnam"
-                android:padding="8dp"
+                android:padding="4dp"
                 android:text="01:00:00"
                 android:textSize="12dp" />
 
@@ -78,38 +79,33 @@
                 android:layout_below="@id/ExersiceDistance_tv_item"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
                 android:layout_weight="1"
                 android:fontFamily="@font/pureunjeonnam_bold"
-                android:padding="8dp"
+                android:padding="4dp"
                 android:text="서울특별시 도봉구 창동"
                 android:textSize="10dp" />
 
             <TextView
                 android:id="@+id/ExersiceDate_tv_item"
+                android:layout_marginTop="4dp"
                 android:layout_below="@id/ExersiceLocation_tv_item"
                 android:layout_alignLeft="@id/ExersiceLocation_tv_item"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:fontFamily="@font/pureunjeonnam"
-                android:padding="8dp"
+                android:padding="4dp"
                 android:text="2024년 10월 3일 목요일"
                 android:textSize="10dp" />
 
-            <LinearLayout
-                android:layout_width="75dp"
-                android:layout_height="50dp"
-                android:padding="4dp"
-                android:layout_toRightOf="@id/ExersiceDate_tv_item"
-                android:layout_alignParentBottom="true"
-                android:orientation="vertical"
-                android:weightSum="2">
-
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="4dp"
+                    android:gravity="right"
+                    android:layout_marginBottom="4dp"
+                    android:layout_alignParentBottom="true"
                     android:orientation="horizontal">
 
                     <ImageView
@@ -122,14 +118,6 @@
                         android:layout_height="15dp"
                         android:textSize="10dp"
                         android:text="100" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:layout_weight="1"
-                    android:orientation="horizontal">
 
                     <ImageView
                         android:layout_width="15dp"
@@ -144,7 +132,6 @@
                 </LinearLayout>
 
 
-            </LinearLayout>
 
         </RelativeLayout>
 

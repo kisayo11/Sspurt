@@ -71,8 +71,13 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                 LOCATION_PERMISSION_REQUEST_CODE)
             return
         }
-
+        //기본 ui 설정
         mMap.isMyLocationEnabled = true
+        mMap.uiSettings.isZoomControlsEnabled = true
+        mMap.uiSettings.isMapToolbarEnabled = true
+        mMap.uiSettings.isScrollGesturesEnabledDuringRotateOrZoom = true
+
+
 
         // 현재 위치 요청
         fusedLocationClient.lastLocation.addOnSuccessListener { location ->

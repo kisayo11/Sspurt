@@ -96,7 +96,7 @@ class LoginActivity : AppCompatActivity() {
                         //val nickName: String = user?.kakaoAccount?.profile?.nickname ?: ""
                         //val profileImg: String = user?.kakaoAccount?.profile?.profileImageUrl ?: ""
                         Toast.makeText(this, "$email", Toast.LENGTH_SHORT).show()
-                        G.userAccount = UserAccount(id, email, "kakao")
+                        G.userAccount = UserAccount(id, email, "kakao","","")
                         //main화면 이동
                         startActivity(Intent(this@LoginActivity, MainActivity::class.java))
                         finish()
@@ -146,7 +146,7 @@ class LoginActivity : AppCompatActivity() {
                         val email: String = userInfo?.response?.email ?: ""
 
                         Toast.makeText(this@LoginActivity, "$email", Toast.LENGTH_SHORT).show()
-                        G.userAccount = UserAccount(id, email, "naver")
+                        G.userAccount = UserAccount(id, email, "naver", "","")
 
                         startActivity(Intent(this@LoginActivity, MainActivity::class.java))
                         finish()

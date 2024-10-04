@@ -21,7 +21,9 @@ data class ExerciseRecord(
     var photoUrl: String? = null, // 사진 URL (옵션)
     var exerciseJournal: String? = null, // 운동 일지 (옵션)
     var metValue: Double = 0.0, // MET 값 추가
-    var realTimeData: RealTimeData? =null
+    var realTimeData: RealTimeData? =null,
+    var isShared: Boolean = false, // 공유 스위치
+    var locationTag: String? = null // 공유시 장소 태그 추가
 )
 
 data class LatLngWrapper(
