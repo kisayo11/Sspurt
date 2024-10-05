@@ -56,4 +56,13 @@ class FirestoreHelper {
             }
     }
 
+    fun saveImageUrl(email: String, imageUrl: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+        // Firestore에서 해당 사용자의 최신 운동 기록을 업데이트
+        val userRecordRef = db.collection("account").document(email).collection("exerciseData").document("latestRecord") // 최신 기록에 저장 (예시)
+
+        userRecordRef.update("photoUrl", imageUrl)
+            .addOnSuccessListener { onSuccess() }
+            .addOnFailureListener { onFailure(it) }
+    }
+
 }

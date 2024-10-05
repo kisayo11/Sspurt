@@ -31,8 +31,9 @@ class GpsConfirmActivity : AppCompatActivity() {
         healthRecordFragment = HealthRecordFragment()
 
         // MapFragment 초기화 및 추가
+        val exerciseMapFragment = MapFragment.newInstance(true)
         supportFragmentManager.beginTransaction()
-            .replace(R.id.map_container, mapFragment)
+            .replace(R.id.map_fragment_container, exerciseMapFragment)
             .replace(R.id.healthRecord_container, healthRecordFragment)
             .commitNow()
 

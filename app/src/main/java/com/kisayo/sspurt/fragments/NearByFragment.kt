@@ -5,6 +5,7 @@ import android.view.LayoutInflater // 레이아웃 인플레이터
 import android.view.View // View 클래스
 import android.view.ViewGroup // ViewGroup 클래스
 import androidx.fragment.app.Fragment // Fragment 클래스
+import com.kisayo.sspurt.R
 import com.kisayo.sspurt.databinding.FragmentNearByBinding
 
 
@@ -19,10 +20,10 @@ class NearByFragment : Fragment() {
         _binding = FragmentNearByBinding.inflate(inflater, container, false)
         val view = binding.root
 
-        // MapFragment를 동적으로 추가
-        val mapFragment = MapFragment()
+        // `MapFragment`를 폴리라인 없이 `nearby` 모드로 사용
+        val nearbyMapFragment = MapFragment.newInstance(false)
         childFragmentManager.beginTransaction()
-            .replace(binding.mapContainer.id, mapFragment)
+            .replace(R.id.map_fragment_container, nearbyMapFragment)
             .commit()
 
         return view

@@ -57,7 +57,7 @@ class RecordDataFragment : Fragment() {
 
         //save button
         binding.postBtn.setOnClickListener {
-            val postDialog = postDialogFragment()
+            val postDialog = PostDialogFragment()
             postDialog.show(parentFragmentManager, "postDialogFragment")
         }
         //delete button

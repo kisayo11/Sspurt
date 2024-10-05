@@ -9,31 +9,7 @@
     tools:context=".activities.MainActivity">
 
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appbar_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/white">
 
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/toptoolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="#fff9f9"
-            app:menu="@menu/top_app_bar_menu"
-            app:navigationIcon="@drawable/baseline_search_24">
-
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/rectangle_1"
-                android:hint="Search"
-                android:imeOptions="actionSearch"
-                android:inputType="text"
-                android:padding="8dp"
-                android:textSize="12sp" />
-        </com.google.android.material.appbar.MaterialToolbar>
-    </com.google.android.material.appbar.AppBarLayout>
 
 <!--    <androidx.recyclerview.widget.RecyclerView-->
 <!--        android:id="@+id/recyclerViewByMyFav"-->
@@ -49,7 +25,6 @@
         android:id="@+id/fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/appbar_layout"
         android:layout_above="@id/bottomNavigationView"
         />
 

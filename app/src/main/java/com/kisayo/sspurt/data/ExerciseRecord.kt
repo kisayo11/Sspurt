@@ -23,7 +23,9 @@ data class ExerciseRecord(
     var metValue: Double = 0.0, // MET 값 추가
     var realTimeData: RealTimeData? =null,
     var isShared: Boolean = false, // 공유 스위치
-    var locationTag: String? = null // 공유시 장소 태그 추가
+    var locationTag: String? = null, // 공유시 장소 태그 추가
+    var routes: List<LatLngWrapper> = listOf() // 경로 리스트 추가
+
 )
 
 data class LatLngWrapper(

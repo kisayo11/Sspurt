@@ -20,7 +20,9 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.health.connect.client.HealthConnectClient
+import androidx.lifecycle.Observer
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -37,6 +39,7 @@ import com.kisayo.sspurt.data.LatLngWrapper
 import com.kisayo.sspurt.data.RealTimeData
 import com.kisayo.sspurt.databinding.FragmentHealthRecordBinding
 import com.kisayo.sspurt.utils.FirestoreHelper
+import com.kisayo.sspurt.utils.RecordViewModel
 import com.kisayo.sspurt.utils.UserRepository
 
 class HealthRecordFragment : Fragment() {
@@ -55,6 +58,9 @@ class HealthRecordFragment : Fragment() {
     private var exerciseType: String? = null // 운동 유형을 저장할 변수
     private var lastAltitude: Double = 0.0 // 최근 고도 값
     private var realTimeData = RealTimeData() // 실시간 데이터
+    private val recordViewModel : RecordViewModel by activityViewModels()
+    var isAnimationFinished = false // 애니메이션 완료 상태 플래그
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -71,8 +77,22 @@ class HealthRecordFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // ViewModel의 isRecording 상태를 관찰
+        recordViewModel.isRecording.observe(viewLifecycleOwner, Observer { isRecording ->
+            Log.d("HealthRecordFragment", "isRecording observed: $isRecording")
+
+            // 녹화 중지가 감지되었을 때만 데이터 저장
+            if (!isRecording && exerciseData.isRecording) {
+                stopRecording() // 이 부분에서 의도한 시점에만 녹화 중지 및 데이터 저장
+            }
+        })
+
+
+
         // 레코드 버튼(animationview) 클릭 리스너
         binding.recordAni.setOnClickListener {
+            binding.recordAni.isEnabled = false // 버튼 비활성화
+            isAnimationFinished = false // 애니메이션 시작 시 플래그 초기화
             binding.countdownAni.visibility = View.VISIBLE
             binding.countdownAni.playAnimation()
 
@@ -82,7 +102,12 @@ class HealthRecordFragment : Fragment() {
                     binding.countdownAni.visibility = View.GONE
                     binding.recordAni.visibility = View.GONE
                     binding.pauseIb.visibility = View.VISIBLE
+                    isAnimationFinished = true // 애니메이션 완료
+
+
                     startRecording() // 레코딩 시작
+                    recordViewModel.startRecording() // ViewModel에서 레코딩 시작
+
                 }
             })
             requestCurrentLocation() // 위치 요청 추가
@@ -97,8 +122,12 @@ class HealthRecordFragment : Fragment() {
             }
             if (exerciseData.isPaused) {
                 resumeRecording() // 재개
+                recordViewModel.startRecording() // ViewModel에서 재개
+
             } else {
                 pauseRecording() // 일시 중지
+                recordViewModel.stopRecording() // ViewModel에서 일시 중지
+
             }
         }
 
@@ -106,6 +135,8 @@ class HealthRecordFragment : Fragment() {
         binding.stopIb.setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_IN)
         binding.stopIb.setOnLongClickListener {
             stopRecording() // 레코딩 중지
+            recordViewModel.stopRecording() // ViewModel에서 레코딩 중지
+
             // 애니메이션 및 다음 액티비티로 이동
             val animator = ValueAnimator.ofFloat(0f, 1f)
             animator.duration = 500 // 애니메이션 시간
@@ -126,6 +157,8 @@ class HealthRecordFragment : Fragment() {
     }
 
     private fun startRecording() {
+        if (!isAnimationFinished) return // 애니메이션이 완료되지 않았다면 실행 안함
+
         exerciseData.isRecording = true
         exerciseData.isPaused = false
         exerciseData.elapsedTime = 0 // 경과 시간 초기화
@@ -209,7 +242,7 @@ class HealthRecordFragment : Fragment() {
         exerciseData.realTimeData = realTimeData
 
         // 데이터 저장 호출
-        saveExerciseData() // 데이터를 저장
+//        saveExerciseData() // 데이터를 저장
     }
 
     private fun saveExerciseData() {
@@ -218,23 +251,29 @@ class HealthRecordFragment : Fragment() {
             LatLngWrapper(it.latitude, it.longitude)
         }
 
+        // Firestore에 저장할 exerciseRecord
         val exerciseRecord = ExerciseRecord(
             isRecording = exerciseData.isRecording,
+            isPaused = exerciseData.isPaused,
             elapsedTime = exerciseData.elapsedTime,
             distance = exerciseData.distance,
             currentSpeed = exerciseData.currentSpeed,
-            averageSpeed = calculateAverageSpeed(), // 평균 속도 계산 추가
+            averageSpeed = calculateAverageSpeed(),
             maxSpeed = exerciseData.maxSpeed,
             heartHealthScore = exerciseData.heartHealthScore,
             calories = exerciseData.calories,
             temperature = exerciseData.temperature,
             exerciseType = exerciseData.exerciseType,
             userFeedback = exerciseData.userFeedback,
-            currentLocation = currentLocation, // LatLng 타입으로 변경 필요
+            currentLocation = currentLocation,
             date = Timestamp.now(),
             photoUrl = exerciseData.photoUrl,
             exerciseJournal = exerciseData.exerciseJournal,
-            realTimeData = exerciseData.realTimeData // 실시간 데이터 저장
+            metValue = exerciseData.metValue,
+            realTimeData = exerciseData.realTimeData,
+            isShared = exerciseData.isShared,
+            locationTag = exerciseData.locationTag,
+            routes = exerciseData.routes
         )
 
         firestoreHelper.saveExerciseRecord(email, exerciseRecord, onSuccess = {
@@ -276,6 +315,16 @@ class HealthRecordFragment : Fragment() {
                 val currentLocation = locationResult.locations.last()
                 exerciseData.currentLocation =
                     LatLngWrapper(currentLocation.latitude, currentLocation.longitude)
+
+                // LatLng 객체 생성
+                val latLng = LatLng(currentLocation.latitude, currentLocation.longitude)
+
+                // ViewModel에 좌표 추가
+                recordViewModel.addRoutePoint(latLng)
+
+                // `routes` 리스트에 현재 위치 추가
+                exerciseData.routes = exerciseData.routes + LatLngWrapper(currentLocation.latitude, currentLocation.longitude)
+
 
                 // 이동 거리 계산
                 // 일시 정지 상태에서 거리 계산을 하지 않음
