@@ -89,7 +89,14 @@ dependencies {
     //MPAndoridChart
     implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
 
+    //retorfit
+    implementation("com.squareup.retrofit2:retrofit:2.11.0")
+    implementation("com.google.code.gson:gson:2.11.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.11.0")
 
+    //google place API
+
+    implementation("com.google.android.libraries.places:places:2.6.0")
 
 }
 

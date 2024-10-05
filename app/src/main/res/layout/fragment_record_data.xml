@@ -13,6 +13,13 @@
         android:background="@color/white"
         android:orientation="vertical">
 
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:visibility="gone"
+            />
+
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -54,14 +54,6 @@
 
     <!-- 공유하기 스위치 추가 -->
 
-
-    <ImageView
-        android:id="@+id/selected_image_view"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:layout_gravity="center"
-        android:scaleType="centerCrop"
-        android:visibility="gone" /> <!-- 기본적으로 숨김 -->
     <Button
         android:id="@+id/confirm_button"
         android:layout_width="wrap_content"

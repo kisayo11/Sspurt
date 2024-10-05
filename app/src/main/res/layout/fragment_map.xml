@@ -1,6 +1,42 @@
-<fragment
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/map"
-    android:name="com.google.android.gms.maps.SupportMapFragment"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" />
+    android:layout_height="match_parent">
+
+    <fragment
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+<com.google.android.material.appbar.AppBarLayout
+android:id="@+id/appbar_layout"
+app:layout_constraintTop_toTopOf="parent"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:background="@color/white">
+
+<com.google.android.material.appbar.MaterialToolbar
+    android:id="@+id/toptoolbar"
+    android:layout_width="match_parent"
+    android:layout_height="?attr/actionBarSize"
+    android:background="#fff9f9"
+    app:menu="@menu/top_app_bar_menu"
+    app:navigationIcon="@drawable/baseline_search_24">
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rectangle_1"
+        android:hint="Search"
+        android:imeOptions="actionSearch"
+        android:inputType="text"
+        android:padding="8dp"
+        android:textSize="12sp" />
+</com.google.android.material.appbar.MaterialToolbar>
+</com.google.android.material.appbar.AppBarLayout>
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

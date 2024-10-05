@@ -1,6 +1,7 @@
 package com.kisayo.sspurt.utils
 
 import android.util.Log
+import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.kisayo.sspurt.data.ExerciseRecord
@@ -53,6 +54,34 @@ class FirestoreHelper {
             .addOnFailureListener { e ->
                 Log.e("FirestoreHelper", "문서 가져오기 실패: ${e.message}")
                 onFailure(e)
+            }
+    }
+
+    fun saveImageUrl(email: String, imageUrl: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+        // Firestore에서 해당 사용자의 최신 운동 기록을 업데이트
+        val userRecordRef = db.collection("account").document(email).collection("exerciseData").document("latestRecord") // 최신 기록에 저장 (예시)
+
+        userRecordRef.update("photoUrl", imageUrl)
+            .addOnSuccessListener { onSuccess() }
+            .addOnFailureListener { onFailure(it) }
+    }
+
+    fun getUserLocationData(email: String, onSuccess: (LatLng?) -> Unit, onFailure: (Exception) -> Unit) {
+        val userDocRef = db.collection("account").document(email)
+
+        userDocRef.get()
+            .addOnSuccessListener { document ->
+                if (document != null && document.exists()) {
+                    val latitude = document.getDouble("latitude") ?: 0.0
+                    val longitude = document.getDouble("longitude") ?: 0.0
+                    onSuccess(LatLng(latitude, longitude))
+                } else {
+                    onSuccess(null)
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.e("FirestoreHelper", "Error fetching location: ${exception.message}")
+                onFailure(exception)
             }
     }
 

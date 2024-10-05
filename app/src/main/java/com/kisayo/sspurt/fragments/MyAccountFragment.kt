@@ -238,6 +238,8 @@ class MyAccountFragment : Fragment() {
                         uploadProfileImage(getImageUri) // 이미지 업로드
                     } // 이미지 업로드
                 }
+
+
                 CAMERA_REQUEST_CODE -> {
                     val imageBitmap = data?.extras?.get("data") as Bitmap
                     val imageUri = getImageUri(imageBitmap) // 비트맵을 URI로 변환
