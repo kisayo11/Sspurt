@@ -15,6 +15,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -31,6 +32,7 @@ import com.kisayo.sspurt.activities.MainActivity
 import com.kisayo.sspurt.databinding.FragmentPostDialogBinding
 import com.kisayo.sspurt.fragments.MyAccountFragment.Companion
 import com.kisayo.sspurt.utils.FirestoreHelper
+import com.kisayo.sspurt.utils.PlacesHelper
 import com.kisayo.sspurt.utils.UserRepository
 import java.io.File
 import java.io.FileOutputStream
@@ -40,7 +42,8 @@ import java.util.UUID
 class PostDialogFragment : DialogFragment() {
 
     private lateinit var binding: FragmentPostDialogBinding
-    private var selectedImageUri: String? = null
+    private lateinit var placesHelper: PlacesHelper
+    private lateinit var firestoreHelper: FirestoreHelper
     private lateinit var userRepository: UserRepository
     private lateinit var sharedPreferences: SharedPreferences
 
@@ -94,13 +97,54 @@ class PostDialogFragment : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
-
         // 저장(확인) 버튼 클릭 리스너
         binding.confirmButton.setOnClickListener {
 //            handleConfirm()  // 데이터 저장 처리
         }
+
+        // FirestoreHelper와 PlacesHelper 초기화
+        firestoreHelper = FirestoreHelper()
+        val apiKey = "AIzaSyB4bm_PKHQsTeC7iBPbuJdcRat5YpDYCUs" // 실제 API 키로 대체
+        placesHelper = PlacesHelper(requireContext(), apiKey)
+
+        // 현재 사용자 이메일 가져오기
+        val email = userRepository.getCurrentUserEmail()
+
+        // Firestore에서 위치 데이터 가져와서 스피너 설정
+        if (email != null) {
+            firestoreHelper.getUserLocationData(email,
+                onSuccess = { location ->
+                    if (location != null) {
+                        // 장소 정보를 가져와 스피너 설정
+                        placesHelper.getNearbyPlaces(location) { placeList ->
+                            setupLocationSpinner(placeList)
+                        }
+                    } else {
+                        Log.e("PostDialogFragment", "Location data not found for user")
+                        Toast.makeText(requireContext(), "위치 데이터를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show()
+                    }
+                },
+                onFailure = { exception ->
+                    Log.e("PostDialogFragment", "Failed to fetch location data: ${exception.message}")
+                    Toast.makeText(requireContext(), "위치 데이터를 가져오는 데 실패했습니다.", Toast.LENGTH_SHORT).show()
+                }
+            )
+        } else {
+            Log.e("PostDialogFragment", "User email not found")
+            Toast.makeText(requireContext(), "사용자 이메일을 찾을 수 없습니다.", Toast.LENGTH_SHORT).show()
+        }
     }
+
+    // 스피너 설정
+    private fun setupLocationSpinner(placeList: List<String>) {
+        val spinnerAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, placeList)
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        binding.locationSpinner.adapter = spinnerAdapter
+    }
+
+
+
+
 
     // 이미지 선택 창 열기
     private fun showImageSelectionDialog() {

@@ -1,6 +1,7 @@
 package com.kisayo.sspurt.utils
 
 import android.util.Log
+import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.kisayo.sspurt.data.ExerciseRecord
@@ -63,6 +64,25 @@ class FirestoreHelper {
         userRecordRef.update("photoUrl", imageUrl)
             .addOnSuccessListener { onSuccess() }
             .addOnFailureListener { onFailure(it) }
+    }
+
+    fun getUserLocationData(email: String, onSuccess: (LatLng?) -> Unit, onFailure: (Exception) -> Unit) {
+        val userDocRef = db.collection("account").document(email)
+
+        userDocRef.get()
+            .addOnSuccessListener { document ->
+                if (document != null && document.exists()) {
+                    val latitude = document.getDouble("latitude") ?: 0.0
+                    val longitude = document.getDouble("longitude") ?: 0.0
+                    onSuccess(LatLng(latitude, longitude))
+                } else {
+                    onSuccess(null)
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.e("FirestoreHelper", "Error fetching location: ${exception.message}")
+                onFailure(exception)
+            }
     }
 
 }
