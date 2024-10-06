@@ -15,6 +15,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.Toast
@@ -24,11 +25,13 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import com.bumptech.glide.Glide
 import com.bumptech.glide.signature.ObjectKey
+import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.storage.FirebaseStorage
 import com.kisayo.sspurt.R
 import com.kisayo.sspurt.activities.GpsConfirmActivity
 import com.kisayo.sspurt.activities.MainActivity
+import com.kisayo.sspurt.data.LatLngWrapper
 import com.kisayo.sspurt.databinding.FragmentPostDialogBinding
 import com.kisayo.sspurt.fragments.MyAccountFragment.Companion
 import com.kisayo.sspurt.utils.FirestoreHelper
@@ -78,6 +81,28 @@ class PostDialogFragment : DialogFragment() {
             showImageSelectionDialog()
         }
 
+        // 스피너 아이템 선택 리스너 추가
+        binding.locationSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                // 스피너에서 선택된 아이템 가져오기
+                val selectedPlace = parent.getItemAtPosition(position).toString()
+                // 선택된 장소에 대한 동작 추가
+                Toast.makeText(requireContext(), "Selected Place: $selectedPlace", Toast.LENGTH_SHORT).show()
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>) {
+                // 아무것도 선택되지 않은 경우 처리
+            }
+        }
+
+        // 저장(확인) 버튼 클릭 리스너
+        binding.confirmButton.setOnClickListener {
+            binding.locationSpinner.performClick()
+
+//            handleConfirm()  // 데이터 저장 처리
+        }
+
+
         return dialog
     }
 
@@ -97,28 +122,29 @@ class PostDialogFragment : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // 저장(확인) 버튼 클릭 리스너
-        binding.confirmButton.setOnClickListener {
-//            handleConfirm()  // 데이터 저장 처리
-        }
+
+
+
 
         // FirestoreHelper와 PlacesHelper 초기화
         firestoreHelper = FirestoreHelper()
         val apiKey = "AIzaSyB4bm_PKHQsTeC7iBPbuJdcRat5YpDYCUs" // 실제 API 키로 대체
         placesHelper = PlacesHelper(requireContext(), apiKey)
 
-        // 현재 사용자 이메일 가져오기
+        // 스피너 설정 및 데이터 로드
+        fetchLocationDataAndSetupSpinner()
+
+    }
+
+    private fun fetchLocationDataAndSetupSpinner() {
         val email = userRepository.getCurrentUserEmail()
 
-        // Firestore에서 위치 데이터 가져와서 스피너 설정
         if (email != null) {
             firestoreHelper.getUserLocationData(email,
-                onSuccess = { location ->
-                    if (location != null) {
-                        // 장소 정보를 가져와 스피너 설정
-                        placesHelper.getNearbyPlaces(location) { placeList ->
-                            setupLocationSpinner(placeList)
-                        }
+                onSuccess = { locationWrapper ->
+                    if (locationWrapper != null) {
+                        // LatLngWrapper 객체로 주변 장소 가져와 스피너 설정
+                        fetchNearbyPlacesAndSetupSpinner(locationWrapper)
                     } else {
                         Log.e("PostDialogFragment", "Location data not found for user")
                         Toast.makeText(requireContext(), "위치 데이터를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show()
@@ -135,16 +161,17 @@ class PostDialogFragment : DialogFragment() {
         }
     }
 
+    private fun fetchNearbyPlacesAndSetupSpinner(locationWrapper: LatLngWrapper) {
+        placesHelper.getNearbyPlaces(locationWrapper) { placeList ->
+            setupLocationSpinner(placeList)
+        }
+    }
     // 스피너 설정
     private fun setupLocationSpinner(placeList: List<String>) {
         val spinnerAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, placeList)
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.locationSpinner.adapter = spinnerAdapter
     }
-
-
-
-
 
     // 이미지 선택 창 열기
     private fun showImageSelectionDialog() {

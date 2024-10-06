@@ -1,76 +1,66 @@
 package com.kisayo.sspurt.fragments
 
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
-import com.kisayo.sspurt.Adapter.HomeFragmentAdapter
 import com.kisayo.sspurt.Adapter.LookupFragmentAdapter
+import com.kisayo.sspurt.data.CombinedRecord
 import com.kisayo.sspurt.data.ExerciseRecord
 import com.kisayo.sspurt.data.UserAccount
 import com.kisayo.sspurt.databinding.FragmentLookUpBinding
-import com.kisayo.sspurt.utils.UserRepository
-import kotlin.Pair
 
-class LookUpFragment : Fragment(){
+class LookUpFragment : Fragment() {
 
     private lateinit var binding: FragmentLookUpBinding
     private lateinit var adapter: LookupFragmentAdapter
-    private var exerciseRecords : MutableList<ExerciseRecord> = mutableListOf()
-    private var userAccounts : MutableList<UserAccount> = mutableListOf()
-    private var combinedRecords: MutableList<Pair<ExerciseRecord, UserAccount>> = mutableListOf() // 운동 데이터와 사용자 정보를 쌍으로 저장
+    private var exerciseRecords: MutableList<ExerciseRecord> = mutableListOf()
+    private var userAccounts: MutableList<UserAccount> = mutableListOf()
+    private var combinedRecords: MutableList<CombinedRecord> = mutableListOf()
     private lateinit var firestore: FirebaseFirestore
-    private lateinit var repository: UserRepository
+    private var isExerciseRecordsLoaded = false
+    private var isUserAccountsLoaded = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding=FragmentLookUpBinding.inflate(inflater,container,false)
+        binding = FragmentLookUpBinding.inflate(inflater, container, false)
 
-        //초기화즈...
+        // Firestore 초기화
         firestore = FirebaseFirestore.getInstance()
-        repository = UserRepository(requireContext())
-        binding.recyclerViewLookup.layoutManager = GridLayoutManager(requireContext(),2)
+        binding.recyclerViewLookup.layoutManager = GridLayoutManager(requireContext(), 2)
 
-
-        fetchExerciseRecords()         // 운동 기록과 사용자 정보를 가져오기
-        fetchUserAccounts() // 사용자 계정 정보 가져오기
+        // 데이터 가져오기 시작
+        fetchExerciseRecords()
+        fetchUserAccounts()
 
         return binding.root
-
     }
+
     private fun fetchExerciseRecords() {
-        val email = repository.getCurrentUserEmail()
-        if (email != null) {
-            firestore.collection("account")
-                .document(email)
-                .collection("exerciseData")
-                .orderBy("date", Query.Direction.DESCENDING)
-                .limit(10)
-                .get()
-                .addOnSuccessListener { documents ->
-                    for (document in documents) {
-                        val exerciseRecord = document.toObject(ExerciseRecord::class.java)
-                        exerciseRecords.add(exerciseRecord) // 운동 기록 리스트에 추가
-                    }
-                    combineRecords() // 운동 기록과 사용자 계정을 결합
+        firestore.collectionGroup("exerciseData")
+            .orderBy("date", Query.Direction.DESCENDING)
+            .limit(10)
+            .get()
+            .addOnSuccessListener { documents ->
+                for (document in documents) {
+                    val exerciseRecord = document.toObject(ExerciseRecord::class.java)
+                    exerciseRecords.add(exerciseRecord)
                 }
-                .addOnFailureListener { exception ->
-                    Log.e("Firestore", "Error getting documents: ", exception)
-                }
-        } else {
-            Log.e("Auth", "User is not logged in.")
-        }
+                isExerciseRecordsLoaded = true
+                checkDataAndCombine() // 두 데이터 로드 확인
+            }
+            .addOnFailureListener { exception ->
+                Log.e("Firestore", "Error getting exercise records: ", exception)
+            }
     }
 
     private fun fetchUserAccounts() {
@@ -79,29 +69,49 @@ class LookUpFragment : Fragment(){
             .addOnSuccessListener { documents ->
                 for (document in documents) {
                     val userAccount = document.toObject(UserAccount::class.java)
-                    userAccounts.add(userAccount) // 사용자 계정 리스트에 추가
+                    userAccounts.add(userAccount)
                 }
-                combineRecords() // 사용자 계정 정보를 가져온 후 결합
+                isUserAccountsLoaded = true
+                checkDataAndCombine() // 두 데이터 로드 확인
             }
             .addOnFailureListener { exception ->
                 Log.e("Firestore", "Error getting user accounts: ", exception)
             }
     }
 
-    // 운동 기록과 사용자 계정을 결합하는 함수
-    private fun combineRecords() {
-        // 각 운동 기록에 대해 해당하는 사용자 계정과 결합
-        exerciseRecords.forEach { exerciseRecord ->
-            // 사용자 계정 중에서 이메일이 일치하는 것을 찾아 결합
-            userAccounts.find { it.email == repository.getCurrentUserEmail() }?.let { userAccount ->
-                combinedRecords.add(Pair(exerciseRecord, userAccount)) // 운동 기록과 사용자 계정의 쌍 추가
-            }
+    // 두 데이터가 모두 로드되었는지 확인 후 결합 수행
+    private fun checkDataAndCombine() {
+        if (isExerciseRecordsLoaded && isUserAccountsLoaded) {
+            combineRecords()
         }
-        updateAdapter() // 어댑터 업데이트
     }
 
-    private fun updateAdapter() {
-        adapter = LookupFragmentAdapter(requireContext(), combinedRecords) // 결합된 레코드로 어댑터 초기화
-        binding.recyclerViewLookup.adapter = adapter // RecyclerView에 어댑터 설정
+    private fun combineRecords() {
+        combinedRecords.clear() // 기존 데이터를 지운다
+
+        for (exerciseRecord in exerciseRecords) {
+            val userAccount = userAccounts.find { it.email == exerciseRecord.ownerEmail }
+            if (userAccount != null) {
+                combinedRecords.add(CombinedRecord(exerciseRecord, userAccount))
+            }
+        }
+
+        // combinedRecords가 비어 있는지 확인
+        if (combinedRecords.isEmpty()) {
+            // UI에 데이터가 없음을 표시 (예: Toast 메시지)
+            Toast.makeText(requireContext(), "운동 기록이 없습니다.", Toast.LENGTH_SHORT).show()
+        }
+
+        // 어댑터 업데이트
+        updateAdapter(combinedRecords) // combinedRecords를 전달
+    }
+
+    private fun updateAdapter(combinedRecords: List<CombinedRecord>) {
+        // CombinedRecord를 어댑터에 전달
+        adapter = LookupFragmentAdapter(requireContext(), combinedRecords)
+        binding.recyclerViewLookup.adapter = adapter
+
+        // notifyDataSetChanged()는 어댑터가 이미 설정되었을 때 필요 없음
+        // adapter.notifyDataSetChanged() // 주석 처리
     }
 }

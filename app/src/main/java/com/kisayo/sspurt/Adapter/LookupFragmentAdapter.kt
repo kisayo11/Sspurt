@@ -11,8 +11,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.kisayo.sspurt.R
 import com.kisayo.sspurt.data.CombinedRecord
-import com.kisayo.sspurt.data.ExerciseRecord
-import com.kisayo.sspurt.data.UserAccount
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -20,15 +18,13 @@ import java.util.Locale
 
 class LookupFragmentAdapter(
     private val context: Context,
-    private val combinedRecords: List<Pair<ExerciseRecord, UserAccount>>
-
+    private val combinedRecords: List<CombinedRecord>
 ) : RecyclerView.Adapter<LookupFragmentAdapter.ExerciseRecordViewHolder>() {
 
     inner class ExerciseRecordViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val nicknameTextView: TextView = itemView.findViewById(R.id.nickname_tv)
         private val exerciseTypeTextView: TextView = itemView.findViewById(R.id.exerciseType_tv_item)
         private val distanceTextView: TextView = itemView.findViewById(R.id.ExerciseDistance_tv_item)
-
         //private val averageSpeedTextView: TextView = itemView.findViewById(R.id.ExersiceSpeed_tv_item)
         private val elapsedTimeTextView: TextView = itemView.findViewById(R.id.ExerciseTime_tv_item)
         private val locationTextView: TextView = itemView.findViewById(R.id.locationTag)
@@ -36,9 +32,9 @@ class LookupFragmentAdapter(
         private val photoImageView: ImageView = itemView.findViewById(R.id.picture_iv)
         private val profileImageView: ImageView = itemView.findViewById(R.id.profile_cv)
 
-        fun bind(record: Pair<ExerciseRecord, UserAccount>) {
-            val exerciseRecord = record.first // ExerciseRecord
-            val userAccount = record.second // UserAccount
+        fun bind(combinedRecord: CombinedRecord) {
+            val exerciseRecord = combinedRecord.exerciseRecord
+            val userAccount = combinedRecord.userAccount
 
             exerciseTypeTextView.text = exerciseRecord.exerciseType // 운동 종류
             nicknameTextView.text = userAccount.username
@@ -98,12 +94,9 @@ class LookupFragmentAdapter(
         return ExerciseRecordViewHolder(itemView)
     }
 
-    override fun onBindViewHolder(
-        holder: LookupFragmentAdapter.ExerciseRecordViewHolder,
-        position: Int
-    ) {
-        val combinedRecord = combinedRecords[position] // CombinedRecord 가져오기
-        holder.bind(combinedRecord) // bind 메소드 호출
+    override fun onBindViewHolder(holder: ExerciseRecordViewHolder, position: Int) {
+        val combinedRecord = combinedRecords[position]
+        holder.bind(combinedRecord)
     }
 
     override fun getItemCount(): Int {
