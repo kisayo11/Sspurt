@@ -5,6 +5,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.kisayo.sspurt.data.ExerciseRecord
+import com.kisayo.sspurt.data.LatLngWrapper
 import com.kisayo.sspurt.data.RealTimeData
 
 class FirestoreHelper {
@@ -66,7 +67,7 @@ class FirestoreHelper {
             .addOnFailureListener { onFailure(it) }
     }
 
-    fun getUserLocationData(email: String, onSuccess: (LatLng?) -> Unit, onFailure: (Exception) -> Unit) {
+    fun getUserLocationData(email: String, onSuccess: (LatLngWrapper?) -> Unit, onFailure: (Exception) -> Unit) {
         val userDocRef = db.collection("account").document(email)
 
         userDocRef.get()
@@ -74,7 +75,8 @@ class FirestoreHelper {
                 if (document != null && document.exists()) {
                     val latitude = document.getDouble("latitude") ?: 0.0
                     val longitude = document.getDouble("longitude") ?: 0.0
-                    onSuccess(LatLng(latitude, longitude))
+                    // LatLngWrapper로 변환
+                    onSuccess(LatLngWrapper(latitude, longitude))
                 } else {
                     onSuccess(null)
                 }
@@ -84,5 +86,7 @@ class FirestoreHelper {
                 onFailure(exception)
             }
     }
+
+
 
 }

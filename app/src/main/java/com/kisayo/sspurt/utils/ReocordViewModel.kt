@@ -34,6 +34,9 @@ class RecordViewModel : ViewModel() {
     private val _isRecording = MutableLiveData<Boolean>(false)
     val isRecording: LiveData<Boolean> get() = _isRecording
 
+    private val _isPaused = MutableLiveData<Boolean>().apply { value = false }
+    val isPaused: LiveData<Boolean> = _isPaused
+
 
     // Firestore에서 사용자 경로 데이터 가져오기
     fun fetchRoute(email: String, context: Context) {
@@ -108,6 +111,15 @@ class RecordViewModel : ViewModel() {
             Log.d("RecordViewModel", "Recording started")
         }
     }
+
+    // 녹화 일시 중지
+    fun pauseRecording() {
+        if (_isRecording.value == true) {
+            _isPaused.value = true
+            Log.d("RecordViewModel", "Recording paused")
+        }
+    }
+
 
 
     // 녹화 중지

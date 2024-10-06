@@ -3,6 +3,8 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.google.android.libraries.mapsplatform.secrets.gradle.plugin)
     id("com.google.gms.google-services")
+    id("kotlin-parcelize")
+
 }
 
 android {
@@ -74,7 +76,7 @@ dependencies {
 
     //Firebase Authentication
     implementation("com.google.firebase:firebase-auth-ktx")
-    implementation("com.google.android.gms:play-services-auth:20.5.0")
+    implementation("com.google.android.gms:play-services-auth:21.2.0")
 
     //animation - intro 
     implementation("com.airbnb.android:lottie:6.5.2")
@@ -96,7 +98,7 @@ dependencies {
 
     //google place API
 
-    implementation("com.google.android.libraries.places:places:2.6.0")
+    implementation("com.google.android.libraries.places:places:4.0.0")
 
 }
 

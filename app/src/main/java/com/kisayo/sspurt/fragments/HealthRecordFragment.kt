@@ -77,13 +77,14 @@ class HealthRecordFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // ViewModel의 isRecording 상태를 관찰
         recordViewModel.isRecording.observe(viewLifecycleOwner, Observer { isRecording ->
             Log.d("HealthRecordFragment", "isRecording observed: $isRecording")
 
             // 녹화 중지가 감지되었을 때만 데이터 저장
             if (!isRecording && exerciseData.isRecording) {
-                stopRecording() // 이 부분에서 의도한 시점에만 녹화 중지 및 데이터 저장
+                if (!exerciseData.isPaused) { // 퍼즈 상태가 아닐 때만 저장
+                    stopRecording()
+                }
             }
         })
 
@@ -242,7 +243,7 @@ class HealthRecordFragment : Fragment() {
         exerciseData.realTimeData = realTimeData
 
         // 데이터 저장 호출
-//        saveExerciseData() // 데이터를 저장
+        //saveExerciseData() // 데이터를 저장
     }
 
     private fun saveExerciseData() {
@@ -273,7 +274,8 @@ class HealthRecordFragment : Fragment() {
             realTimeData = exerciseData.realTimeData,
             isShared = exerciseData.isShared,
             locationTag = exerciseData.locationTag,
-            routes = exerciseData.routes
+            routes = exerciseData.routes,
+            ownerEmail = email
         )
 
         firestoreHelper.saveExerciseRecord(email, exerciseRecord, onSuccess = {

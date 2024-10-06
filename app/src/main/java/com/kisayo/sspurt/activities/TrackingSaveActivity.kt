@@ -16,7 +16,17 @@ class TrackingSaveActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        recordDataFragment = RecordDataFragment()
+        // Intent에서 `date`와 `ownerEmail` 수신
+        val date = intent.getStringExtra("date")
+        val ownerEmail = intent.getStringExtra("ownerEmail")
+
+        // `DetailedRecordDataFragment` 인스턴스 생성 및 `Bundle`로 데이터 전달
+        recordDataFragment = RecordDataFragment().apply {
+            arguments = Bundle().apply {
+                putString("date", date) // 전달받은 `date`
+                putString("ownerEmail", ownerEmail) // 전달받은 `ownerEmail`
+            }
+        }
 
         supportFragmentManager.beginTransaction()
             .replace(R.id.recordData_container, recordDataFragment)

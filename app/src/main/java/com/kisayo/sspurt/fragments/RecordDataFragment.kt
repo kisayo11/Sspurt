@@ -46,7 +46,6 @@ class RecordDataFragment : Fragment() {
         return binding.root
     }
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -54,6 +53,19 @@ class RecordDataFragment : Fragment() {
 
         barChart = binding.barChartAvgspeedpermin
         setupBarChartAvgspeedpermin()
+
+        // Bundle에서 `date`와 `ownerEmail` 수신
+        val date = arguments?.getString("date")
+        val ownerEmail = arguments?.getString("ownerEmail")
+
+        if (date != null && ownerEmail != null) {
+            // `date`와 `ownerEmail`이 전달된 경우, `fetchFromLookup` 수행
+            fetchFromLookup(ownerEmail, date)
+        } else {
+            // 전달된 인자가 없으면 기존 로직 수행
+            val email = userRepository.getCurrentUserEmail()
+            fetchExerciseRecord(email)
+        }
 
         //save button
         binding.postBtn.setOnClickListener {
@@ -80,6 +92,38 @@ class RecordDataFragment : Fragment() {
         val email = userRepository.getCurrentUserEmail()
         fetchExerciseRecord(email)
     }
+
+    private fun fetchFromLookup(ownerEmail: String, date: String) {
+        // Firestore에서 `ownerEmail`과 `date`를 기준으로 데이터 조회
+        db.collection("account")
+            .document(ownerEmail)
+            .collection("exerciseData")
+            .whereEqualTo("date", date)
+            .get()
+            .addOnSuccessListener { documents ->
+                if (!documents.isEmpty) {
+                    val document = documents.first()
+                    val record = document.toObject(ExerciseRecord::class.java)
+
+                    // UI 업데이트
+                    updateUIWithDetailedRecord(record)
+                }
+            }
+            .addOnFailureListener { exception ->
+                // 오류 처리 로직 추가 가능
+            }
+    }
+
+    private fun updateUIWithDetailedRecord(record: ExerciseRecord) {
+        // 기존 `RecordDataFragment`의 UI 요소를 사용해 데이터 표시
+        binding.ExersiceTimeTv.text = formatElapsedTime(record.elapsedTime)
+        val distanceInKm = record.distance / 1000.0
+        binding.ExersiceDistanceTv.text = String.format("%.2f km", distanceInKm)
+
+        // 추가적인 상세 데이터 표시 로직 작성
+    }
+
+
     private fun deleteRecentExerciseRecord(email: String) {
         // FirestoreHelper 인스턴스 생성 및 삭제 로직
         val firestoreHelper = FirestoreHelper()
