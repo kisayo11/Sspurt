@@ -110,8 +110,5 @@ class LookUpFragment : Fragment() {
         // CombinedRecord를 어댑터에 전달
         adapter = LookupFragmentAdapter(requireContext(), combinedRecords)
         binding.recyclerViewLookup.adapter = adapter
-
-        // notifyDataSetChanged()는 어댑터가 이미 설정되었을 때 필요 없음
-        // adapter.notifyDataSetChanged() // 주석 처리
     }
 }

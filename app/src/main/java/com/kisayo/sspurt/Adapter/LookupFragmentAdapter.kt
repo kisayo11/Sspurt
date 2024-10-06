@@ -1,6 +1,7 @@
 package com.kisayo.sspurt.Adapter
 
 import android.content.Context
+import android.content.Intent
 import android.location.Geocoder
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +11,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.kisayo.sspurt.R
+import com.kisayo.sspurt.activities.TrackingSaveActivity
 import com.kisayo.sspurt.data.CombinedRecord
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -95,8 +97,32 @@ class LookupFragmentAdapter(
     }
 
     override fun onBindViewHolder(holder: ExerciseRecordViewHolder, position: Int) {
-        val combinedRecord = combinedRecords[position]
+        val combinedRecord= combinedRecords[position]
         holder.bind(combinedRecord)
+        holder.itemView.setOnClickListener {
+            val intent = Intent(context, TrackingSaveActivity::class.java)
+            intent.putExtra("ownerEmail", combinedRecord.exerciseRecord.ownerEmail)
+            intent.putExtra("date", combinedRecord.exerciseRecord.date)
+
+            context.startActivity(intent)
+        }
+
+
+//        val record = combinedRecords[position]
+//
+////         구버전 롤백용
+//        val combinedRecord = combinedRecords[position]
+//        holder.bind(combinedRecord)
+
+//        holder.itemView.setOnClickListener {
+//            val intent = Intent(context, TrackingSaveActivity::class.java)
+//            intent.putExtra("ownerEmail", record.exerciseRecord.ownerEmail)
+//            intent.putExtra("date", record.exerciseRecord.date)
+//
+//            context.startActivity(intent)
+//        }
+
+
     }
 
     override fun getItemCount(): Int {
