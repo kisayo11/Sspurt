@@ -1,7 +1,6 @@
 package com.kisayo.sspurt.fragments
 
 
-import android.Manifest
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
@@ -17,25 +16,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
-import com.bumptech.glide.Glide
-import com.bumptech.glide.signature.ObjectKey
-import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.storage.FirebaseStorage
-import com.kisayo.sspurt.R
-import com.kisayo.sspurt.activities.GpsConfirmActivity
 import com.kisayo.sspurt.activities.MainActivity
 import com.kisayo.sspurt.data.LatLngWrapper
 import com.kisayo.sspurt.databinding.FragmentPostDialogBinding
-import com.kisayo.sspurt.fragments.MyAccountFragment.Companion
-import com.kisayo.sspurt.utils.FirestoreHelper
-import com.kisayo.sspurt.utils.PlacesHelper
+import com.kisayo.sspurt.Helpers.FirestoreHelper
+import com.kisayo.sspurt.Helpers.PlacesHelper
 import com.kisayo.sspurt.utils.UserRepository
 import java.io.File
 import java.io.FileOutputStream

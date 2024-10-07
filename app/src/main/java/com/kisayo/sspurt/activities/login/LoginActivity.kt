@@ -18,7 +18,7 @@ import com.kisayo.sspurt.activities.MainActivity
 import com.kisayo.sspurt.data.NidUserInfoResponse
 import com.kisayo.sspurt.data.UserAccount
 import com.kisayo.sspurt.databinding.ActivityLoginBinding
-import com.kisayo.sspurt.networks.RetrofitHelper
+import com.kisayo.sspurt.Helpers.RetrofitHelper
 import com.kisayo.sspurt.networks.RetrofitService
 import com.navercorp.nid.NaverIdLoginSDK
 import com.navercorp.nid.oauth.OAuthLoginCallback

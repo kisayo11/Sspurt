@@ -4,7 +4,6 @@ import android.Manifest
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
@@ -18,7 +17,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.health.connect.client.HealthConnectClient
@@ -31,14 +29,13 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.Timestamp
-import com.google.firebase.firestore.GeoPoint
 import com.kisayo.sspurt.Location.ExerciseTracker
 import com.kisayo.sspurt.activities.TrackingSaveActivity
 import com.kisayo.sspurt.data.ExerciseRecord
 import com.kisayo.sspurt.data.LatLngWrapper
 import com.kisayo.sspurt.data.RealTimeData
 import com.kisayo.sspurt.databinding.FragmentHealthRecordBinding
-import com.kisayo.sspurt.utils.FirestoreHelper
+import com.kisayo.sspurt.Helpers.FirestoreHelper
 import com.kisayo.sspurt.utils.RecordViewModel
 import com.kisayo.sspurt.utils.UserRepository
 
