@@ -18,7 +18,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.health.connect.client.HealthConnectClient
@@ -31,14 +30,13 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.Timestamp
-import com.google.firebase.firestore.GeoPoint
 import com.kisayo.sspurt.Location.ExerciseTracker
 import com.kisayo.sspurt.activities.TrackingSaveActivity
 import com.kisayo.sspurt.data.ExerciseRecord
 import com.kisayo.sspurt.data.LatLngWrapper
 import com.kisayo.sspurt.data.RealTimeData
 import com.kisayo.sspurt.databinding.FragmentHealthRecordBinding
-import com.kisayo.sspurt.utils.FirestoreHelper
+import com.kisayo.sspurt.Helpers.FirestoreHelper
 import com.kisayo.sspurt.utils.RecordViewModel
 import com.kisayo.sspurt.utils.UserRepository
 
@@ -148,7 +146,13 @@ class HealthRecordFragment : Fragment() {
             }
             animator.addListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationEnd(animation: Animator) {
-                    val intent = Intent(requireContext(), TrackingSaveActivity::class.java)
+                    val date = Timestamp.now() // 현재 날짜 및 시간
+                    val ownerEmail = userRepository.getCurrentUserEmail() // 현재 사용자의 이메일
+
+                    val intent = Intent(requireContext(), TrackingSaveActivity::class.java).apply {
+                        putExtra("date", date.toString())
+                        putExtra("ownerEmail", ownerEmail)
+                    }
                     startActivity(intent)
                 }
             })
@@ -251,6 +255,10 @@ class HealthRecordFragment : Fragment() {
         val currentLocation = exerciseData.currentLocation?.let {
             LatLngWrapper(it.latitude, it.longitude)
         }
+        val sharedPreferences = requireContext().getSharedPreferences("activityPickSave", Context.MODE_PRIVATE)
+        val savedExerciseType = sharedPreferences.getString("selected_icon","")
+        exerciseData.exerciseType = savedExerciseType!!
+
 
         // Firestore에 저장할 exerciseRecord
         val exerciseRecord = ExerciseRecord(

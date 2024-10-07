@@ -1,7 +1,6 @@
-package com.kisayo.sspurt.utils
+package com.kisayo.sspurt.Helpers
 
 import android.util.Log
-import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.kisayo.sspurt.data.ExerciseRecord

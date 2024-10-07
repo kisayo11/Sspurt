@@ -1,16 +1,12 @@
-package com.kisayo.sspurt.utils
+package com.kisayo.sspurt.Helpers
 
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import android.util.Log
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.libraries.places.api.Places
-import com.google.android.libraries.places.api.model.Place
-import com.google.android.libraries.places.api.net.FindCurrentPlaceRequest
-import com.google.android.libraries.places.api.net.PlacesClient
 import com.kisayo.sspurt.data.LatLngWrapper
 import okhttp3.Call
 import okhttp3.Callback
