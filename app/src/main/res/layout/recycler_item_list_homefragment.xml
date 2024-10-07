@@ -19,13 +19,14 @@
             android:layout_height="150dp"
             android:layout_alignParentRight="true"
             android:scaleType="centerCrop"
+            android:src="@drawable/logo_sspurt"
             android:background="@drawable/rectangle_picture" />
 
         <ImageView
-            android:id="@+id/exersiceType_iv_item"
+            android:id="@+id/exerciseType_iv_item"
             android:layout_width="75dp"
             android:layout_height="100dp"
-            android:background="@android:color/holo_purple"
+            android:background="#CADACB"
             android:layout_alignParentLeft="true"
             android:padding="24dp"
             android:scaleType="centerInside"
@@ -34,7 +35,7 @@
         <RelativeLayout
             android:layout_width="200dp"
             android:layout_height="150dp"
-            android:layout_toRightOf="@id/exersiceType_iv_item"
+            android:layout_toRightOf="@id/exerciseType_iv_item"
             android:orientation="vertical">
 
             <TextView
@@ -46,8 +47,8 @@
                 android:fontFamily="@font/pureunjeonnam"
                 android:padding="4dp"
                 android:layout_marginRight="4dp"
-                android:text="00.00km"
-                android:textSize="12dp" />
+                android:text="__.__km"
+                android:textSize="14dp" />
 
             <TextView
                 android:id="@+id/ExersiceSpeed_tv_item"
@@ -59,8 +60,8 @@
                 android:layout_weight="1"
                 android:fontFamily="@font/pureunjeonnam"
                 android:padding="4dp"
-                android:text="00'00"
-                android:textSize="12dp" />
+                android:text="--'--"
+                android:textSize="14dp" />
 
             <TextView
                 android:id="@+id/ExersiceTime_tv_item"
@@ -71,8 +72,8 @@
                 android:layout_weight="1"
                 android:fontFamily="@font/pureunjeonnam"
                 android:padding="4dp"
-                android:text="01:00:00"
-                android:textSize="12dp" />
+                android:text="--:--:--"
+                android:textSize="14dp" />
 
             <TextView
                 android:id="@+id/ExersiceLocation_tv_item"
@@ -99,37 +100,37 @@
                 android:text="2024년 10월 3일 목요일"
                 android:textSize="10dp" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="4dp"
-                    android:gravity="right"
-                    android:layout_marginBottom="4dp"
-                    android:layout_alignParentBottom="true"
-                    android:orientation="horizontal">
+<!--                <LinearLayout-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginRight="4dp"-->
+<!--                    android:gravity="right"-->
+<!--                    android:layout_marginBottom="4dp"-->
+<!--                    android:layout_alignParentBottom="true"-->
+<!--                    android:orientation="horizontal">-->
 
-                    <ImageView
-                        android:layout_width="15dp"
-                        android:layout_height="15dp"
-                        android:src="@drawable/outline_remove_red_eye_24" />
+<!--                    <ImageView-->
+<!--                        android:layout_width="15dp"-->
+<!--                        android:layout_height="15dp"-->
+<!--                        android:src="@drawable/outline_remove_red_eye_24" />-->
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="15dp"
-                        android:textSize="10dp"
-                        android:text="100" />
+<!--                    <TextView-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="15dp"-->
+<!--                        android:textSize="10dp"-->
+<!--                        android:text="100" />-->
 
-                    <ImageView
-                        android:layout_width="15dp"
-                        android:layout_height="15dp"
-                        android:src="@drawable/baseline_favorite_border_24" />
+<!--                    <ImageView-->
+<!--                        android:layout_width="15dp"-->
+<!--                        android:layout_height="15dp"-->
+<!--                        android:src="@drawable/baseline_favorite_border_24" />-->
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="15dp"
-                        android:textSize="10dp"
-                        android:text="100" />
-                </LinearLayout>
+<!--                    <TextView-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="15dp"-->
+<!--                        android:textSize="10dp"-->
+<!--                        android:text="100" />-->
+<!--                </LinearLayout>-->
 
 
 

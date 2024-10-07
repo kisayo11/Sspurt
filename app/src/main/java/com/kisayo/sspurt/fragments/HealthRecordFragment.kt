@@ -4,6 +4,7 @@ import android.Manifest
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
@@ -145,7 +146,13 @@ class HealthRecordFragment : Fragment() {
             }
             animator.addListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationEnd(animation: Animator) {
-                    val intent = Intent(requireContext(), TrackingSaveActivity::class.java)
+                    val date = Timestamp.now() // 현재 날짜 및 시간
+                    val ownerEmail = userRepository.getCurrentUserEmail() // 현재 사용자의 이메일
+
+                    val intent = Intent(requireContext(), TrackingSaveActivity::class.java).apply {
+                        putExtra("date", date.toString())
+                        putExtra("ownerEmail", ownerEmail)
+                    }
                     startActivity(intent)
                 }
             })
@@ -248,6 +255,10 @@ class HealthRecordFragment : Fragment() {
         val currentLocation = exerciseData.currentLocation?.let {
             LatLngWrapper(it.latitude, it.longitude)
         }
+        val sharedPreferences = requireContext().getSharedPreferences("activityPickSave", Context.MODE_PRIVATE)
+        val savedExerciseType = sharedPreferences.getString("selected_icon","")
+        exerciseData.exerciseType = savedExerciseType!!
+
 
         // Firestore에 저장할 exerciseRecord
         val exerciseRecord = ExerciseRecord(

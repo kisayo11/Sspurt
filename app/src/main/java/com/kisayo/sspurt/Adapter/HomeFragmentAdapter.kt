@@ -20,11 +20,12 @@ import java.text.SimpleDateFormat
 
 class HomeFragmentAdapter(
     private val context: Context,
-    private val exerciseRecords: List<ExerciseRecord>
+    private val exerciseRecords: List<ExerciseRecord>,
+    private val onItemClick: (String,String) -> Unit // 클릭리스너
 ) : RecyclerView.Adapter<HomeFragmentAdapter.ExerciseRecordViewHolder>() {
 
     inner class ExerciseRecordViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-//        private val exerciseTypeTextView: TextView = itemView.findViewById(R.id.exersiceType_iv_item)
+        private val exercisetypeView: ImageView = itemView.findViewById(R.id.exerciseType_iv_item)
         private val distanceTextView: TextView = itemView.findViewById(R.id.ExersiceDistance_tv_item)
         private val averageSpeedTextView: TextView = itemView.findViewById(R.id.ExersiceSpeed_tv_item)
         private val elapsedTimeTextView: TextView = itemView.findViewById(R.id.ExersiceTime_tv_item)
@@ -35,8 +36,9 @@ class HomeFragmentAdapter(
         fun bind(exerciseRecord: ExerciseRecord) {
 //            exerciseTypeTextView.text = exerciseRecord.exerciseType // 운동 종류
             distanceTextView.text = String.format("%.2f km", exerciseRecord.distance / 1000) // 이동 거리
-            averageSpeedTextView.text = String.format("%.2f km/h", exerciseRecord.averageSpeed) // 평균 속도
+//            averageSpeedTextView.text = String.format("%.2f km/h", exerciseRecord.averageSpeed) // 평균 속도
             averageSpeedTextView.text = formatSpeedToCoordinates(exerciseRecord.averageSpeed) // 평균 속도
+            elapsedTimeTextView.text = formatElapsedTime(exerciseRecord.elapsedTime)
 
             // 위치 정보를 주소로 변환
             val location = exerciseRecord.currentLocation
@@ -52,6 +54,22 @@ class HomeFragmentAdapter(
                     .load(url)
                     .into(photoImageView)
             }
+
+            // 아이템 클릭 시 email과 date 전달
+            itemView.setOnClickListener {
+                onItemClick(exerciseRecord.ownerEmail, exerciseRecord.date.toDate().toString())
+            }
+
+            exercisetypeView.setImageResource(
+                when (exerciseRecord.exerciseType) {
+                    "running" -> R.drawable.icon_running100 // 달리기 아이콘
+                    "cycling" -> R.drawable.icon_ridding100 // 사이클링 아이콘
+                    "hiking" -> R.drawable.icon_treckking100 // 하이킹 아이콘
+                    "trailrunning" -> R.drawable.icon_trail100 // 트레일러닝 아이콘
+                    else -> R.drawable.logo_sspurt // 기본 아이콘
+                }
+            )
+
         }
         // 날짜 포맷팅 함수
         private fun formatDate(date: Date): String {
@@ -93,17 +111,17 @@ class HomeFragmentAdapter(
     }
 
     private fun formatElapsedTime(elapsedTime: Long): String {
-        val hours = (elapsedTime / 3600000).toInt()
-        val minutes = (elapsedTime % 3600000 / 60000).toInt()
-        val seconds = (elapsedTime % 60000 / 1000).toInt()
+        val hours = (elapsedTime / 3600).toInt() // 시
+        val minutes = ((elapsedTime % 3600) / 60).toInt() // 분
+        val seconds = (elapsedTime % 60).toInt() // 초
         return String.format("%02d:%02d:%02d", hours, minutes, seconds) // HH:mm:ss 형식으로 포맷
     }
+
     // 평균 속도를 "00'00''" 형식으로 변환하는 함수
     private fun formatSpeedToCoordinates(speed: Double): String {
         // km/h의 정수부와 소수부를 분리
         val km = speed.toInt() // km/h의 정수 부분
         val meters = ((speed - km) * 100).toInt() // km/h를 m 단위로 변환한 후 소수부를 100으로 변환
-
         return String.format("%02d'%02d''", km, meters)
     }
 

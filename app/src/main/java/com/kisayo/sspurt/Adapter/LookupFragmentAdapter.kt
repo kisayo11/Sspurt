@@ -3,6 +3,7 @@ package com.kisayo.sspurt.Adapter
 import android.content.Context
 import android.content.Intent
 import android.location.Geocoder
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,14 +21,17 @@ import java.util.Locale
 
 class LookupFragmentAdapter(
     private val context: Context,
-    private val combinedRecords: List<CombinedRecord>
+    private val combinedRecords: List<CombinedRecord>,
+    private val onItemClick: (String, String) -> Unit // 클릭 리스너
 ) : RecyclerView.Adapter<LookupFragmentAdapter.ExerciseRecordViewHolder>() {
 
     inner class ExerciseRecordViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val nicknameTextView: TextView = itemView.findViewById(R.id.nickname_tv)
-        private val exerciseTypeTextView: TextView = itemView.findViewById(R.id.exerciseType_tv_item)
-        private val distanceTextView: TextView = itemView.findViewById(R.id.ExerciseDistance_tv_item)
-        //private val averageSpeedTextView: TextView = itemView.findViewById(R.id.ExersiceSpeed_tv_item)
+        private val exercisetypeView: ImageView = itemView.findViewById(R.id.exerciseType_cv)
+        private val distanceTextView: TextView =
+            itemView.findViewById(R.id.ExerciseDistance_tv_item)
+
+        //private val averageSpeedTextView: TextView = itemView.findViewById(R.id.ExerciseSpeed_tv_item)
         private val elapsedTimeTextView: TextView = itemView.findViewById(R.id.ExerciseTime_tv_item)
         private val locationTextView: TextView = itemView.findViewById(R.id.locationTag)
         private val dateTextView: TextView = itemView.findViewById(R.id.ExerciseDate_tv_item)
@@ -38,7 +42,7 @@ class LookupFragmentAdapter(
             val exerciseRecord = combinedRecord.exerciseRecord
             val userAccount = combinedRecord.userAccount
 
-            exerciseTypeTextView.text = exerciseRecord.exerciseType // 운동 종류
+
             nicknameTextView.text = userAccount.username
             elapsedTimeTextView.text = formatElapsedTime(exerciseRecord.elapsedTime)
             distanceTextView.text =
@@ -65,7 +69,24 @@ class LookupFragmentAdapter(
             exerciseRecord.photoUrl?.let { url ->
                 Glide.with(itemView.context).load(url).into(photoImageView)
             }
+
+            exercisetypeView.setImageResource(
+                when (exerciseRecord.exerciseType) {
+                    "running" -> R.drawable.icon_running100 // 달리기 아이콘
+                    "cycling" -> R.drawable.icon_ridding100 // 사이클링 아이콘
+                    "hiking" -> R.drawable.icon_treckking100 // 하이킹 아이콘
+                    "trailrunning" -> R.drawable.icon_trail100 // 트레일러닝 아이콘
+                    else -> R.drawable.logo_sspurt // 기본 아이콘
+                }
+            )
+
+            itemView.setOnClickListener {
+                Log.d("LookUpFragmentAdapter", "Item clicked: Email: ${exerciseRecord.ownerEmail}, Date: ${exerciseRecord.date.toDate()}")
+                onItemClick(exerciseRecord.ownerEmail, exerciseRecord.date.toDate().toString())
+
+            }
         }
+
 
         // 날짜 포맷팅 함수
         private fun formatDate(date: Date): String {
@@ -97,15 +118,8 @@ class LookupFragmentAdapter(
     }
 
     override fun onBindViewHolder(holder: ExerciseRecordViewHolder, position: Int) {
-        val combinedRecord= combinedRecords[position]
+        val combinedRecord = combinedRecords[position]
         holder.bind(combinedRecord)
-        holder.itemView.setOnClickListener {
-            val intent = Intent(context, TrackingSaveActivity::class.java)
-            intent.putExtra("ownerEmail", combinedRecord.exerciseRecord.ownerEmail)
-            intent.putExtra("date", combinedRecord.exerciseRecord.date)
-
-            context.startActivity(intent)
-        }
 
 
 //        val record = combinedRecords[position]
