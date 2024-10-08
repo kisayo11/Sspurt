@@ -66,15 +66,21 @@ class FirestoreHelper {
             }
     }
 
-    fun saveImageUrl(email: String, imageUrl: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
-        // Firestore에서 해당 사용자의 최신 운동 기록을 업데이트
-        val userRecordRef = db.collection("account").document(email).collection("exerciseData").document("latestRecord") // 최신 기록에 저장 (예시)
+    fun saveImageUrl(email: String, imageUrl: String, exerciseRecordId: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+        // 이미 생성된 문서 경로 사용
+        val userRecordRef = db.collection("account")
+            .document(email)
+            .collection("exerciseData")
+            .document(exerciseRecordId) // exerciseRecordId를 사용하여 문서 참조
 
         userRecordRef.update("photoUrl", imageUrl)
-            .addOnSuccessListener { onSuccess() }
-            .addOnFailureListener { onFailure(it) }
+            .addOnSuccessListener {
+                onSuccess() // 성공 콜백 호출
+            }
+            .addOnFailureListener { exception ->
+                onFailure(exception) // 실패 콜백 호출
+            }
     }
-
     fun getUserLocationData(email: String, onSuccess: (LatLngWrapper?) -> Unit, onFailure: (Exception) -> Unit) {
         val userDocRef = db.collection("account").document(email)
 

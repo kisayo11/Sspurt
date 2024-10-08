@@ -62,8 +62,11 @@ class RecordDataFragment : Fragment() {
         }
         // save button
         binding.postBtn.setOnClickListener {
-            val postDialog = PostDialogFragment()
-            postDialog.show(parentFragmentManager, "postDialogFragment")
+            val dialog = PostDialogFragment()
+            val bundle = Bundle()
+            bundle.putString("exerciseRecordId", exerciseRecordId)  // 전달할 exerciseRecordId
+            dialog.arguments = bundle
+            dialog.show(parentFragmentManager, "PostDialogFragment")
         }
 
         // delete button
