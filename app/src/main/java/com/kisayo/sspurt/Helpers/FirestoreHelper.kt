@@ -3,6 +3,7 @@ package com.kisayo.sspurt.Helpers
 import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.SetOptions
 import com.kisayo.sspurt.data.ExerciseRecord
 import com.kisayo.sspurt.data.LatLngWrapper
 import com.kisayo.sspurt.data.RealTimeData
@@ -11,10 +12,18 @@ class FirestoreHelper {
     private val db = FirebaseFirestore.getInstance()
 
     // 운동 기록 저장
-    fun saveExerciseRecord(email: String, record: ExerciseRecord, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+    fun saveExerciseRecord(
+        email: String,
+        record: ExerciseRecord,
+        onSuccess: (String) -> Unit, // onSuccess에서 생성된 ID를 전달
+        onFailure: (Exception) -> Unit
+    ) {
         val userRecordRef = db.collection("account").document(email).collection("exerciseData").document()
+        record.exerciseRecordId = userRecordRef.id // Firestore에서 생성된 문서 ID를 record에 설정
         userRecordRef.set(record)
-            .addOnSuccessListener { onSuccess() }
+            .addOnSuccessListener {
+                onSuccess(userRecordRef.id) // onSuccess로 생성된 ID 반환
+            }
             .addOnFailureListener { onFailure(it) }
     }
 

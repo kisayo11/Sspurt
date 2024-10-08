@@ -1,9 +1,7 @@
 package com.kisayo.sspurt.Adapter
 
 import android.content.Context
-import android.content.Intent
 import android.location.Geocoder
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,7 +10,6 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.kisayo.sspurt.R
-import com.kisayo.sspurt.activities.TrackingSaveActivity
 import com.kisayo.sspurt.data.CombinedRecord
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -22,7 +19,7 @@ import java.util.Locale
 class LookupFragmentAdapter(
     private val context: Context,
     private val combinedRecords: List<CombinedRecord>,
-    private val onItemClick: (String, String) -> Unit // 클릭 리스너
+    private val onItemClick: (String) -> Unit // 클릭 리스너
 ) : RecyclerView.Adapter<LookupFragmentAdapter.ExerciseRecordViewHolder>() {
 
     inner class ExerciseRecordViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -81,12 +78,10 @@ class LookupFragmentAdapter(
             )
 
             itemView.setOnClickListener {
-                Log.d("LookUpFragmentAdapter", "Item clicked: Email: ${exerciseRecord.ownerEmail}, Date: ${exerciseRecord.date.toDate()}")
-                onItemClick(exerciseRecord.ownerEmail, exerciseRecord.date.toDate().toString())
+                onItemClick(exerciseRecord.exerciseRecordId) // 클릭 시 recordId 전달
 
             }
         }
-
 
         // 날짜 포맷팅 함수
         private fun formatDate(date: Date): String {

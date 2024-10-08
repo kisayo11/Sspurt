@@ -43,27 +43,23 @@ class RecordDataFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        Log.d("RecordDataFragment", "onViewCreated called")
 
         userRepository = UserRepository(requireContext())
         barChart = binding.barChartAvgspeedpermin
         setupBarChartAvgspeedpermin()
 
-        // Bundle에서 `ownerEmail`과 `date` 수신
-        val ownerEmail = arguments?.getString("ownerEmail")
-        val dateString = arguments?.getString("date") // String 형식으로 수신
+        // Bundle에서 `exerciseRecordId` 수신
+        val exerciseRecordId = arguments?.getString("exerciseRecordId")
+        Log.d("RecordDataFragment", "Received exerciseRecordId: $exerciseRecordId")
 
-        // String을 Timestamp로 변환
-        val date = dateString?.let { stringToTimestamp(it) }
-
-        // 전달된 데이터에 따라 다른 로직 처리
-        if (ownerEmail != null && date != null) {
-            fetchExerciseRecord(ownerEmail, date) // 이메일과 날짜를 사용하여 데이터 조회
+        // `exerciseRecordId`가 항상 전달되므로 바로 데이터 조회
+        if (exerciseRecordId != null) {
+            fetchExerciseRecord(exerciseRecordId)
         } else {
-            // 본인의 기록을 가져오는 경우 (기본 동작)
-            val email = userRepository.getCurrentUserEmail()
-            fetchRecentExerciseRecord(email) // 최근 운동 기록 불러오기
+            Log.e("RecordDataFragment", "No exerciseRecordId provided")
+            // `exerciseRecordId`가 없는 상황에 대한 에러 처리 (발생하지 않는다면 이 부분은 필요 없음)
         }
-
         // save button
         binding.postBtn.setOnClickListener {
             val postDialog = PostDialogFragment()
@@ -96,25 +92,67 @@ class RecordDataFragment : Fragment() {
         }
     }
 
-    private fun fetchExerciseRecord(ownerEmail: String, date: Timestamp) {
-        db.collection("account").document(ownerEmail).collection("exerciseData")
-            .whereEqualTo("date", date) // 정확한 날짜에 해당하는 기록 조회
+    private fun fetchExerciseRecord(exerciseRecordId: String) {
+        Log.d("RecordDataFragment", "fetchExerciseRecord() called with ID: $exerciseRecordId") // 메서드 진입 확인
+
+        db.collectionGroup("exerciseData")
             .get()
             .addOnSuccessListener { documents ->
-                Log.d("RecordDataFragment", "Documents found: ${documents.size()}")
-                if (!documents.isEmpty) {
-                    val document = documents.first()
-                    val record = document.toObject(ExerciseRecord::class.java)
-                    updateUIWithDetailedRecord(record)
+                Log.d("RecordDataFragment", "Documents found: ${documents.size()}") // 문서 수 출력
+
+                var foundRecord: ExerciseRecord? = null // 매칭되는 레코드 저장
+
+                documents.forEach { document ->
+                    // 각 문서의 exerciseRecordId 필드 값 확인
+                    val recordId = document.getString("exerciseRecordId")
+                    Log.d("RecordDataFragment", "Document ID: ${document.id}, exerciseRecordId: $recordId")
+
+                    // 원하는 exerciseRecordId와 비교
+                    if (recordId == exerciseRecordId) { // 전달받은 ID 값과 비교
+                        foundRecord = document.toObject(ExerciseRecord::class.java)
+                    }
+                }
+
+                // 매칭되는 레코드가 있는 경우 UI 업데이트
+                if (foundRecord != null) {
+                    updateUIWithDetailedRecord(foundRecord!!) // UI 업데이트
                 } else {
-                    Log.d("RecordDataFragment", "No documents found for the given date.")
+                    Log.d("RecordDataFragment", "No matching exerciseRecordId found.")
                 }
             }
             .addOnFailureListener { exception ->
-                Log.e("Firestore", "Error getting documents: ", exception)
+                Log.e("Firestore", "Error executing collectionGroup query: ", exception)
             }
+//        db.collectionGroup("exerciseData")
+//            .whereEqualTo("exerciseRecordId", exerciseRecordId)
+//            .get()
+//            .addOnSuccessListener { documents ->
+//                Log.d("RecordDataFragment", "collectionGroup query executed successfully") // 쿼리 실행 확인
+//
+//                if (documents.isEmpty) {
+//                    Log.d("RecordDataFragment", "No documents found for exerciseRecordId: $exerciseRecordId") // 쿼리 결과 없음
+//                } else {
+//                    Log.d("RecordDataFragment", "Documents found: ${documents.size()}") // 쿼리 결과 확인
+//
+//                    documents.forEach { document ->
+//                        Log.d("RecordDataFragment", "Document ID: ${document.id}, Data: ${document.data}") // 가져온 문서 확인
+//                    }
+//
+//                    val document = documents.first()
+//                    val record = document.toObject(ExerciseRecord::class.java)
+//                    Log.d("RecordDataFragment", "Fetched record: $record") // 변환된 데이터 확인
+//                    updateUIWithDetailedRecord(record)
+//                }
+//            }
+//            .addOnFailureListener { exception ->
+//                Log.e("Firestore", "Error executing Firestore query: ", exception) // 쿼리 실패 확인
+//            }
     }
+
+
+
     private fun updateUIWithDetailedRecord(record: ExerciseRecord) {
+        Log.d("RecordDataFragment", "Updating UI with record data: $record")
         binding.ExersiceTimeTv.text = formatElapsedTime(record.elapsedTime)
         val distanceInKm = record.distance / 1000.0
         binding.ExersiceDistanceTv.text = String.format("%.2f km", distanceInKm)
@@ -172,25 +210,6 @@ class RecordDataFragment : Fragment() {
         return String.format("%02d:%02d:%02d", hours, minutes, seconds)
     }
 
-    private fun fetchRecentExerciseRecord(email: String?) {
-        db.collection("account").document(email!!).collection("exerciseData")
-            .orderBy("date", Query.Direction.DESCENDING) // 생성일 기준으로 내림차순
-            .limit(1)
-            .get()
-            .addOnSuccessListener { documents ->
-                if (!documents.isEmpty) {
-                    val document = documents.first() // 첫 번째 문서 가져오기
-                    val record = document.toObject(ExerciseRecord::class.java)
-
-                    // UI 업데이트 로직
-                    updateUIWithDetailedRecord(record)
-                }
-            }
-            .addOnFailureListener { exception ->
-                Log.e("Firestore", "Error getting documents: ", exception)
-            }
-    }
-
     // 날짜 포맷팅 함수
     private fun formatDate(date: Date): String {
         val dateFormat = SimpleDateFormat("yyyy년 MM월 dd일", Locale.getDefault())
@@ -220,4 +239,6 @@ class RecordDataFragment : Fragment() {
         binding.barChartAvgspeedpermin.data = barData
         binding.barChartAvgspeedpermin.invalidate() // 차트 업데이트
     }
+
+
 }

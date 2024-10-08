@@ -21,7 +21,7 @@ import java.text.SimpleDateFormat
 class HomeFragmentAdapter(
     private val context: Context,
     private val exerciseRecords: List<ExerciseRecord>,
-    private val onItemClick: (String,String) -> Unit // 클릭리스너
+    private val onItemClick: (String) -> Unit // 클릭리스너
 ) : RecyclerView.Adapter<HomeFragmentAdapter.ExerciseRecordViewHolder>() {
 
     inner class ExerciseRecordViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -55,10 +55,11 @@ class HomeFragmentAdapter(
                     .into(photoImageView)
             }
 
-            // 아이템 클릭 시 email과 date 전달
+            // 아이템 클릭 시 exerciseRecordId 전달
             itemView.setOnClickListener {
-                onItemClick(exerciseRecord.ownerEmail, exerciseRecord.date.toDate().toString())
+                onItemClick(exerciseRecord.exerciseRecordId) // exerciseRecordId 전달
             }
+
 
             exercisetypeView.setImageResource(
                 when (exerciseRecord.exerciseType) {
