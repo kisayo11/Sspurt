@@ -5,6 +5,7 @@ import com.google.firebase.Timestamp
 
 
 data class ExerciseRecord(
+    var exerciseRecordId: String = "", //운동데이터 고유식별자 ID
     var isRecording: Boolean = false, // 기록 중인지 여부
     var isPaused: Boolean = false, // 일시 중지 상태
     var elapsedTime: Long = 0, // 경과 시간
