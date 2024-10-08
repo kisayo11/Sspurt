@@ -210,7 +210,8 @@
                 android:visibility="invisible" />
 
             <ImageButton
-                android:id="@+id/empty"
+                android:visibility="invisible"
+                android:id="@+id/saveExerciseIb"
                 android:layout_width="75dp"
                 android:layout_height="75dp"
                 android:layout_weight="1"
