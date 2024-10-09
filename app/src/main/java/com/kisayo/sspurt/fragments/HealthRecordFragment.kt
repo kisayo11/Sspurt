@@ -10,6 +10,7 @@ import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.location.Location
+import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.util.Log
@@ -18,6 +19,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.health.connect.client.HealthConnectClient
@@ -33,6 +35,7 @@ import com.google.firebase.Timestamp
 import com.kisayo.sspurt.Helpers.FirestoreHelper
 import com.kisayo.sspurt.Location.ExerciseTracker
 import com.kisayo.sspurt.activities.TrackingSaveActivity
+import com.kisayo.sspurt.activities.TrackingService
 import com.kisayo.sspurt.data.ExerciseRecord
 import com.kisayo.sspurt.data.LatLngWrapper
 import com.kisayo.sspurt.data.RealTimeData
@@ -76,6 +79,19 @@ class HealthRecordFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Android 13 이상에서 POST_NOTIFICATIONS 권한 요청
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            val permissionResult = ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.POST_NOTIFICATIONS)
+            if (permissionResult == PackageManager.PERMISSION_DENIED) {
+                ActivityCompat.requestPermissions(
+                    requireActivity(),
+                    arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                    1001
+                )
+            }
+        }
+
+
         recordViewModel.isRecording.observe(viewLifecycleOwner, Observer { isRecording ->
             Log.d("HealthRecordFragment", "isRecording observed: $isRecording")
 
@@ -102,6 +118,10 @@ class HealthRecordFragment : Fragment() {
                     binding.recordAni.visibility = View.GONE
                     binding.pauseIb.visibility = View.VISIBLE
                     isAnimationFinished = true // 애니메이션 완료
+
+
+                    //Foreground Service 시작
+                    startTrackingService()
 
 
                     startRecording() // 레코딩 시작
@@ -136,6 +156,9 @@ class HealthRecordFragment : Fragment() {
         binding.stopIb.setOnLongClickListener {
             stopRecording() // 레코딩 중지
             recordViewModel.stopRecording() // ViewModel에서 레코딩 중지
+
+            // Foreground Service 중지
+            stopTrackingService()
 
             // 애니메이션 및 다음 액티비티로 이동
             val animator = ValueAnimator.ofFloat(0f, 1f)
@@ -453,6 +476,20 @@ class HealthRecordFragment : Fragment() {
                 Toast.makeText(requireContext(), "위치 권한이 필요합니다.", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    private fun startTrackingService() {
+        val startIntent = Intent(requireContext(), TrackingService::class.java)
+        startIntent.action = "ACTION_START" // 일반 서비스 시작
+        requireContext().startService(startIntent) // 일반 서비스로 시작
+    }
+
+
+
+    private fun stopTrackingService() {
+        val stopIntent = Intent(requireContext(), TrackingService::class.java)
+        stopIntent.action = "ACTION_STOP" // 서비스 종료
+        requireContext().startService(stopIntent) // 서비스 중지
     }
 
 }
