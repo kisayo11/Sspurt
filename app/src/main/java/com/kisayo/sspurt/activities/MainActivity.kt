@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -20,6 +21,8 @@ class MainActivity : AppCompatActivity() {
     val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
     private lateinit var healthConnectClient: HealthConnectClient
     private val REQUEST_CODE_BODY_SENSORS = 1 // 요청 코드 정의
+    private val REQUEST_CODE_LOCATION_PERMISSION = 1001
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,6 +31,9 @@ class MainActivity : AppCompatActivity() {
 
         //헬스커넥트 초기화
         healthConnectClient = HealthConnectClient.getOrCreate(this)
+
+        // 위치 권한 요청
+//        checkLocationPermissionAndStartService()
 
         //헬스커넥트 권한작업
         // 권한 요청
@@ -40,6 +46,7 @@ class MainActivity : AppCompatActivity() {
         else {
             // 권한이 이미 허용된 경우 헬스커넥트 데이터 읽기
             readHealthData()
+
         }
 
 
@@ -65,4 +72,43 @@ class MainActivity : AppCompatActivity() {
     private fun readHealthData(){
 
     }
+//
+//    private fun checkLocationPermissionAndStartService() {
+//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+//            ActivityCompat.checkSelfPermission(this, Manifest.permission.FOREGROUND_SERVICE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//
+//            // 권한이 없으면 권한 요청
+//            ActivityCompat.requestPermissions(
+//                this,
+//                arrayOf(
+//                    Manifest.permission.ACCESS_FINE_LOCATION,
+//                    Manifest.permission.FOREGROUND_SERVICE_LOCATION
+//                ),
+//                REQUEST_CODE_LOCATION_PERMISSION
+//            )
+//        } else {
+//            // 권한이 이미 있을 경우 서비스 시작
+//            startLocationService()
+//        }
+//    }
+//
+//    private fun startLocationService() {
+//        val serviceIntent = Intent(this, TrackingService::class.java)
+//        startForegroundService(serviceIntent) // API 26 이상에서는 startForegroundService 필요
+//    }
+//
+//    // 권한 요청에 대한 응답 처리
+//    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+//
+//        if (requestCode == REQUEST_CODE_LOCATION_PERMISSION && grantResults.isNotEmpty() &&
+//            grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
+//            // 권한이 승인된 경우 서비스 시작
+//            startLocationService()
+//        } else {
+//            // 권한이 거부된 경우
+//            Toast.makeText(this, "위치 권한이 필요합니다.", Toast.LENGTH_SHORT).show()
+//        }
+//    }
 }
+

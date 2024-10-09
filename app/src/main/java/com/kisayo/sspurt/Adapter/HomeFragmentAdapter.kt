@@ -37,7 +37,7 @@ class HomeFragmentAdapter(
 //            exerciseTypeTextView.text = exerciseRecord.exerciseType // 운동 종류
             distanceTextView.text = String.format("%.2f km", exerciseRecord.distance / 1000) // 이동 거리
 //            averageSpeedTextView.text = String.format("%.2f km/h", exerciseRecord.averageSpeed) // 평균 속도
-            averageSpeedTextView.text = formatSpeedToCoordinates(exerciseRecord.averageSpeed) // 평균 속도
+            averageSpeedTextView.text = formatSpeedToCoordinates(exerciseRecord.averageSpeed / 1000) // 평균 속도
             elapsedTimeTextView.text = formatElapsedTime(exerciseRecord.elapsedTime)
 
             // 위치 정보를 주소로 변환

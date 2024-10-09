@@ -2,6 +2,7 @@ package com.kisayo.sspurt.fragments
 
 import android.content.Intent
 import android.graphics.Color
+import android.location.Geocoder
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -9,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.BarData
@@ -23,6 +25,7 @@ import com.kisayo.sspurt.activities.MainActivity
 import com.kisayo.sspurt.data.ExerciseRecord
 import com.kisayo.sspurt.databinding.FragmentRecordDataBinding
 import com.kisayo.sspurt.utils.UserRepository
+import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -43,7 +46,23 @@ class RecordDataFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Log.d("RecordDataFragment", "onViewCreated called")
+
+        //sourceFragment 확인
+        val sourceFragment = requireActivity().intent.getStringExtra("sourceFragment")
+
+        if(sourceFragment == "LookUp"){
+            binding.postBtn.visibility = View.GONE
+            binding.deleteBtn.visibility = View.GONE
+            binding.ExerciseimageView.visibility = View.VISIBLE
+        }
+
+
+        if(sourceFragment == "HealthRecord"){
+            binding.ExerciseimageView.visibility = View.GONE
+        }
+
+
+
 
         userRepository = UserRepository(requireContext())
         barChart = binding.barChartAvgspeedpermin
@@ -62,14 +81,22 @@ class RecordDataFragment : Fragment() {
         }
         // save button
         binding.postBtn.setOnClickListener {
-            val postDialog = PostDialogFragment()
-            postDialog.show(parentFragmentManager, "postDialogFragment")
+            val dialog = PostDialogFragment()
+            val bundle = Bundle()
+            bundle.putString("exerciseRecordId", exerciseRecordId)  // 전달할 exerciseRecordId
+            dialog.arguments = bundle
+            dialog.show(parentFragmentManager, "PostDialogFragment")
         }
 
         // delete button
         binding.deleteBtn.setOnClickListener {
+            Toast.makeText(requireContext(), "길게 누르면 삭제됩니다.", Toast.LENGTH_SHORT).show()
+        }
+
+        binding.deleteBtn.setOnLongClickListener {
             val email = userRepository.getCurrentUserEmail() // 사용자 이메일 가져오기
-            deleteRecentExerciseRecord(email!!)
+            val documentId = exerciseRecordId
+            deleteExerciseRecord(email!!,documentId!!)
             binding.deleteBtn.visibility = View.INVISIBLE
 
             // 현재 액티비티 종료
@@ -79,6 +106,8 @@ class RecordDataFragment : Fragment() {
             val intent = Intent(requireContext(), MainActivity::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(intent)
+
+            true
         }
     }
 
@@ -162,6 +191,16 @@ class RecordDataFragment : Fragment() {
         binding.ExersiceMaxspeedTv.text = if (record.maxSpeed == 0.0) "0" else formatSpeedToString(record.maxSpeed)
         binding.ExersiceHeartScoreTv.text = record.heartHealthScore.toString()
         binding.ExersiceCalorieTv.text = String.format("%.2f", record.calories)
+        record.photoUrl?.let{ url ->
+            Glide.with(this).load(url).into(binding.ExerciseimageView)
+        }
+
+        val location = record.currentLocation
+        val address = location?.let { getAddress(it.latitude, it.longitude) }
+        binding.addressTv.text = address ?: "" // 위치 표시
+
+
+
 
         // 운동 타입 표시
         binding.ExersiceTypeIv.setImageResource(
@@ -177,11 +216,11 @@ class RecordDataFragment : Fragment() {
         updateBarChart(record.averageSpeed)
     }
 
-    private fun deleteRecentExerciseRecord(email: String) {
+    private fun deleteExerciseRecord(email: String, documentId : String) {
         // FirestoreHelper 인스턴스 생성 및 삭제 로직
         val firestoreHelper = FirestoreHelper()
-        firestoreHelper.deleteRecentExerciseRecord(email, onSuccess = {
-            Toast.makeText(requireContext(), "최근 운동 기록이 삭제되었습니다.", Toast.LENGTH_SHORT).show()
+        firestoreHelper.deleteExerciseRecord(email, documentId,onSuccess = {
+            Toast.makeText(requireContext(), "운동 기록이 삭제되었습니다.", Toast.LENGTH_SHORT).show()
         }, onFailure = { e ->
             Toast.makeText(requireContext(), "삭제 실패: ${e.message}", Toast.LENGTH_SHORT).show()
         })
@@ -238,6 +277,21 @@ class RecordDataFragment : Fragment() {
         barData.barWidth = 0.9f
         binding.barChartAvgspeedpermin.data = barData
         binding.barChartAvgspeedpermin.invalidate() // 차트 업데이트
+    }
+
+    private fun getAddress(latitude: Double, longitude: Double): String {
+        val geocoder = Geocoder(requireContext(), Locale.getDefault())
+        val addressLine: String
+        return try {
+            val addresses = geocoder.getFromLocation(latitude, longitude, 1)
+            addressLine = addresses?.get(0)?.getAddressLine(0) ?: "" // 첫 번째 주소 라인
+            val addressComponents = addressLine.split(" ")
+            // 성수동 정보를 반환
+            "${addressComponents[1]} ${addressComponents[2]} ${addressComponents[3]}"
+        } catch (e: IOException) {
+            e.printStackTrace()
+            "주소를 가져올 수 없습니다." // 예외 발생 시 기본 메시지 반환
+        }
     }
 
 

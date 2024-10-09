@@ -14,19 +14,23 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
+import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.DialogFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 import com.google.firebase.storage.FirebaseStorage
-import com.kisayo.sspurt.activities.MainActivity
-import com.kisayo.sspurt.data.LatLngWrapper
-import com.kisayo.sspurt.databinding.FragmentPostDialogBinding
 import com.kisayo.sspurt.Helpers.FirestoreHelper
 import com.kisayo.sspurt.Helpers.PlacesHelper
+import com.kisayo.sspurt.R
+import com.kisayo.sspurt.activities.MainActivity
+import com.kisayo.sspurt.data.ExerciseRecord
+import com.kisayo.sspurt.databinding.FragmentPostDialogBinding
 import com.kisayo.sspurt.utils.UserRepository
 import java.io.File
 import java.io.FileOutputStream
@@ -38,61 +42,86 @@ class PostDialogFragment : DialogFragment() {
     private lateinit var binding: FragmentPostDialogBinding
     private lateinit var placesHelper: PlacesHelper
     private lateinit var firestoreHelper: FirestoreHelper
+    private lateinit var firestore: FirebaseFirestore
     private lateinit var userRepository: UserRepository
     private lateinit var sharedPreferences: SharedPreferences
+    lateinit var exerciseData: ExerciseRecord
+    private lateinit var exerciseRecordId: String
+    private var isShared = false
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
 
+        firestore = FirebaseFirestore.getInstance()
         userRepository = UserRepository(requireContext())
+        exerciseRecordId = arguments?.getString("exerciseRecordId") ?: ""
 
+        // 다이얼로그에 사용할 뷰를 인플레이트
+        binding = FragmentPostDialogBinding.inflate(LayoutInflater.from(context))
+
+        // 다이얼로그 생성
         val dialog = MaterialAlertDialogBuilder(requireContext())
-            .setView(onCreateView(LayoutInflater.from(context), null, savedInstanceState))
+            .setView(binding.root) // 다이얼로그에 뷰 설정
+            .setPositiveButton("확인", null) // Positive 버튼 추가
+            .setCancelable(false) // 다이얼로그 외부 클릭 무시
             .create()
 
+        // Firestore 또는 다른 곳에서 데이터를 불러와서 exerciseData를 설정
+        exerciseData = ExerciseRecord() // Firestore에서 불러온 데이터를 여기에 설정
+
+        // 스위치 상태가 변경될 때 로그로 확인 (체크될 때마다 기록)
+        binding.shareSwitch.setOnCheckedChangeListener { _, isChecked ->
+            isShared = isChecked
+            Log.d("SwitchState", "스위치 상태 변경: isShared = $isChecked")
+        }
+
+        // 다이얼로그가 표시되었을 때 호출
         dialog.setOnShowListener {
-            // 다이얼로그의 confirm_button을 찾기
-            val confirmButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE) // AlertDialog.BUTTON_POSITIVE 사용
-            confirmButton?.setOnClickListener {
-                // 다이얼로그 종료
+            val confirmButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+            confirmButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+            confirmButton.textSize = 14f
+            val typeface=ResourcesCompat.getFont(requireContext(),R.font.pureunjeonnam)
+            confirmButton.typeface = typeface
+            // 버튼 모서리 둥글게 설정하고 패딩 추가 (버튼처럼 보이게)
+            confirmButton.setPadding(40, 20, 40, 20) // 패딩 설정
+            confirmButton.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.black))
+
+            confirmButton.setOnClickListener {
+
+                // Firestore에 저장
+                val email = userRepository.getCurrentUserEmail()
+                val db = FirebaseFirestore.getInstance()
+
+                val userRecordRef = db.collection("account")
+                    .document(email!!)
+                    .collection("exerciseData")
+                    .document(exerciseRecordId)
+
+                userRecordRef.update("isShared", isShared)
+                    .addOnSuccessListener {
+                        Log.d("Firestore", "isShared 필드가 Firestore에 성공적으로 저장되었습니다: $isShared")
+                    }
+                    .addOnFailureListener { e ->
+                        Log.e("Firestore", "isShared 필드 저장 실패: ${e.message}")
+                    }
+
+                // 다이얼로그 닫기
                 dialog.dismiss()
 
                 // 현재 액티비티 종료
-                // requireActivity().finish()
+                requireActivity().finish()
 
-                // 모든 액티비티 종료 후 메인 액티비티로 이동
+                // 메인 액티비티로 이동
                 val intent = Intent(requireContext(), MainActivity::class.java)
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
                 startActivity(intent)
             }
         }
 
-        // 사진 등록 버튼 클릭 리스너
+        // 다이얼로그의 뷰에서 버튼 클릭 리스너 설정
         binding.upBtn.setOnClickListener {
             Log.d("PostDialogFragment", "Upload button clicked")
-            showImageSelectionDialog()
+            showImageSelectionDialog() // 이미지 선택 다이얼로그 호출
         }
-
-        // 스피너 아이템 선택 리스너 추가
-        binding.locationSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
-                // 스피너에서 선택된 아이템 가져오기
-                val selectedPlace = parent.getItemAtPosition(position).toString()
-                // 선택된 장소에 대한 동작 추가
-                Toast.makeText(requireContext(), "Selected Place: $selectedPlace", Toast.LENGTH_SHORT).show()
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>) {
-                // 아무것도 선택되지 않은 경우 처리
-            }
-        }
-
-        // 저장(확인) 버튼 클릭 리스너
-        binding.confirmButton.setOnClickListener {
-            binding.locationSpinner.performClick()
-
-//            handleConfirm()  // 데이터 저장 처리
-        }
-
 
         return dialog
     }
@@ -114,54 +143,39 @@ class PostDialogFragment : DialogFragment() {
         super.onViewCreated(view, savedInstanceState)
 
 
-
-
-
         // FirestoreHelper와 PlacesHelper 초기화
         firestoreHelper = FirestoreHelper()
-        val apiKey = "AIzaSyB4bm_PKHQsTeC7iBPbuJdcRat5YpDYCUs" // 실제 API 키로 대체
-        placesHelper = PlacesHelper(requireContext(), apiKey)
-
-        // 스피너 설정 및 데이터 로드
-        fetchLocationDataAndSetupSpinner()
 
     }
 
-    private fun fetchLocationDataAndSetupSpinner() {
+    // Firestore에 isShared 값을 저장하는 함수
+    private fun saveIsSharedToFirestore(isShared: Boolean) {
         val email = userRepository.getCurrentUserEmail()
-
         if (email != null) {
-            firestoreHelper.getUserLocationData(email,
-                onSuccess = { locationWrapper ->
-                    if (locationWrapper != null) {
-                        // LatLngWrapper 객체로 주변 장소 가져와 스피너 설정
-                        fetchNearbyPlacesAndSetupSpinner(locationWrapper)
-                    } else {
-                        Log.e("PostDialogFragment", "Location data not found for user")
-                        Toast.makeText(requireContext(), "위치 데이터를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show()
-                    }
-                },
-                onFailure = { exception ->
-                    Log.e("PostDialogFragment", "Failed to fetch location data: ${exception.message}")
-                    Toast.makeText(requireContext(), "위치 데이터를 가져오는 데 실패했습니다.", Toast.LENGTH_SHORT).show()
-                }
-            )
-        } else {
-            Log.e("PostDialogFragment", "User email not found")
-            Toast.makeText(requireContext(), "사용자 이메일을 찾을 수 없습니다.", Toast.LENGTH_SHORT).show()
-        }
-    }
+            val db = FirebaseFirestore.getInstance()
+            // Firestore 컬렉션 경로
+            val userRecordRef = db.collection("account")
+                .document(email)
+                .collection("exerciseData")
+                .document(exerciseRecordId)
 
-    private fun fetchNearbyPlacesAndSetupSpinner(locationWrapper: LatLngWrapper) {
-        placesHelper.getNearbyPlaces(locationWrapper) { placeList ->
-            setupLocationSpinner(placeList)
+
+            Log.d("FirestoreSave", "Firestore 문서 경로: account/$email/exerciseData/$exerciseRecordId")
+            Log.d("FirestoreSave", "저장하기 직전 isShared 값: $isShared")
+
+
+            Log.d("FirestoreSave", "Save before isShared 값: $isShared")
+
+            userRecordRef.update("isShared", isShared)
+                .addOnSuccessListener {
+                    Log.d("Firestore", "isShared Field saved success.")
+                }
+                .addOnFailureListener { e ->
+                    Log.e("Firestore", "isShared 필드 저장 실패: ${e.message}")
+                }
+        } else {
+            Toast.makeText(requireContext(), "사용자 정보를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show()
         }
-    }
-    // 스피너 설정
-    private fun setupLocationSpinner(placeList: List<String>) {
-        val spinnerAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, placeList)
-        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        binding.locationSpinner.adapter = spinnerAdapter
     }
 
     // 이미지 선택 창 열기
@@ -179,11 +193,12 @@ class PostDialogFragment : DialogFragment() {
     }
 
     // 이미지 선택 후 결과 처리
-    private fun pickImageFromGallery(){
+    private fun pickImageFromGallery() {
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
         startActivityForResult(intent, IMAGE_PICK_CODE)
     }
-    private fun captureImage(){
+
+    private fun captureImage() {
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         startActivityForResult(intent, CAMERA_REQUEST_CODE)
     }
@@ -196,18 +211,24 @@ class PostDialogFragment : DialogFragment() {
                     val imageUri = data?.data
                     if (imageUri != null) {
                         // 이미지 URI를 비트맵으로 변환하고 압축하여 업로드
-                        val bitmap = MediaStore.Images.Media.getBitmap(requireContext().contentResolver, imageUri)
+                        val bitmap = MediaStore.Images.Media.getBitmap(
+                            requireContext().contentResolver,
+                            imageUri
+                        )
                         val getImageUri = getImageUri(bitmap) // 압축된 이미지 URI
-                        uploadPhoto(getImageUri) // Firebase에 업로드
+                        uploadPhoto(
+                            getImageUri,
+                            exerciseData.exerciseRecordId
+                        ) // exerciseRecordId 전달
 
                         // 이미지 뷰 업데이트 생략
                     }
                 }
+
                 CAMERA_REQUEST_CODE -> {
                     val imageBitmap = data?.extras?.get("data") as Bitmap
                     val imageUri = getImageUri(imageBitmap)
-                    uploadPhoto(imageUri) // URI를 업로드 함수로 넘김
-
+                    uploadPhoto(imageUri, exerciseData.exerciseRecordId) // URI를 업로드 함수로 넘김
                 }
             }
         }
@@ -215,79 +236,92 @@ class PostDialogFragment : DialogFragment() {
 
     private fun getImageUri(bitmap: Bitmap): Uri {
         val file = File(requireContext().cacheDir, "temp_photo.jpg")
-        FileOutputStream(file).use{out ->
+        FileOutputStream(file).use { out ->
             bitmap.compress(Bitmap.CompressFormat.JPEG, 80, out)
         }
         return Uri.fromFile(file)
     }
 
-    private fun uploadPhoto(imageUri: Uri) {
+    private fun uploadPhoto(imageUri: Uri, exerciseRecordId: String) {
         val email = userRepository.getCurrentUserEmail() // 현재 사용자 이메일 가져오기
 
         if (email != null) {
-            uploadImageToFirebaseStorage(imageUri, email) // Firebase Storage에 업로드 호출
+            // Firebase Storage에 업로드 호출, exerciseRecordId 전달
+            uploadImageToFirebaseStorage(imageUri, email, exerciseRecordId)
         } else {
             Toast.makeText(requireContext(), "사용자 정보가 유효하지 않습니다.", Toast.LENGTH_SHORT).show()
         }
     }
 
-    private fun uploadImageToFirebaseStorage(imageUri: Uri, email: String) {
-        val storageReference = FirebaseStorage.getInstance().getReference("images/${UUID.randomUUID()}")
-        storageReference.putFile(imageUri)
-            .addOnSuccessListener { taskSnapshot ->
+    // Firebase Storage에 이미지 업로드 및 Firestore에 URL 저장
+    private fun uploadImageToFirebaseStorage(
+        imageUri: Uri,
+        email: String,
+        exerciseRecordId: String
+    ) {
+        val storageReference =
+            FirebaseStorage.getInstance().getReference("images/${UUID.randomUUID()}")
+
+        // Firebase Storage에 이미지 파일 업로드
+        storageReference.putFile(imageUri).addOnSuccessListener {
+                // 업로드 성공 로그
+                Log.d("UploadImage", "Image successfully uploaded to Firebase Storage.")
+
+                // 업로드 성공 후, 다운로드 URL 획득
                 storageReference.downloadUrl.addOnSuccessListener { uri ->
+                    val downloadUrl = uri.toString() // 이미지 다운로드 URL
+                    Log.d("DownloadURL", "Download URL successfully obtained: $downloadUrl")
+
                     // Firestore에 URL 저장
-                    FirestoreHelper().saveImageUrl(email, uri.toString(),
-                        onSuccess = {
-                            // UI 스레드에서 토스트 표시
-                            requireActivity().runOnUiThread {
-                                Toast.makeText(requireContext(), "이미지가 Firestore에 저장되었습니다.", Toast.LENGTH_SHORT).show()
-                            }
-                        },
-                        onFailure = { exception ->
-                            Log.e("Firestore", "Failed to save image URL: ${exception.message}")
-                            // UI 스레드에서 토스트 표시
-                            requireActivity().runOnUiThread {
-                                Toast.makeText(requireContext(), "이미지 URL 저장 실패", Toast.LENGTH_SHORT).show()
-                            }
-                        }
-                    )
+                    saveImageUrlToFirestore(downloadUrl)
+                }.addOnFailureListener { exception ->
+                    // 다운로드 URL을 가져오는 데 실패한 경우
+                    Log.e("DownloadURL", "Failed to get download URL: ${exception.message}")
+                    Toast.makeText(requireContext(), "이미지 URL을 가져오는 데 실패했습니다.", Toast.LENGTH_SHORT)
+                        .show()
                 }
-            }
-            .addOnFailureListener { exception ->
+            }.addOnFailureListener { exception ->
+                // 이미지 업로드 실패 로그
                 Log.e("UploadImage", "Failed to upload image: ${exception.message}")
-                // UI 스레드에서 토스트 표시
-                requireActivity().runOnUiThread {
-                    Toast.makeText(requireContext(), "이미지 업로드 실패", Toast.LENGTH_SHORT).show()
-                }
+                Toast.makeText(requireContext(), "이미지 업로드 실패", Toast.LENGTH_SHORT).show()
             }
     }
 
-    // 저장 버튼 눌렀을 때의 처리
-//    private fun handleConfirm() {
-//        val builder = AlertDialog.Builder(requireContext())
-//        builder.setMessage("사진을 저장하시겠습니까?")
-//        builder.setPositiveButton("예") { dialog, _ ->
-//            // 저장 로직 수행
-//            dialog.dismiss()
-//        }
-//        builder.setNegativeButton("아니요") { dialog, _ ->
-//            dialog.dismiss()
-//        }
-//        builder.show() // 두 번째 다이얼로그 표시
-//
-//
-//        val isShared = binding.shareSwitch.isChecked  // 공유 여부
-//        val locationTag = binding.locationSpinner.selectedItem.toString()  // 선택한 위치 태그
-//        val photoUrl = selectedImageUri.toString()  // 선택한 이미지의 URI
-//
-//        Log.d("PostDialogFragment", "Shared: $isShared, Location: $locationTag, Photo URL: $photoUrl")
-//
-//        // 데이터를 서버(MySQL 등)에 저장하거나 처리하는 로직 추가
-//        // 여기서 MySQL에 저장하는 로직을 추가해야 함 (Retrofit, HttpURLConnection 등 사용 가능)
-//    }
+    // Firestore에 다운로드 URL 저장
+    private fun saveImageUrlToFirestore(downloadUrl: String) {
+        val email = userRepository.getCurrentUserEmail() // 현재 로그인된 사용자의 이메일 가져오기
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        if (email != null) {
+            val db = FirebaseFirestore.getInstance()
+
+            // Firestore 문서 경로 설정
+            val userRecordRef = db.collection("account")
+                .document(email)
+                .collection("exerciseData")
+                .document(exerciseRecordId) // exerciseRecordId를 문서 ID로 사용
+
+            // 다운로드 URL을 Firestore 문서에 저장
+            userRecordRef.update("photoUrl", downloadUrl)
+                .addOnSuccessListener {
+                    Log.d("Firestore", "Image URL saved successfully.")
+                    Toast.makeText(requireContext(), "이미지가 저장되었습니다.", Toast.LENGTH_SHORT).show()
+                }
+                .addOnFailureListener { exception ->
+                    Log.e("Firestore", "Failed to save image URL: ${exception.message}")
+                    Toast.makeText(requireContext(), "이미지 URL 저장 실패", Toast.LENGTH_SHORT).show()
+                }
+        } else {
+            Log.e("Firestore", "User email is null. Cannot proceed with Firestore operations.")
+            Toast.makeText(requireContext(), "사용자 이메일을 찾을 수 없습니다.", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == IMAGE_PICK_CODE || requestCode == CAMERA_REQUEST_CODE) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {

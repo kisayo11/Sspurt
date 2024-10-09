@@ -59,7 +59,7 @@ class HomeFragment : Fragment() {
         val Email = repository.getCurrentUserEmail()
         if (Email != null) {
             firestore.collection("account").document(Email).collection("exerciseData")
-                .orderBy("date", Query.Direction.DESCENDING).limit(5).get()
+                .orderBy("date", Query.Direction.DESCENDING).limit(8).get()
                 .addOnSuccessListener { documents ->
                     for (document in documents) {
                         val exerciseRecord = document.toObject(ExerciseRecord::class.java)
