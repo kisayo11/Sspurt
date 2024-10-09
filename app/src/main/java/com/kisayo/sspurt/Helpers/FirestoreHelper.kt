@@ -36,35 +36,59 @@ class FirestoreHelper {
     }
 
     // 최근 운동 기록 삭제
-    fun deleteRecentExerciseRecord(email: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
-        val recentRecordRef = db.collection("account").document(email).collection("exerciseData")
-            .orderBy("date", Query.Direction.DESCENDING)
-            .limit(1)
+    fun deleteExerciseRecord(email: String, documentId: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+        // 특정 문서 ID를 이용해서 삭제
+        val specificRecordRef = db.collection("account").document(email).collection("exerciseData").document(documentId)
 
-        recentRecordRef.get()
-            .addOnSuccessListener { documents ->
-                Log.d("FirestoreHelper", "문서 수: ") // 문서 수 확인
-                if (documents.isEmpty) {
-                    Log.d("FirestoreHelper", "no record for delete")
-                    onFailure(Exception("삭제할 기록이 없습니다."))
-                    return@addOnSuccessListener
-                }
-
-                for (document in documents) {
-                    Log.d("FirestoreHelper", "삭제할 문서 ID: ${document.id}, timestamp: ${document.getTimestamp("timestamp")}") // 문서 정보 출력
-                    db.collection("account").document(email).collection("exerciseData").document(document.id).delete()
-                        .addOnSuccessListener { onSuccess() }
-                        .addOnFailureListener { e ->
-                            Log.e("FirestoreHelper", "삭제 실패: ${e.message}")
-                            onFailure(e)
-                        }
-                }
+        specificRecordRef.delete()
+            .addOnSuccessListener {
+                Log.d("FirestoreHelper", "문서 삭제 성공: $documentId")
+                onSuccess()
             }
             .addOnFailureListener { e ->
-                Log.e("FirestoreHelper", "문서 가져오기 실패: ${e.message}")
+                Log.e("FirestoreHelper", "문서 삭제 실패: ${e.message}")
                 onFailure(e)
             }
     }
+
+
+
+
+
+
+
+
+
+
+//    fun deleteRecentExerciseRecord(email: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+//        val recentRecordRef = db.collection("account").document(email).collection("exerciseData")
+//            .orderBy("date", Query.Direction.DESCENDING)
+//            .limit(1)
+//
+//        recentRecordRef.get()
+//            .addOnSuccessListener { documents ->
+//                Log.d("FirestoreHelper", "문서 수: ") // 문서 수 확인
+//                if (documents.isEmpty) {
+//                    Log.d("FirestoreHelper", "no record for delete")
+//                    onFailure(Exception("삭제할 기록이 없습니다."))
+//                    return@addOnSuccessListener
+//                }
+//
+//                for (document in documents) {
+//                    Log.d("FirestoreHelper", "삭제할 문서 ID: ${document.id}, timestamp: ${document.getTimestamp("timestamp")}") // 문서 정보 출력
+//                    db.collection("account").document(email).collection("exerciseData").document(document.id).delete()
+//                        .addOnSuccessListener { onSuccess() }
+//                        .addOnFailureListener { e ->
+//                            Log.e("FirestoreHelper", "삭제 실패: ${e.message}")
+//                            onFailure(e)
+//                        }
+//                }
+//            }
+//            .addOnFailureListener { e ->
+//                Log.e("FirestoreHelper", "문서 가져오기 실패: ${e.message}")
+//                onFailure(e)
+//            }
+//    }
 
     fun saveImageUrl(email: String, imageUrl: String, exerciseRecordId: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
         // 이미 생성된 문서 경로 사용

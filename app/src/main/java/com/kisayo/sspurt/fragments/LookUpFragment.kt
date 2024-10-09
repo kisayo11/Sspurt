@@ -46,12 +46,16 @@ class LookUpFragment : Fragment() {
 
     private fun fetchExerciseRecords() {
         firestore.collectionGroup("exerciseData")
+            .whereEqualTo("isShared", true)  // isShared가 true인 데이터만 가져옴
             .orderBy("date", Query.Direction.DESCENDING)
-            .limit(10)
+            .limit(14)
             .get()
             .addOnSuccessListener { documents ->
                 Log.d("LookUpFragment", "Exercise records fetched successfully.")
+                Log.d("LookUpFragment", "Documents fetched: ${documents.size()}") // 가져온 문서 수 로그
+
                 for (document in documents) {
+                    Log.d("LookUpFragment", "Fetched Document: ${document.data}") // 각 문서 데이터 출력
                     val exerciseRecord = document.toObject(ExerciseRecord::class.java)
                     exerciseRecords.add(exerciseRecord)
                 }

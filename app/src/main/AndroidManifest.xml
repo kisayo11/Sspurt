@@ -50,9 +50,6 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyB4bm_PKHQsTeC7iBPbuJdcRat5YpDYCUs" />
         <activity
-            android:name=".LocationRecordActivity"
-            android:exported="false" />
-        <activity
             android:name=".activities.TrackingSaveActivity"
             android:exported="false" />
         <activity

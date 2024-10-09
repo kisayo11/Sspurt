@@ -37,13 +37,4 @@
 
     <!-- 공유하기 스위치 추가 -->
 
-    <Button
-        android:id="@+id/confirm_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:backgroundTint="@color/black"
-        android:text="확인"
-        android:layout_gravity="end"
-        />
-
 </LinearLayout>

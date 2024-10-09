@@ -14,15 +14,20 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.DialogFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 import com.google.firebase.storage.FirebaseStorage
 import com.kisayo.sspurt.Helpers.FirestoreHelper
 import com.kisayo.sspurt.Helpers.PlacesHelper
+import com.kisayo.sspurt.R
 import com.kisayo.sspurt.activities.MainActivity
 import com.kisayo.sspurt.data.ExerciseRecord
 import com.kisayo.sspurt.databinding.FragmentPostDialogBinding
@@ -37,52 +42,86 @@ class PostDialogFragment : DialogFragment() {
     private lateinit var binding: FragmentPostDialogBinding
     private lateinit var placesHelper: PlacesHelper
     private lateinit var firestoreHelper: FirestoreHelper
+    private lateinit var firestore: FirebaseFirestore
     private lateinit var userRepository: UserRepository
     private lateinit var sharedPreferences: SharedPreferences
     lateinit var exerciseData: ExerciseRecord
     private lateinit var exerciseRecordId: String
-
+    private var isShared = false
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
 
+        firestore = FirebaseFirestore.getInstance()
         userRepository = UserRepository(requireContext())
         exerciseRecordId = arguments?.getString("exerciseRecordId") ?: ""
 
+        // 다이얼로그에 사용할 뷰를 인플레이트
+        binding = FragmentPostDialogBinding.inflate(LayoutInflater.from(context))
 
-        val dialog = MaterialAlertDialogBuilder(requireContext()).setView(
-                onCreateView(
-                    LayoutInflater.from(context), null, savedInstanceState
-                )
-            ).create()
+        // 다이얼로그 생성
+        val dialog = MaterialAlertDialogBuilder(requireContext())
+            .setView(binding.root) // 다이얼로그에 뷰 설정
+            .setPositiveButton("확인", null) // Positive 버튼 추가
+            .setCancelable(false) // 다이얼로그 외부 클릭 무시
+            .create()
 
-        exerciseData = ExerciseRecord() // 여기에 Firestore 또는 다른 곳에서 불러온 데이터로 설정
+        // Firestore 또는 다른 곳에서 데이터를 불러와서 exerciseData를 설정
+        exerciseData = ExerciseRecord() // Firestore에서 불러온 데이터를 여기에 설정
 
+        // 스위치 상태가 변경될 때 로그로 확인 (체크될 때마다 기록)
+        binding.shareSwitch.setOnCheckedChangeListener { _, isChecked ->
+            isShared = isChecked
+            Log.d("SwitchState", "스위치 상태 변경: isShared = $isChecked")
+        }
+
+        // 다이얼로그가 표시되었을 때 호출
         dialog.setOnShowListener {
-            // 다이얼로그의 confirm_button을 찾기
-            val confirmButton =
-                dialog.getButton(AlertDialog.BUTTON_POSITIVE) // AlertDialog.BUTTON_POSITIVE 사용
+            val confirmButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+            confirmButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+            confirmButton.textSize = 14f
+            val typeface=ResourcesCompat.getFont(requireContext(),R.font.pureunjeonnam)
+            confirmButton.typeface = typeface
+            // 버튼 모서리 둥글게 설정하고 패딩 추가 (버튼처럼 보이게)
+            confirmButton.setPadding(40, 20, 40, 20) // 패딩 설정
+            confirmButton.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.black))
+
             confirmButton.setOnClickListener {
-                // 다이얼로그 종료
+
+                // Firestore에 저장
+                val email = userRepository.getCurrentUserEmail()
+                val db = FirebaseFirestore.getInstance()
+
+                val userRecordRef = db.collection("account")
+                    .document(email!!)
+                    .collection("exerciseData")
+                    .document(exerciseRecordId)
+
+                userRecordRef.update("isShared", isShared)
+                    .addOnSuccessListener {
+                        Log.d("Firestore", "isShared 필드가 Firestore에 성공적으로 저장되었습니다: $isShared")
+                    }
+                    .addOnFailureListener { e ->
+                        Log.e("Firestore", "isShared 필드 저장 실패: ${e.message}")
+                    }
+
+                // 다이얼로그 닫기
                 dialog.dismiss()
 
-//                 현재 액티비티 종료
-                 requireActivity().finish()
+                // 현재 액티비티 종료
+                requireActivity().finish()
 
-                // 모든 액티비티 종료 후 메인 액티비티로 이동
+                // 메인 액티비티로 이동
                 val intent = Intent(requireContext(), MainActivity::class.java)
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
                 startActivity(intent)
             }
         }
 
-        // 사진 등록 버튼 클릭 리스너
+        // 다이얼로그의 뷰에서 버튼 클릭 리스너 설정
         binding.upBtn.setOnClickListener {
             Log.d("PostDialogFragment", "Upload button clicked")
-            showImageSelectionDialog()
+            showImageSelectionDialog() // 이미지 선택 다이얼로그 호출
         }
-
-
-
 
         return dialog
     }
@@ -109,7 +148,35 @@ class PostDialogFragment : DialogFragment() {
 
     }
 
+    // Firestore에 isShared 값을 저장하는 함수
+    private fun saveIsSharedToFirestore(isShared: Boolean) {
+        val email = userRepository.getCurrentUserEmail()
+        if (email != null) {
+            val db = FirebaseFirestore.getInstance()
+            // Firestore 컬렉션 경로
+            val userRecordRef = db.collection("account")
+                .document(email)
+                .collection("exerciseData")
+                .document(exerciseRecordId)
 
+
+            Log.d("FirestoreSave", "Firestore 문서 경로: account/$email/exerciseData/$exerciseRecordId")
+            Log.d("FirestoreSave", "저장하기 직전 isShared 값: $isShared")
+
+
+            Log.d("FirestoreSave", "Save before isShared 값: $isShared")
+
+            userRecordRef.update("isShared", isShared)
+                .addOnSuccessListener {
+                    Log.d("Firestore", "isShared Field saved success.")
+                }
+                .addOnFailureListener { e ->
+                    Log.e("Firestore", "isShared 필드 저장 실패: ${e.message}")
+                }
+        } else {
+            Toast.makeText(requireContext(), "사용자 정보를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show()
+        }
+    }
 
     // 이미지 선택 창 열기
     private fun showImageSelectionDialog() {
@@ -237,7 +304,7 @@ class PostDialogFragment : DialogFragment() {
             userRecordRef.update("photoUrl", downloadUrl)
                 .addOnSuccessListener {
                     Log.d("Firestore", "Image URL saved successfully.")
-                    Toast.makeText(requireContext(), "이미지 URL이 Firestore에 저장되었습니다.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "이미지가 저장되었습니다.", Toast.LENGTH_SHORT).show()
                 }
                 .addOnFailureListener { exception ->
                     Log.e("Firestore", "Failed to save image URL: ${exception.message}")

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/record_data"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -12,18 +11,27 @@
         android:layout_height="wrap_content"
         android:background="@color/white"
         android:orientation="vertical">
-
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#fff9f9"
+    android:orientation="vertical">
         <ImageView
-            android:layout_width="match_parent"
+            android:id="@+id/ExerciseimageView"
+            android:layout_width="wrap_content"
             android:layout_height="300dp"
-            android:visibility="gone"
-            />
-
+            android:layout_gravity="center"
+            android:layout_margin="8dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/logo_sspurt"
+            android:visibility="visible" />
+</LinearLayout>
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp">
+            android:layout_margin="8dp">
+
             <TextView
                 android:id="@+id/ExersiceDate_tv"
                 android:layout_width="200dp"
@@ -31,24 +39,25 @@
                 android:paddingTop="4dp"
                 android:text="2024년 10월 02일 수요일"
                 android:textSize="14sp" />
+
             <TextView
                 android:id="@+id/address_tv"
                 style="@style/basicFontStyle"
                 android:layout_width="280dp"
                 android:layout_height="60dp"
+                android:layout_below="@id/ExersiceDate_tv"
                 android:layout_marginBottom="16dp"
                 android:gravity="center_vertical"
                 android:maxLines="2"
-                android:layout_below="@id/ExersiceDate_tv"
                 android:text="서울시 성동구 성수동"
                 android:textColor="@color/black"
                 android:textSize="14sp" />
 
             <ImageView
                 android:id="@+id/ExersiceType_iv"
-                android:layout_marginRight="5dp"
                 android:layout_width="100dp"
                 android:layout_height="75dp"
+                android:layout_marginRight="5dp"
                 android:layout_toRightOf="@+id/address_tv"
                 android:background="#fff9f9"
                 android:src="@drawable/icon_running100" />
@@ -225,10 +234,9 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
                     android:layout_marginTop="16dp"
-                    android:padding="16dp"
-                    >
+                    android:gravity="center_vertical"
+                    android:padding="16dp">
 
                     <Button
                         android:id="@+id/delete_btn"
@@ -238,6 +246,7 @@
                         android:layout_weight="1"
                         android:backgroundTint="@android:color/holo_red_dark"
                         android:text="삭제하기" />
+
                     <Button
                         android:id="@+id/post_btn"
                         android:layout_width="0dp"

@@ -25,9 +25,7 @@ class LookupFragmentAdapter(
     inner class ExerciseRecordViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val nicknameTextView: TextView = itemView.findViewById(R.id.nickname_tv)
         private val exercisetypeView: ImageView = itemView.findViewById(R.id.exerciseType_cv)
-        private val distanceTextView: TextView =
-            itemView.findViewById(R.id.ExerciseDistance_tv_item)
-
+        private val distanceTextView: TextView = itemView.findViewById(R.id.ExerciseDistance_tv_item)
         //private val averageSpeedTextView: TextView = itemView.findViewById(R.id.ExerciseSpeed_tv_item)
         private val elapsedTimeTextView: TextView = itemView.findViewById(R.id.ExerciseTime_tv_item)
         private val locationTextView: TextView = itemView.findViewById(R.id.locationTag)
@@ -139,10 +137,12 @@ class LookupFragmentAdapter(
     }
 
     private fun formatElapsedTime(elapsedTime: Long): String {
-        val hours = (elapsedTime / 3600000).toInt()
-        val minutes = (elapsedTime % 3600000 / 60000).toInt()
-        val seconds = (elapsedTime % 60000 / 1000).toInt()
-        return String.format("%02d:%02d:%02d", hours, minutes, seconds) // HH:mm:ss 형식으로 포맷
+        // 초를 00:00:00으로 변환
+        val hours = (elapsedTime / 3600) % 24
+        val minutes = (elapsedTime / 60) % 60
+        val seconds = elapsedTime % 60
+
+        return String.format("%02d:%02d:%02d", hours, minutes, seconds)
     }
 
     // 평균 속도를 "00'00''" 형식으로 변환하는 함수

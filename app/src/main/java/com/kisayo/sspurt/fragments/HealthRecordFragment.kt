@@ -17,6 +17,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -108,6 +109,14 @@ class HealthRecordFragment : Fragment() {
         binding.recordAni.setOnClickListener {
             binding.recordAni.isEnabled = false // 버튼 비활성화
             isAnimationFinished = false // 애니메이션 시작 시 플래그 초기화
+
+            // 카운트다운 애니메이션 시작 시 배경 어둡게 처리
+            val window = requireActivity().window
+            val layoutParams = window.attributes
+            layoutParams.dimAmount = 0.5f // 배경을 어둡게 처리
+            window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+            window.attributes = layoutParams
+
             binding.countdownAni.visibility = View.VISIBLE
             binding.countdownAni.playAnimation()
 
@@ -119,14 +128,14 @@ class HealthRecordFragment : Fragment() {
                     binding.pauseIb.visibility = View.VISIBLE
                     isAnimationFinished = true // 애니메이션 완료
 
+                    // 배경을 다시 밝게 처리
+                    layoutParams.dimAmount = 0f
+                    window.attributes = layoutParams
 
                     //Foreground Service 시작
                     startTrackingService()
-
-
                     startRecording() // 레코딩 시작
                     recordViewModel.startRecording() // ViewModel에서 레코딩 시작
-
                 }
             })
             requestCurrentLocation() // 위치 요청 추가
