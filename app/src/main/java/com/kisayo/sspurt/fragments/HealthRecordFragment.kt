@@ -367,13 +367,19 @@ class HealthRecordFragment : Fragment() {
     private fun createLocationRequest(): LocationRequest {
         Log.d("LocationRequest", "Requesting location updates")
         return LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 1000)
-            .setIntervalMillis(1000).build()
+            .setIntervalMillis(1000)
+            .setMinUpdateDistanceMeters(5f)
+            .build()
     }
 
     private val locationCallback = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
             if (locationResult.locations.isNotEmpty()) {
                 val currentLocation = locationResult.locations.last()
+
+                // 최소 이동 거리 설정 (예: 5미터)
+                val MIN_DISTANCE_THRESHOLD = 5.0 // 미터 단위
+
                 exerciseData.currentLocation =
                     LatLngWrapper(currentLocation.latitude, currentLocation.longitude)
 
@@ -394,32 +400,49 @@ class HealthRecordFragment : Fragment() {
                 if (!exerciseData.isPaused) {
                     previousLocation?.let {
                         val distance = it.distanceTo(currentLocation) // 두 위치 간의 거리 (미터)
-                        totalDistance += distance // 총 이동 거리 업데이트
-                        exerciseData.distance = totalDistance // ExerciseData에 총 거리 업데이트
+
+                        // 최소 이동 거리 설정 (예: 5미터)
+                        val MIN_DISTANCE_THRESHOLD = 5.0 // 미터 단위
+
+                        // 이동 거리가 5미터 미만이면 무시
+                        if (distance >= MIN_DISTANCE_THRESHOLD) {
+                            totalDistance += distance // 총 이동 거리 업데이트
+                            exerciseData.distance = totalDistance // ExerciseData에 총 거리 업데이트
+                        }
                     }
-                    // 현재 위치를 이전 위치로 업데이트
                     previousLocation = currentLocation
                 } else {
                     previousLocation = currentLocation
                 }
 
+
                 // 현재 속도 계산
                 val speed = currentLocation.speed // m/s
-                val speedKmh = speed * 3.6 // km/h로 변환
-                exerciseData.currentSpeed = speedKmh.toDouble()
+                val speedKmh = currentLocation.speed * 3.6 // km/h로 변환
 
-                // 최고 속도 갱신
-                if (speedKmh > exerciseData.maxSpeed) {
-                    exerciseData.maxSpeed = speedKmh.toDouble() // 최고 속도 갱신
+                // 최소, 최대 속도 필터링 (예: 0km/h ~ 60km/h 범위)
+                if (speedKmh in 0.0..60.0) {
+                    exerciseData.currentSpeed = speedKmh.toDouble()
+
+                    // 최고 속도 갱신
+                    if (speedKmh > exerciseData.maxSpeed) {
+                        exerciseData.maxSpeed = speedKmh.toDouble()
+                    }
                 }
 
                 // 현재 속도를 분속으로 변환 (min/km로 변환)
-                val currentPace = if (speedKmh > 0) 60 / speedKmh else 0.0 // 분/km
+                val currentPace = if (speedKmh > 0.1) 60 / speedKmh else 0.0 // 너무 낮은 속도는 무시
                 val paceMinutes = currentPace.toInt() // 분
                 val paceSeconds = ((currentPace - paceMinutes) * 60).toInt() // 초
 
-                // UI 업데이트
-                binding.tv4.text = String.format("%d' %02d\"", paceMinutes, paceSeconds)
+// UI 업데이트
+                binding.tv4.text = if (speedKmh > 0.1) {
+                    String.format("%d' %02d\"", paceMinutes, paceSeconds)
+                } else {
+                    "0' 00\"" // 너무 낮은 속도일 때는 0' 00"로 표시
+                }
+
+
                 // 이동 거리 및 평균 속도 업데이트
                 updateUI() // 이동 거리 및 평균 속도 업데이트 호출
 
