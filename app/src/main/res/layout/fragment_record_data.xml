@@ -57,7 +57,8 @@
                 android:id="@+id/ExersiceType_iv"
                 android:layout_width="100dp"
                 android:layout_height="75dp"
-
+                android:padding="16dp"
+                android:scaleType="fitCenter"
                 android:layout_alignParentRight="true"
                 android:layout_toRightOf="@+id/address_tv"
                 android:background="#fff9f9"
@@ -83,7 +84,9 @@
                         android:layout_margin="4dp"
                         android:layout_weight="1"
                         android:background="#fff9f9"
-                        android:src="@drawable/outline_timer_24" />
+                        android:padding="16dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/timer_50" />
 
                     <ImageView
                         android:layout_width="80dp"
@@ -91,7 +94,9 @@
                         android:layout_margin="4dp"
                         android:layout_weight="1"
                         android:background="#fff9f9"
-                        android:src="@drawable/distance100" />
+                        android:padding="16dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/distance50" />
 
                     <ImageView
                         android:layout_width="80dp"
@@ -99,7 +104,9 @@
                         android:layout_margin="4dp"
                         android:layout_weight="1"
                         android:background="#fff9f9"
-                        android:src="@drawable/icons_speed100" />
+                        android:padding="16dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/icons_speed50" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -152,7 +159,9 @@
                         android:layout_margin="4dp"
                         android:layout_weight="1"
                         android:background="#fff9f9"
-                        android:src="@drawable/icons_maxspeed100" />
+                        android:padding="16dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/icons_maxspeed50" />
 
                     <ImageView
                         android:layout_width="80dp"
@@ -160,7 +169,9 @@
                         android:layout_margin="4dp"
                         android:layout_weight="1"
                         android:background="#fff9f9"
-                        android:src="@drawable/icons_heart100" />
+                        android:padding="16dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/icons_heart50" />
 
                     <ImageView
                         android:layout_width="80dp"
@@ -168,6 +179,8 @@
                         android:layout_margin="4dp"
                         android:layout_weight="1"
                         android:background="#fff9f9"
+                        android:padding="16dp"
+                        android:scaleType="fitCenter"
                         android:src="@drawable/icons_calorie" />
                 </LinearLayout>
 
@@ -239,21 +252,26 @@
                     android:gravity="center_vertical"
                     android:padding="16dp">
 
-                    <Button
+                    <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/delete_btn"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="36dp"
+                        android:background="@drawable/rectangle_databtndel"
                         android:layout_weight="1"
-                        android:backgroundTint="@android:color/holo_red_dark"
+                        android:textColor="@color/white"
+                        android:backgroundTint="@null"
                         android:text="삭제하기" />
 
-                    <Button
+                    <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/post_btn"
                         android:layout_width="0dp"
+                        android:background="@drawable/rectangle_databtn"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="36dp"
                         android:layout_weight="1"
+                        android:textColor="@color/white"
+                        android:backgroundTint="@null"
                         android:text="저장하기" />
                 </LinearLayout>
 

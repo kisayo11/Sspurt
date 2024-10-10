@@ -15,8 +15,8 @@
 
         <ImageView
             android:id="@+id/exersicePic_iv_item"
-            android:layout_width="120dp"
-            android:layout_height="150dp"
+            android:layout_width="110dp"
+            android:layout_height="110dp"
             android:layout_alignParentRight="true"
             android:scaleType="centerCrop"
             android:src="@drawable/logo_sspurt"
@@ -29,7 +29,7 @@
             android:background="#CADACB"
             android:layout_alignParentLeft="true"
             android:padding="24dp"
-            android:scaleType="centerInside"
+            android:scaleType="centerCrop"
             android:src="@drawable/icon_running100" />
 
         <RelativeLayout
