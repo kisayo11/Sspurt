@@ -18,6 +18,7 @@
         android:fontFamily="@font/pureunjeonnam_bold"
         android:gravity="center_horizontal|top"
         android:text="@string/hello"
+        android:textColor="#253f8e"
         android:textAppearance="@style/hello" />
 
     <EditText
@@ -135,7 +136,7 @@
                 android:layout_height="45dp"
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="57dp"
-                android:layout_marginBottom="36dp"
+                android:layout_marginBottom="72dp"
                 android:checked="true"
                 android:src="@drawable/loginbutton" />
 
