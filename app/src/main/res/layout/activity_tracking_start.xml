@@ -15,7 +15,7 @@
         android:layout_marginTop="150dp"
         android:layout_marginBottom="4dp"
         android:fontFamily="@font/pureunjeonnam_bold"
-        android:text="운동 시작"
+        android:text="운동을 선택하세요"
         android:textSize="24sp" />
 
     <ImageView
@@ -84,16 +84,16 @@
         </RelativeLayout>
     </LinearLayout>
 
-    <com.google.android.material.materialswitch.MaterialSwitch
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/ib_layout"
-        android:layout_alignParentRight="true"
-        android:layout_marginTop="24dp"
-        android:layout_marginRight="55dp"
-        android:checked="true"
-        android:fontFamily="@font/pureunjeonnam"
-        android:text="위치확인 skip"
-        android:textSize="18sp" />
+<!--    <com.google.android.material.materialswitch.MaterialSwitch-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_below="@id/ib_layout"-->
+<!--        android:layout_alignParentRight="true"-->
+<!--        android:layout_marginTop="24dp"-->
+<!--        android:layout_marginRight="55dp"-->
+<!--        android:checked="true"-->
+<!--        android:fontFamily="@font/pureunjeonnam"-->
+<!--        android:text="위치확인 skip"-->
+<!--        android:textSize="18sp" />-->
     <!--    틴트를 바꾸고 싶은데 안됨... ㅠㅠ-->
 </RelativeLayout>
