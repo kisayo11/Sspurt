@@ -123,7 +123,7 @@ class TrackingService : Service() {
         return NotificationCompat.Builder(this, "tracking_channel")
             .setContentTitle("Sspurt")
             .setContentText("운동 추적중입니다.")
-            .setSmallIcon(R.drawable.logo_sspurt) // 아이콘 설정
+            .setSmallIcon(R.drawable.noti_bar_logo) // 아이콘 설정
             .setContentIntent(pendingIntent)
             .setPriority(NotificationCompat.PRIORITY_LOW)
             .build()

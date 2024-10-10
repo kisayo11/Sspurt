@@ -97,7 +97,7 @@ class RecordDataFragment : Fragment() {
             val email = userRepository.getCurrentUserEmail() // 사용자 이메일 가져오기
             val documentId = exerciseRecordId
             deleteExerciseRecord(email!!,documentId!!)
-            binding.deleteBtn.visibility = View.INVISIBLE
+
 
             // 현재 액티비티 종료
             requireActivity().finish()

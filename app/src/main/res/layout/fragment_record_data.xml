@@ -24,7 +24,7 @@
             android:layout_margin="8dp"
             android:scaleType="centerCrop"
             android:src="@drawable/logo_sspurt"
-            android:visibility="visible" />
+            android:visibility="gone" />
 </LinearLayout>
 
         <RelativeLayout
@@ -57,7 +57,8 @@
                 android:id="@+id/ExersiceType_iv"
                 android:layout_width="100dp"
                 android:layout_height="75dp"
-                android:layout_marginRight="5dp"
+
+                android:layout_alignParentRight="true"
                 android:layout_toRightOf="@+id/address_tv"
                 android:background="#fff9f9"
                 android:src="@drawable/icon_running100" />
