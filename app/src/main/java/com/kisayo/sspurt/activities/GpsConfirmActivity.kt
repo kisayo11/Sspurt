@@ -2,7 +2,9 @@ package com.kisayo.sspurt.activities
 
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.appbar.AppBarLayout
 import com.kisayo.sspurt.R
 import com.kisayo.sspurt.databinding.ActivityGpsConfirmBinding
 import com.kisayo.sspurt.fragments.HealthRecordFragment
@@ -13,11 +15,6 @@ class GpsConfirmActivity : AppCompatActivity() {
     private lateinit var mapFragment: MapFragment
     private lateinit var healthRecordFragment: HealthRecordFragment
     private lateinit var sharedPreferences: SharedPreferences
-
-
-
-
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,6 +29,12 @@ class GpsConfirmActivity : AppCompatActivity() {
 
         // MapFragment 초기화 및 추가
         mapFragment = MapFragment.newInstance(true)
+
+        binding.root.post {
+            val appBarLayout = findViewById<AppBarLayout>(R.id.appbar_layout)
+            appBarLayout?.visibility = View.GONE // 앱바 숨기기
+        }
+
 
         supportFragmentManager.beginTransaction()
             .replace(R.id.map_fragment_container, mapFragment)

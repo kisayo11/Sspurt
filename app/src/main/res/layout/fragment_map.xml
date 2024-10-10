@@ -15,6 +15,7 @@ android:id="@+id/appbar_layout"
 app:layout_constraintTop_toTopOf="parent"
 android:layout_width="match_parent"
 android:layout_height="wrap_content"
+android:visibility="visible"
 android:background="@color/white">
 
 <com.google.android.material.appbar.MaterialToolbar
@@ -26,6 +27,7 @@ android:background="@color/white">
     app:navigationIcon="@drawable/baseline_search_24">
 
     <EditText
+        android:id="@+id/searching"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/rectangle_1"

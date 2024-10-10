@@ -29,8 +29,8 @@
 
     <LinearLayout
         android:id="@+id/ib_layout"
-        android:layout_width="300dp"
-        android:layout_height="300dp"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
         android:layout_below="@id/iv_pick"
         android:layout_centerHorizontal="true"
         android:orientation="horizontal"
@@ -40,60 +40,56 @@
 
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/trackingstartbg">
+            android:background="@drawable/trackingstartbgsqure">
 
             <ImageButton
                 android:id="@+id/ib_hiking"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_margin="24dp"
-                android:background="@android:color/transparent"
+                android:layout_width="125dp"
+                android:layout_height="125dp"
                 android:adjustViewBounds="true"
+                android:background="@android:color/transparent"
                 android:src="@drawable/icon_treckking100" />
 
             <ImageButton
                 android:id="@+id/ib_running"
-                android:background="@android:color/transparent"
-                android:adjustViewBounds="true"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_margin="24dp"
+                android:layout_width="125dp"
+                android:layout_height="125dp"
                 android:layout_toRightOf="@id/ib_hiking"
+                android:adjustViewBounds="true"
+                android:background="@android:color/transparent"
                 android:src="@drawable/icon_running100" />
 
             <ImageButton
                 android:id="@+id/ib_trailrunning"
-                android:layout_width="100dp"
-                android:background="@android:color/transparent"
-                android:adjustViewBounds="true"
-                android:layout_height="100dp"
+                android:layout_width="125dp"
+                android:layout_height="125dp"
                 android:layout_below="@id/ib_hiking"
-                android:layout_margin="24dp"
+                android:adjustViewBounds="true"
+                android:background="@android:color/transparent"
                 android:src="@drawable/icon_trail100" />
 
             <ImageButton
                 android:id="@+id/ib_cycling"
-                android:background="@android:color/transparent"
-                android:adjustViewBounds="true"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
+                android:layout_width="125dp"
+                android:layout_height="125dp"
                 android:layout_below="@id/ib_running"
-                android:layout_margin="24dp"
                 android:layout_toRightOf="@id/ib_trailrunning"
+                android:adjustViewBounds="true"
+                android:background="@android:color/transparent"
                 android:src="@drawable/icon_ridding100" />
         </RelativeLayout>
     </LinearLayout>
 
-<!--    <com.google.android.material.materialswitch.MaterialSwitch-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_below="@id/ib_layout"-->
-<!--        android:layout_alignParentRight="true"-->
-<!--        android:layout_marginTop="24dp"-->
-<!--        android:layout_marginRight="55dp"-->
-<!--        android:checked="true"-->
-<!--        android:fontFamily="@font/pureunjeonnam"-->
-<!--        android:text="위치확인 skip"-->
-<!--        android:textSize="18sp" />-->
+    <!--    <com.google.android.material.materialswitch.MaterialSwitch-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_below="@id/ib_layout"-->
+    <!--        android:layout_alignParentRight="true"-->
+    <!--        android:layout_marginTop="24dp"-->
+    <!--        android:layout_marginRight="55dp"-->
+    <!--        android:checked="true"-->
+    <!--        android:fontFamily="@font/pureunjeonnam"-->
+    <!--        android:text="위치확인 skip"-->
+    <!--        android:textSize="18sp" />-->
     <!--    틴트를 바꾸고 싶은데 안됨... ㅠㅠ-->
 </RelativeLayout>
