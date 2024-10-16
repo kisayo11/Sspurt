@@ -7,7 +7,11 @@ import android.animation.ValueAnimator
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.Path
 import android.graphics.PorterDuff
 import android.location.Location
 import android.os.Build
@@ -32,9 +36,11 @@ import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.PolylineOptions
 import com.google.firebase.Timestamp
 import com.kisayo.sspurt.Helpers.FirestoreHelper
 import com.kisayo.sspurt.Location.ExerciseTracker
+import com.kisayo.sspurt.R
 import com.kisayo.sspurt.activities.TrackingSaveActivity
 import com.kisayo.sspurt.activities.TrackingService
 import com.kisayo.sspurt.data.ExerciseRecord
@@ -61,7 +67,9 @@ class HealthRecordFragment : Fragment() {
     private var lastAltitude: Double = 0.0 // 최근 고도 값
     private var realTimeData = RealTimeData() // 실시간 데이터
     private val recordViewModel: RecordViewModel by activityViewModels()
-    var isAnimationFinished = false // 애니메이션 완료 상태 플래그
+    private var isAnimationFinished = false // 애니메이션 완료 상태 플래그
+    private val snapShot: String? = null
+
 
 
     override fun onCreateView(
@@ -94,13 +102,19 @@ class HealthRecordFragment : Fragment() {
 
 
         recordViewModel.isRecording.observe(viewLifecycleOwner, Observer { isRecording ->
-            Log.d("HealthRecordFragment", "isRecording observed: $isRecording")
-
-            // 녹화 중지가 감지되었을 때만 데이터 저장
-            if (!isRecording && exerciseData.isRecording) {
-                if (!exerciseData.isPaused) { // 퍼즈 상태가 아닐 때만 저장
-                    stopRecording()
+            if (isRecording) {
+                resumeRecording() // 녹화 재개
+            } else {
+                // 녹화가 아닌 경우에도, 일시 정지 상태를 체크하여 잘못된 종료를 방지
+                if (recordViewModel.isPaused.value == false && exerciseData.isRecording) {
+                    stopRecording() // 녹화 중지
                 }
+            }
+        })
+
+        recordViewModel.isPaused.observe(viewLifecycleOwner, Observer { isPaused ->
+            if (isPaused) {
+                pauseRecording()
             }
         })
 
@@ -154,7 +168,7 @@ class HealthRecordFragment : Fragment() {
 
             } else {
                 pauseRecording() // 일시 중지
-                recordViewModel.stopRecording() // ViewModel에서 일시 중지
+                recordViewModel.setPaused(true) // ViewModel에서 일시 정지 상태 설정
 
             }
 
@@ -192,6 +206,10 @@ class HealthRecordFragment : Fragment() {
 
         exerciseData.isRecording = true
         exerciseData.isPaused = false
+
+        // ViewModel 상태 확실히 설정
+        recordViewModel.startRecording()
+
         exerciseData.elapsedTime = 0 // 경과 시간 초기화
 
         exerciseData.exerciseType = exerciseType ?: "" // 운동 유형 설정 (null일 경우 빈 문자열로 초기화)
@@ -238,7 +256,16 @@ class HealthRecordFragment : Fragment() {
             recordingTimer?.cancel() // 타이머 중지
             exerciseData.isRecording = false
             fusedLocationClient.removeLocationUpdates(locationCallback) // 위치 업데이트 중단
-            saveExerciseData() // 데이터 저장 시도
+
+            // MapFragment에서 캡처 기능 호출
+            val mapFragment = parentFragmentManager.findFragmentById(R.id.map_fragment_container) as? MapFragment
+            mapFragment?.capturePolylineOnly {
+            // 폴리라인 캡처 완료 후 지도 배경과 함께 캡처
+            mapFragment.captureMapWithPolyline {
+            // 모든 캡처 작업 완료 후 데이터 저장
+            saveExerciseData()
+                }
+            }
         } catch (e: Exception) {
             Log.e("HealthRecordFragment", "Error in stopRecording: ${e.message}")
             Toast.makeText(requireContext(), "운동 기록 저장 실패: ${e.message}", Toast.LENGTH_SHORT).show()
@@ -292,6 +319,10 @@ class HealthRecordFragment : Fragment() {
         val savedExerciseType = sharedPreferences.getString("selected_icon", "")
         exerciseData.exerciseType = savedExerciseType!!
 
+        exerciseData.capturePolylineOnly = recordViewModel.polylineCapturePath.value
+        exerciseData.captureMapWithPolyline = recordViewModel.mapWithPolylineCapturePath.value
+
+
         // Firestore에 저장할 exerciseRecord
         val exerciseRecord = ExerciseRecord(
             exerciseRecordId = exerciseData.exerciseRecordId,
@@ -316,7 +347,9 @@ class HealthRecordFragment : Fragment() {
             isShared = exerciseData.isShared,
             locationTag = exerciseData.locationTag,
             routes = exerciseData.routes,
-            ownerEmail = email
+            ownerEmail = email,
+            capturePolylineOnly =  exerciseData.capturePolylineOnly,
+            captureMapWithPolyline = exerciseData.captureMapWithPolyline
 
         )
 
@@ -516,12 +549,19 @@ class HealthRecordFragment : Fragment() {
         requireContext().startService(startIntent) // 일반 서비스로 시작
     }
 
-
-
     private fun stopTrackingService() {
         val stopIntent = Intent(requireContext(), TrackingService::class.java)
         stopIntent.action = "ACTION_STOP" // 서비스 종료
         requireContext().startService(stopIntent) // 서비스 중지
+
     }
 
-}
+    override fun onResume() {
+        super.onResume()
+        // 녹화 중이면서 일시 정지 상태가 아닌 경우에만 재개
+        if (recordViewModel.isRecording.value == true && recordViewModel.isPaused.value == false) {
+            resumeRecording() // UI 업데이트 및 타이머 재개
+        }
+    }
+
+    }

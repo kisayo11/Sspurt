@@ -3,7 +3,11 @@ package com.kisayo.sspurt.fragments
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.Path
 import android.location.LocationManager
 import android.os.Bundle
 import android.os.Handler
@@ -15,6 +19,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -30,6 +35,7 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.Polyline
@@ -42,6 +48,9 @@ import com.kisayo.sspurt.Helpers.PolylineHelper.getPolylineOptionsByExerciseType
 import com.kisayo.sspurt.R
 import com.kisayo.sspurt.utils.RecordViewModel
 import com.kisayo.sspurt.utils.UserRepository
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
 
 class MapFragment : Fragment(), OnMapReadyCallback {
     private lateinit var mMap: GoogleMap
@@ -306,9 +315,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                         val latLng = LatLng(location.latitude, location.longitude)
                         if (shouldAddPoint(latLng)) {
                             recordViewModel.addRoutePoint(latLng)
-                            val points = polyline.points
-                            points.add(latLng)
-                            polyline.points = points
+                            updatePolyline(latLng)
                         }
                     }
                 }
@@ -379,6 +386,13 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        if (isExerciseMap && !isRequestingLocationUpdates) {
+            startLocationUpdates()
+        }
+    }
+
     override fun onPause() {
         super.onPause()
         // 위치 업데이트 중단
@@ -400,6 +414,121 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
+    private fun startLocationUpdates() {
+        val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 10000)
+            .apply { setMinUpdateIntervalMillis(5000) }
+            .build()
+
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            )
+            == PackageManager.PERMISSION_GRANTED
+        ) {
+            fusedLocationClient.requestLocationUpdates(
+                locationRequest,
+                locationCallback,
+                Looper.getMainLooper()
+            )
+            isRequestingLocationUpdates = true
+        }
+    }
+
+    // 폴리라인을 실시간으로 갱신하는 메서드 추가
+    private fun updatePolyline(newLatLng: LatLng) {
+        if (this::polyline.isInitialized) {
+            val currentPoints = polyline.points.toMutableList()
+            currentPoints.add(newLatLng)
+            polyline.points = currentPoints
+        }
+    }
+
+    fun capturePolylineOnly(onCaptureComplete: () -> Unit) {
+        val width = 800
+        val height = 800
+        val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+        val paint = Paint().apply {
+            color = Color.BLUE
+            strokeWidth = 10f
+            style = Paint.Style.STROKE
+            isAntiAlias = true
+        }
+
+        recordViewModel.routePoints.value?.let { routePoints ->
+            val path = Path()
+            routePoints.forEachIndexed { index, latLng ->
+                val x = index * (width / routePoints.size)
+                val y = height / 2
+                if (index == 0) {
+                    path.moveTo(x.toFloat(), y.toFloat())
+                } else {
+                    path.lineTo(x.toFloat(), y.toFloat())
+                }
+            }
+            canvas.drawPath(path, paint)
+        }
+
+        val filePath = saveBitmapToFile(bitmap, "polyline_only.png")
+        if (filePath != null) {
+            recordViewModel.setPolylineCapturePath(filePath)
+
+        } else {
+
+        }
+
+        // 캡처 완료 시 콜백 호출
+        onCaptureComplete()
+    }
+
+    fun captureMapWithPolyline(onCaptureComplete: () -> Unit) {
+        val boundsBuilder = LatLngBounds.Builder()
+        recordViewModel.routePoints.value?.forEach { latLng ->
+            boundsBuilder.include(latLng)
+        }
+        val bounds = boundsBuilder.build()
+
+        // 패딩 값을 추가
+        val padding = 250 // 기본보다 더 큰 패딩 설정
+
+        // LatLngBounds로 카메라 이동
+        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, padding))
+
+        // OnMapLoadedCallback을 사용해 지도 로드가 완료된 후에 캡처 실행
+        mMap.setOnMapLoadedCallback {
+            // 지도의 줌 레벨을 강제 조정 (예: 13.5f)
+            mMap.moveCamera(CameraUpdateFactory.zoomTo(13.5f))
+
+            // 약간의 딜레이 추가 (예: 500ms) 후에 캡처
+            Handler(Looper.getMainLooper()).postDelayed({
+                mMap.snapshot { bitmap ->
+                    if (bitmap != null) {
+                        val filePath = saveBitmapToFile(bitmap, "map_with_polyline.png")
+                        if (filePath != null) {
+                            recordViewModel.setMapWithPolylineCapturePath(filePath)
+                        }
+                    }
+
+                    onCaptureComplete()
+                }
+            }, 500) // 0.5초 딜레이
+        }
+    }
+
+    private fun saveBitmapToFile(bitmap: Bitmap, fileName: String): String? {
+        val file = File(requireContext().getExternalFilesDir(null), fileName)
+        return try {
+            val outputStream = FileOutputStream(file)
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+            outputStream.flush()
+            outputStream.close()
+            file.absolutePath
+        } catch (e: IOException) {
+            e.printStackTrace()
+            null
+        }
+    }
+
     companion object {
         // newInstance 메서드로 isExerciseMap 값을 전달
         fun newInstance(isExerciseMap: Boolean): MapFragment {
@@ -412,4 +541,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
         const val LOCATION_PERMISSION_REQUEST_CODE = 1
     }
+
+
+
 }

@@ -115,7 +115,9 @@ class TrackingService : Service() {
     }
 
     private fun createNotification(): Notification {
-        val intent = Intent(this, MainActivity::class.java)
+        val intent = Intent(this, GpsConfirmActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
+        }
         val pendingIntent = PendingIntent.getActivity(
             this, 0, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
@@ -126,6 +128,7 @@ class TrackingService : Service() {
             .setSmallIcon(R.drawable.noti_bar_logo) // 아이콘 설정
             .setContentIntent(pendingIntent)
             .setPriority(NotificationCompat.PRIORITY_LOW)
+            .setAutoCancel(true)
             .build()
     }
 

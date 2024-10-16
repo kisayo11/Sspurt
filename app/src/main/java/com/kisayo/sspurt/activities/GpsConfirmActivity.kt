@@ -1,20 +1,24 @@
 package com.kisayo.sspurt.activities
 
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.appbar.AppBarLayout
 import com.kisayo.sspurt.R
 import com.kisayo.sspurt.databinding.ActivityGpsConfirmBinding
 import com.kisayo.sspurt.fragments.HealthRecordFragment
 import com.kisayo.sspurt.fragments.MapFragment
+import com.kisayo.sspurt.utils.RecordViewModel
 
 class GpsConfirmActivity : AppCompatActivity() {
     private lateinit var binding: ActivityGpsConfirmBinding
     private lateinit var mapFragment: MapFragment
     private lateinit var healthRecordFragment: HealthRecordFragment
     private lateinit var sharedPreferences: SharedPreferences
+    private val recordViewModel : RecordViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,4 +74,14 @@ class GpsConfirmActivity : AppCompatActivity() {
         } else { supportFragmentManager.beginTransaction().hide(mapFragment).commit()}
 
     }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        if (recordViewModel.isRecording.value == true) {
+            recordViewModel.resumeRecording() // ViewModel에서 녹화 상태 복구
+        }
+    }
+
 }
+
+

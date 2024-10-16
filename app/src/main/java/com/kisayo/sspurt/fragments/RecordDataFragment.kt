@@ -194,6 +194,10 @@ class RecordDataFragment : Fragment() {
         record.photoUrl?.let{ url ->
             Glide.with(this).load(url).into(binding.ExerciseimageView)
         }
+        record.captureMapWithPolyline?.let{ url ->
+            Glide.with(this).load(url).into(binding.polyWithMap)
+
+        }
 
         val location = record.currentLocation
         val address = location?.let { getAddress(it.latitude, it.longitude) }

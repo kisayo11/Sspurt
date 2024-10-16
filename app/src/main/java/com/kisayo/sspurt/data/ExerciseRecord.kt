@@ -27,7 +27,9 @@ data class ExerciseRecord(
     var isShared: Boolean = false, // 공유 스위치
     var locationTag: String? = null, // 공유시 장소 태그 추가
     var routes: List<LatLngWrapper> = listOf(), // 경로 리스트 추가
-    val ownerEmail: String = "" // 운동 기록 소유자의 이메일
+    val ownerEmail: String = "", // 운동 기록 소유자의 이메일
+    var capturePolylineOnly : String? = null, // 폴리라인만 캡쳐
+    var captureMapWithPolyline : String? = null // 지도위 폴리라인 캡쳐
 
 )
 
