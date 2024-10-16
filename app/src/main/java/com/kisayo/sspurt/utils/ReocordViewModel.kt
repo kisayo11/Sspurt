@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -35,8 +36,33 @@ class RecordViewModel : ViewModel() {
     val isRecording: LiveData<Boolean> get() = _isRecording
 
     private val _isPaused = MutableLiveData<Boolean>().apply { value = false }
-    val isPaused: LiveData<Boolean> = _isPaused
+    val isPaused: LiveData<Boolean> get() = _isPaused
 
+    // 녹화 시작 설정 메서드
+    fun setRecording(isRecording: Boolean) {
+        _isRecording.value = isRecording
+    }
+
+    // 녹화 일시 정지 상태 설정 메서드
+    fun setPaused(paused: Boolean) {
+        _isPaused.value = paused
+    }
+
+    private val _polylineCapturePath = MutableLiveData<String?>()
+    val polylineCapturePath: LiveData<String?> get() = _polylineCapturePath
+
+    private val _mapWithPolylineCapturePath = MutableLiveData<String?>()
+    val mapWithPolylineCapturePath: LiveData<String?> get() = _mapWithPolylineCapturePath
+
+    fun setPolylineCapturePath(path: String?) {
+        _polylineCapturePath.value = path
+        Log.d("RecordViewModel", "Polyline capture path set: $path")
+    }
+
+    fun setMapWithPolylineCapturePath(path: String?) {
+        _mapWithPolylineCapturePath.value = path
+        Log.d("RecordViewModel", "Map with polyline capture path set: $path")
+    }
 
     // Firestore에서 사용자 경로 데이터 가져오기
     fun fetchRoute(email: String, context: Context) {
@@ -97,7 +123,7 @@ class RecordViewModel : ViewModel() {
             }
         }
     }
-    // 경로 추가 메서드
+    // 실시간 좌표 추가 및 폴리라인 업데이트
     fun addRoutePoint(latLng: LatLng) {
         val updatedPoints = _routePoints.value ?: mutableListOf()
         updatedPoints.add(latLng)
@@ -116,9 +142,19 @@ class RecordViewModel : ViewModel() {
     fun pauseRecording() {
         if (_isRecording.value == true) {
             _isPaused.value = true
+            _isRecording.value = false // 녹화 상태를 false로 설정
             Log.d("RecordViewModel", "Recording paused")
         }
     }
+
+    fun resumeRecording() {
+        if (_isPaused.value == true) {
+            _isPaused.value = false
+            _isRecording.value = true
+            Log.d("RecordViewModel", "Recording resumed")
+        }
+    }
+
 
 
 

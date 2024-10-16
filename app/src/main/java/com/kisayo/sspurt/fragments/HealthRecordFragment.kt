@@ -7,7 +7,11 @@ import android.animation.ValueAnimator
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.Path
 import android.graphics.PorterDuff
 import android.location.Location
 import android.os.Build
@@ -32,9 +36,11 @@ import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.PolylineOptions
 import com.google.firebase.Timestamp
 import com.kisayo.sspurt.Helpers.FirestoreHelper
 import com.kisayo.sspurt.Location.ExerciseTracker
+import com.kisayo.sspurt.R
 import com.kisayo.sspurt.activities.TrackingSaveActivity
 import com.kisayo.sspurt.activities.TrackingService
 import com.kisayo.sspurt.data.ExerciseRecord
@@ -61,7 +67,9 @@ class HealthRecordFragment : Fragment() {
     private var lastAltitude: Double = 0.0 // 최근 고도 값
     private var realTimeData = RealTimeData() // 실시간 데이터
     private val recordViewModel: RecordViewModel by activityViewModels()
-    var isAnimationFinished = false // 애니메이션 완료 상태 플래그
+    private var isAnimationFinished = false // 애니메이션 완료 상태 플래그
+    private val snapShot: String? = null
+
 
 
     override fun onCreateView(
@@ -94,13 +102,19 @@ class HealthRecordFragment : Fragment() {
 
 
         recordViewModel.isRecording.observe(viewLifecycleOwner, Observer { isRecording ->
-            Log.d("HealthRecordFragment", "isRecording observed: $isRecording")
-
-            // 녹화 중지가 감지되었을 때만 데이터 저장
-            if (!isRecording && exerciseData.isRecording) {
-                if (!exerciseData.isPaused) { // 퍼즈 상태가 아닐 때만 저장
-                    stopRecording()
+            if (isRecording) {
+                resumeRecording() // 녹화 재개
+            } else {
+                // 녹화가 아닌 경우에도, 일시 정지 상태를 체크하여 잘못된 종료를 방지
+                if (recordViewModel.isPaused.value == false && exerciseData.isRecording) {
+                    stopRecording() // 녹화 중지
                 }
+            }
+        })
+
+        recordViewModel.isPaused.observe(viewLifecycleOwner, Observer { isPaused ->
+            if (isPaused) {
+                pauseRecording()
             }
         })
 
@@ -154,7 +168,7 @@ class HealthRecordFragment : Fragment() {
 
             } else {
                 pauseRecording() // 일시 중지
-                recordViewModel.stopRecording() // ViewModel에서 일시 중지
+                recordViewModel.setPaused(true) // ViewModel에서 일시 정지 상태 설정
 
             }
 
@@ -192,6 +206,10 @@ class HealthRecordFragment : Fragment() {
 
         exerciseData.isRecording = true
         exerciseData.isPaused = false
+
+        // ViewModel 상태 확실히 설정
+        recordViewModel.startRecording()
+
         exerciseData.elapsedTime = 0 // 경과 시간 초기화
 
         exerciseData.exerciseType = exerciseType ?: "" // 운동 유형 설정 (null일 경우 빈 문자열로 초기화)
@@ -238,7 +256,16 @@ class HealthRecordFragment : Fragment() {
             recordingTimer?.cancel() // 타이머 중지
             exerciseData.isRecording = false
             fusedLocationClient.removeLocationUpdates(locationCallback) // 위치 업데이트 중단
-            saveExerciseData() // 데이터 저장 시도
+
+            // MapFragment에서 캡처 기능 호출
+            val mapFragment = parentFragmentManager.findFragmentById(R.id.map_fragment_container) as? MapFragment
+            mapFragment?.capturePolylineOnly {
+            // 폴리라인 캡처 완료 후 지도 배경과 함께 캡처
+            mapFragment.captureMapWithPolyline {
+            // 모든 캡처 작업 완료 후 데이터 저장
+            saveExerciseData()
+                }
+            }
         } catch (e: Exception) {
             Log.e("HealthRecordFragment", "Error in stopRecording: ${e.message}")
             Toast.makeText(requireContext(), "운동 기록 저장 실패: ${e.message}", Toast.LENGTH_SHORT).show()
@@ -292,6 +319,10 @@ class HealthRecordFragment : Fragment() {
         val savedExerciseType = sharedPreferences.getString("selected_icon", "")
         exerciseData.exerciseType = savedExerciseType!!
 
+        exerciseData.capturePolylineOnly = recordViewModel.polylineCapturePath.value
+        exerciseData.captureMapWithPolyline = recordViewModel.mapWithPolylineCapturePath.value
+
+
         // Firestore에 저장할 exerciseRecord
         val exerciseRecord = ExerciseRecord(
             exerciseRecordId = exerciseData.exerciseRecordId,
@@ -316,7 +347,9 @@ class HealthRecordFragment : Fragment() {
             isShared = exerciseData.isShared,
             locationTag = exerciseData.locationTag,
             routes = exerciseData.routes,
-            ownerEmail = email
+            ownerEmail = email,
+            capturePolylineOnly =  exerciseData.capturePolylineOnly,
+            captureMapWithPolyline = exerciseData.captureMapWithPolyline
 
         )
 
@@ -367,13 +400,19 @@ class HealthRecordFragment : Fragment() {
     private fun createLocationRequest(): LocationRequest {
         Log.d("LocationRequest", "Requesting location updates")
         return LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 1000)
-            .setIntervalMillis(1000).build()
+            .setIntervalMillis(1000)
+            .setMinUpdateDistanceMeters(5f)
+            .build()
     }
 
     private val locationCallback = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
             if (locationResult.locations.isNotEmpty()) {
                 val currentLocation = locationResult.locations.last()
+
+                // 최소 이동 거리 설정 (예: 5미터)
+                val MIN_DISTANCE_THRESHOLD = 5.0 // 미터 단위
+
                 exerciseData.currentLocation =
                     LatLngWrapper(currentLocation.latitude, currentLocation.longitude)
 
@@ -394,32 +433,49 @@ class HealthRecordFragment : Fragment() {
                 if (!exerciseData.isPaused) {
                     previousLocation?.let {
                         val distance = it.distanceTo(currentLocation) // 두 위치 간의 거리 (미터)
-                        totalDistance += distance // 총 이동 거리 업데이트
-                        exerciseData.distance = totalDistance // ExerciseData에 총 거리 업데이트
+
+                        // 최소 이동 거리 설정 (예: 5미터)
+                        val MIN_DISTANCE_THRESHOLD = 5.0 // 미터 단위
+
+                        // 이동 거리가 5미터 미만이면 무시
+                        if (distance >= MIN_DISTANCE_THRESHOLD) {
+                            totalDistance += distance // 총 이동 거리 업데이트
+                            exerciseData.distance = totalDistance // ExerciseData에 총 거리 업데이트
+                        }
                     }
-                    // 현재 위치를 이전 위치로 업데이트
                     previousLocation = currentLocation
                 } else {
                     previousLocation = currentLocation
                 }
 
+
                 // 현재 속도 계산
                 val speed = currentLocation.speed // m/s
-                val speedKmh = speed * 3.6 // km/h로 변환
-                exerciseData.currentSpeed = speedKmh.toDouble()
+                val speedKmh = currentLocation.speed * 3.6 // km/h로 변환
 
-                // 최고 속도 갱신
-                if (speedKmh > exerciseData.maxSpeed) {
-                    exerciseData.maxSpeed = speedKmh.toDouble() // 최고 속도 갱신
+                // 최소, 최대 속도 필터링 (예: 0km/h ~ 60km/h 범위)
+                if (speedKmh in 0.0..60.0) {
+                    exerciseData.currentSpeed = speedKmh.toDouble()
+
+                    // 최고 속도 갱신
+                    if (speedKmh > exerciseData.maxSpeed) {
+                        exerciseData.maxSpeed = speedKmh.toDouble()
+                    }
                 }
 
                 // 현재 속도를 분속으로 변환 (min/km로 변환)
-                val currentPace = if (speedKmh > 0) 60 / speedKmh else 0.0 // 분/km
+                val currentPace = if (speedKmh > 0.1) 60 / speedKmh else 0.0 // 너무 낮은 속도는 무시
                 val paceMinutes = currentPace.toInt() // 분
                 val paceSeconds = ((currentPace - paceMinutes) * 60).toInt() // 초
 
-                // UI 업데이트
-                binding.tv4.text = String.format("%d' %02d\"", paceMinutes, paceSeconds)
+// UI 업데이트
+                binding.tv4.text = if (speedKmh > 0.1) {
+                    String.format("%d' %02d\"", paceMinutes, paceSeconds)
+                } else {
+                    "0' 00\"" // 너무 낮은 속도일 때는 0' 00"로 표시
+                }
+
+
                 // 이동 거리 및 평균 속도 업데이트
                 updateUI() // 이동 거리 및 평균 속도 업데이트 호출
 
@@ -493,12 +549,19 @@ class HealthRecordFragment : Fragment() {
         requireContext().startService(startIntent) // 일반 서비스로 시작
     }
 
-
-
     private fun stopTrackingService() {
         val stopIntent = Intent(requireContext(), TrackingService::class.java)
         stopIntent.action = "ACTION_STOP" // 서비스 종료
         requireContext().startService(stopIntent) // 서비스 중지
+
     }
 
-}
+    override fun onResume() {
+        super.onResume()
+        // 녹화 중이면서 일시 정지 상태가 아닌 경우에만 재개
+        if (recordViewModel.isRecording.value == true && recordViewModel.isPaused.value == false) {
+            resumeRecording() // UI 업데이트 및 타이머 재개
+        }
+    }
+
+    }

@@ -11,21 +11,23 @@
         android:layout_height="wrap_content"
         android:background="@color/white"
         android:orientation="vertical">
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="#fff9f9"
-    android:orientation="vertical">
-        <ImageView
-            android:id="@+id/ExerciseimageView"
-            android:layout_width="wrap_content"
-            android:layout_height="300dp"
-            android:layout_gravity="center"
-            android:layout_margin="8dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/logo_sspurt"
-            android:visibility="visible" />
-</LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#fff9f9"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/ExerciseimageView"
+                android:layout_width="wrap_content"
+                android:layout_height="300dp"
+                android:layout_gravity="center"
+                android:layout_margin="8dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/logo_sspurt"
+                android:visibility="gone" />
+        </LinearLayout>
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -57,206 +59,268 @@
                 android:id="@+id/ExersiceType_iv"
                 android:layout_width="100dp"
                 android:layout_height="75dp"
-                android:layout_marginRight="5dp"
+                android:layout_alignParentRight="true"
                 android:layout_toRightOf="@+id/address_tv"
                 android:background="#fff9f9"
+                android:padding="16dp"
+                android:scaleType="fitCenter"
                 android:src="@drawable/icon_running100" />
+        </RelativeLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:padding="16dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Row containing three groups -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/address_tv"
-                android:orientation="vertical"
-                android:weightSum="6">
+                android:padding="4dp"
+                android:orientation="horizontal"
+                android:weightSum="3">
 
+                <!-- First group -->
                 <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal"
-
-                    android:weightSum="3">
-
-                    <ImageView
-                        android:layout_width="80dp"
-                        android:layout_height="70dp"
-                        android:layout_margin="4dp"
-                        android:layout_weight="1"
-                        android:background="#fff9f9"
-                        android:src="@drawable/outline_timer_24" />
-
-                    <ImageView
-                        android:layout_width="80dp"
-                        android:layout_height="70dp"
-                        android:layout_margin="4dp"
-                        android:layout_weight="1"
-                        android:background="#fff9f9"
-                        android:src="@drawable/distance100" />
-
-                    <ImageView
-                        android:layout_width="80dp"
-                        android:layout_height="70dp"
-                        android:layout_margin="4dp"
-                        android:layout_weight="1"
-                        android:background="#fff9f9"
-                        android:src="@drawable/icons_speed100" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
+                    android:id="@+id/first"
+                    android:layout_width="0dp"
+                    android:layout_margin="8dp"
+                    android:background="@drawable/rectangle_banner"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:weightSum="3">
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="70dp"
+                        android:layout_margin="4dp"
+                        android:background="#fff9f9"
+                        android:padding="16dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/timer_50" />
 
                     <TextView
                         android:id="@+id/ExersiceTime_tv"
-                        style="@style/basicFontStyle"
-                        android:layout_width="80dp"
-                        android:layout_height="60dp"
-                        android:layout_weight="1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
                         android:gravity="center"
                         android:text="1:50:00"
                         android:textSize="24dp" />
+                </LinearLayout>
+
+                <!-- Second group -->
+                <LinearLayout
+                    android:id="@+id/second"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="70dp"
+                        android:layout_margin="4dp"
+                        android:background="#fff9f9"
+                        android:padding="16dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/distance50" />
 
                     <TextView
                         android:id="@+id/ExersiceDistance_tv"
-                        style="@style/basicFontStyle"
-                        android:layout_width="80dp"
-                        android:layout_height="60dp"
-                        android:layout_weight="1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
                         android:gravity="center"
                         android:text="20.05km"
                         android:textSize="24dp" />
+                </LinearLayout>
+
+                <!-- Third group -->
+                <LinearLayout
+                    android:id="@+id/third"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="70dp"
+                        android:layout_margin="4dp"
+                        android:background="#fff9f9"
+                        android:padding="16dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/icons_speed50" />
 
                     <TextView
                         android:id="@+id/ExersicePace_tv"
-                        style="@style/basicFontStyle"
-                        android:layout_width="80dp"
-                        android:layout_height="60dp"
-                        android:layout_weight="1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
                         android:gravity="center"
                         android:text="5'44"
                         android:textSize="24dp" />
                 </LinearLayout>
+            </LinearLayout>
 
+            <!-- Another row containing three groups -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="3">
+
+                <!-- Fourth group -->
                 <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal"
-
-                    android:weightSum="3">
-
-                    <ImageView
-                        android:layout_width="80dp"
-                        android:layout_height="70dp"
-                        android:layout_margin="4dp"
-                        android:layout_weight="1"
-                        android:background="#fff9f9"
-                        android:src="@drawable/icons_maxspeed100" />
-
-                    <ImageView
-                        android:layout_width="80dp"
-                        android:layout_height="70dp"
-                        android:layout_margin="4dp"
-                        android:layout_weight="1"
-                        android:background="#fff9f9"
-                        android:src="@drawable/icons_heart100" />
-
-                    <ImageView
-                        android:layout_width="80dp"
-                        android:layout_height="70dp"
-                        android:layout_margin="4dp"
-                        android:layout_weight="1"
-                        android:background="#fff9f9"
-                        android:src="@drawable/icons_calorie" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
+                    android:id="@+id/fourth"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:weightSum="3">
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="70dp"
+                        android:layout_margin="4dp"
+                        android:background="#fff9f9"
+                        android:padding="16dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/icons_maxspeed50" />
 
                     <TextView
                         android:id="@+id/ExersiceMaxspeed_tv"
-                        android:layout_width="80dp"
-                        android:layout_height="60dp"
-                        android:layout_weight="1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
                         android:gravity="center"
                         android:text="5'11"
                         android:textSize="24dp" />
+                </LinearLayout>
+
+                <!-- Fifth group -->
+                <LinearLayout
+                    android:id="@+id/fifth"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="70dp"
+                        android:layout_margin="4dp"
+                        android:background="#fff9f9"
+                        android:padding="16dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/icons_heart50" />
 
                     <TextView
                         android:id="@+id/ExersiceHeartScore_tv"
-                        android:layout_width="80dp"
-                        android:layout_height="60dp"
-                        android:layout_weight="1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
                         android:gravity="center"
                         android:text="12"
                         android:textSize="24dp" />
+                </LinearLayout>
+
+                <!-- Sixth group -->
+                <LinearLayout
+                    android:id="@+id/sixth"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="70dp"
+                        android:layout_margin="4dp"
+                        android:background="#fff9f9"
+                        android:padding="16dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/icons_calorie" />
 
                     <TextView
                         android:id="@+id/ExersiceCalorie_tv"
-                        android:layout_width="80dp"
-                        android:layout_height="60dp"
-                        android:layout_weight="1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
                         android:gravity="center"
                         android:text="155"
                         android:textSize="24dp" />
                 </LinearLayout>
-
-                <TextView
-                    style="@style/basicFontStyle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="8dp"
-                    android:text="분당 페이스"
-                    android:textSize="24sp" />
-
-                <com.github.mikephil.charting.charts.BarChart
-                    android:id="@+id/barChart_avgspeedpermin"
-                    android:layout_width="match_parent"
-                    android:layout_height="200dp" />
-
-                <TextView
-                    style="@style/basicFontStyle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="8dp"
-                    android:text="고도 그래프"
-                    android:textSize="24sp" />
-
-                <com.github.mikephil.charting.charts.LineChart
-                    android:id="@+id/higher_chart"
-                    android:layout_width="match_parent"
-                    android:layout_height="200dp"
-                    android:layout_marginBottom="8dp" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:gravity="center_vertical"
-                    android:padding="16dp">
-
-                    <Button
-                        android:id="@+id/delete_btn"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="36dp"
-                        android:layout_weight="1"
-                        android:backgroundTint="@android:color/holo_red_dark"
-                        android:text="삭제하기" />
-
-                    <Button
-                        android:id="@+id/post_btn"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="36dp"
-                        android:layout_weight="1"
-                        android:text="저장하기" />
-                </LinearLayout>
-
             </LinearLayout>
-        </RelativeLayout>
+
+        </LinearLayout>
+        <TextView
+            style="@style/basicFontStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:text="운동 경로"
+            android:textSize="24sp" />
+
+        <ImageView
+            android:id="@+id/polyWithMap"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:scaleType="centerInside"
+            />
+
+        <TextView
+            style="@style/basicFontStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:text="분당 페이스"
+            android:textSize="24sp" />
+
+        <com.github.mikephil.charting.charts.BarChart
+            android:id="@+id/barChart_avgspeedpermin"
+            android:layout_width="match_parent"
+            android:layout_height="200dp" />
+
+        <TextView
+            style="@style/basicFontStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:text="고도 그래프"
+            android:textSize="24sp" />
+
+        <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/higher_chart"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginBottom="8dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:gravity="center_vertical"
+            android:padding="16dp">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/delete_btn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="36dp"
+                android:layout_weight="1"
+                android:background="@drawable/rectangle_databtndel"
+                android:backgroundTint="@null"
+                android:text="삭제하기"
+                android:textColor="@color/white" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/post_btn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="36dp"
+                android:layout_weight="1"
+                android:background="@drawable/rectangle_databtn"
+                android:backgroundTint="@null"
+                android:text="저장하기"
+                android:textColor="@color/white" />
+        </LinearLayout>
+
     </LinearLayout>
-</ScrollView>
+
+    </ScrollView>

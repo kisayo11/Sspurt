@@ -97,7 +97,7 @@ class RecordDataFragment : Fragment() {
             val email = userRepository.getCurrentUserEmail() // 사용자 이메일 가져오기
             val documentId = exerciseRecordId
             deleteExerciseRecord(email!!,documentId!!)
-            binding.deleteBtn.visibility = View.INVISIBLE
+
 
             // 현재 액티비티 종료
             requireActivity().finish()
@@ -193,6 +193,10 @@ class RecordDataFragment : Fragment() {
         binding.ExersiceCalorieTv.text = String.format("%.2f", record.calories)
         record.photoUrl?.let{ url ->
             Glide.with(this).load(url).into(binding.ExerciseimageView)
+        }
+        record.captureMapWithPolyline?.let{ url ->
+            Glide.with(this).load(url).into(binding.polyWithMap)
+
         }
 
         val location = record.currentLocation

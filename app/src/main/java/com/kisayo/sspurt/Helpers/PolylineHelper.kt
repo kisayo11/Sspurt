@@ -8,10 +8,10 @@ object PolylineHelper {
 
     fun getPolylineOptionsByExerciseType(exerciseType: String): PolylineOptions {
         return when (exerciseType) {
-            "running" -> PolylineOptions().color(Color.BLUE).width(12f)
-            "cycling" -> PolylineOptions().color(Color.GREEN).width(10f)
-            "hiking" -> PolylineOptions().color(Color.rgb(139, 69, 19)).width(15f)
-            "trailrunning" -> PolylineOptions().color(Color.MAGENTA).width(14f)
+            "running" -> PolylineOptions().color(Color.BLUE).width(10f)
+            "cycling" -> PolylineOptions().color(Color.rgb(255,219,88)).width(10f)
+            "hiking" -> PolylineOptions().color(Color.rgb(0,100,0)).width(10f)
+            "trailrunning" -> PolylineOptions().color(Color.MAGENTA).width(10f)
             else -> PolylineOptions().color(Color.GRAY).width(10f)
         }
     }

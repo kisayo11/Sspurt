@@ -3,13 +3,23 @@ package com.kisayo.sspurt.fragments
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.Path
+import android.location.LocationManager
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -25,10 +35,12 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.Polyline
 import com.google.android.gms.maps.model.PolylineOptions
+import com.google.android.material.appbar.AppBarLayout
 import com.google.firebase.storage.FirebaseStorage
 import com.kisayo.sspurt.Helpers.GpxParser
 import com.kisayo.sspurt.Helpers.PolylineHelper
@@ -36,6 +48,9 @@ import com.kisayo.sspurt.Helpers.PolylineHelper.getPolylineOptionsByExerciseType
 import com.kisayo.sspurt.R
 import com.kisayo.sspurt.utils.RecordViewModel
 import com.kisayo.sspurt.utils.UserRepository
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
 
 class MapFragment : Fragment(), OnMapReadyCallback {
     private lateinit var mMap: GoogleMap
@@ -44,11 +59,13 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     private lateinit var polyline: Polyline
     private lateinit var polylineOptions: PolylineOptions
     private val recordViewModel: RecordViewModel by activityViewModels()
-    private lateinit var userRepository: UserRepository // UserRepository 추가
-    private var isExerciseMap: Boolean = false // 모드 구분 변수
-    private var isCameraFollowing = true // 카메라 자동 이동 상태
+    private lateinit var userRepository: UserRepository
+    private var isExerciseMap: Boolean = false
+    private var isCameraFollowing = true
     private var activeMarker: Marker? = null
-
+    private var isRequestingLocationUpdates = false
+    private var activeBorderPolyline: Polyline? = null
+    private val polylineList = mutableListOf<Pair<String, Polyline>>()  // Pair(산 이름, Polyline)
 
 
 
@@ -57,8 +74,14 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_map, container, false)
 
-        // `Bundle`에서 `isExerciseMap` 값 가져오기
-        isExerciseMap = arguments?.getBoolean("IS_EXERCISE_MAP") ?: false
+        // 전달받은 인자 확인
+        isExerciseMap = arguments?.getBoolean("IS_EXERCISE_MAP", false) ?: false
+
+        // isExerciseMap 값이 true일 경우 (GpsConfirmActivity에서 사용됨) 앱바 숨기기
+        if (isExerciseMap) {
+            val appBarLayout = activity?.findViewById<AppBarLayout>(R.id.appbar_layout)
+            appBarLayout?.visibility = View.GONE
+        }
 
         // SupportMapFragment를 가져와서 비동기로 지도 준비
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
@@ -67,123 +90,144 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         // FusedLocationProviderClient 초기화
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
 
-        // UserRepository 초기화
-        userRepository = UserRepository(requireContext())
-
         // LocationCallback 초기화
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
                 for (location in locationResult.locations) {
-                    val latLng = LatLng(location.latitude, location.longitude)
-
-                    // 위치 업데이트가 있을 때 카메라를 이동할지 결정
-                    if (isCameraFollowing) {
-                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16f))
+                    if (location.accuracy < 50) {
+                        val latLng = LatLng(location.latitude, location.longitude)
+                        if (isCameraFollowing) {
+                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16f))
+                        }
+                        recordViewModel.addRoutePoint(latLng)
+                    } else {
+                        Log.w("MapFragment", "Dropped invalid location with low accuracy: ${location.accuracy}")
                     }
-                    // ViewModel의 경로 업데이트
-                    recordViewModel.addRoutePoint(latLng)
                 }
             }
         }
 
+        val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 10000)
+            .apply { setMinUpdateIntervalMillis(5000) }
+            .build()
 
-        val locationRequest = LocationRequest.Builder(
-            Priority.PRIORITY_HIGH_ACCURACY,10000
-        ).apply {
-            setMinUpdateIntervalMillis(5000)
-        }.build()
-
-        if (ActivityCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_COARSE_LOCATION
+        // 위치 권한 확인
+        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+            != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            // 권한이 없으면 권한 요청
             ActivityCompat.requestPermissions(
                 requireActivity(),
                 arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION),
                 LOCATION_PERMISSION_REQUEST_CODE
             )
         } else {
-            // 권한이 있는 경우에만 위치 업데이트 요청
-            fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
+            if (!isRequestingLocationUpdates) {
+                fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
+                isRequestingLocationUpdates = true
+            }
         }
         return view
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        // UserRepository 초기화
+        userRepository = UserRepository(requireContext())
+
+        val searching = requireActivity().findViewById<EditText>(R.id.searching)
+
+        searching.addTextChangedListener(object : TextWatcher{
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, count: Int, afer: Int) {
+                val query = s.toString()
+                searchPolylineAndMoveCamera(query)
+            }
+
+            override fun afterTextChanged(p0: Editable?) {}
+        })
+    }
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
 
-        // 카메라 이동 상태 제어
+
+
+        // 사용자가 지도를 움직이면 카메라 이동 멈춤
         mMap.setOnCameraMoveStartedListener { reason ->
             if (reason == GoogleMap.OnCameraMoveStartedListener.REASON_GESTURE) {
-                // 사용자가 지도를 움직인 경우 카메라 따라가지 않도록 설정
                 isCameraFollowing = false
             }
         }
 
-        // 폴리라인 클릭 리스너
+        // 폴리라인 클릭 리스너 설정
         mMap.setOnPolylineClickListener { clickedPolyline ->
             val tagData = clickedPolyline.tag as? Map<String, Any> ?: return@setOnPolylineClickListener
-
-            // 태그에서 필요한 데이터 가져오기
             val coordinates = tagData["coordinates"] as? List<LatLng> ?: return@setOnPolylineClickListener
             val mountainName = tagData["mountainName"] as? String ?: return@setOnPolylineClickListener
             val highestElevation = tagData["highestElevation"] as? Int ?: return@setOnPolylineClickListener
             val totalDistance = tagData["totalDistance"] as? Double ?: return@setOnPolylineClickListener
 
-            // 이전 마커가 있으면 제거
-            activeMarker?.remove()
+            // 이전에 선택된 폴리라인 테두리가 있다면 제거
+            activeBorderPolyline?.remove()
 
-            // 시작 지점에 마커 추가
+            val borderPolylineOptions = PolylineOptions()
+                .addAll(coordinates)
+                .color(Color.rgb(57, 255, 20))  // 형광색 테두리 (네온 그린)
+                .width(25f)  // 테두리 두께 (원하는 두께로 조정)
+
+            // 새로운 테두리 폴리라인 추가 및 저장
+            activeBorderPolyline = mMap.addPolyline(borderPolylineOptions)
+
+            // 기존의 폴리라인을 다시 그려서 테두리 위에 겹치게 설정 (기존의 스타일 유지)
+            val foregroundPolylineOptions = PolylineOptions()
+                .addAll(coordinates)
+                .color(clickedPolyline.color)  // 기존 폴리라인의 색상 유지
+                .width(10f)  // 기존 폴리라인 두께
+
+            mMap.addPolyline(foregroundPolylineOptions)
+
+            // 이전 마커 제거 후 새로운 마커 추가
+            activeMarker?.remove()
             activeMarker = mMap.addMarker(
                 MarkerOptions()
-                    .position(coordinates.first()) // 시작 지점
+                    .position(coordinates.first())
                     .title(mountainName)
                     .snippet("${highestElevation}m / ${"%.1f".format(totalDistance)}km")
             )
-
-            // 인포 윈도우를 자동으로 보여줌
             activeMarker?.showInfoWindow()
         }
 
-        // 지도 클릭 리스너 설정 (다른 곳 클릭 시 마커 제거)
+        // 지도 클릭 리스너 설정 (다른 곳 클릭 시 마커 및 테두리 제거)
         mMap.setOnMapClickListener {
+            // 선택된 폴리라인 테두리가 있다면 제거
+            activeBorderPolyline?.remove()
+            activeBorderPolyline = null // 선택된 테두리 초기화
+
             // 마커가 있다면 제거
             activeMarker?.remove()
             activeMarker = null // 활성화된 마커 초기화
         }
 
-
+        // 카메라가 멈춘 후 가시 영역 내의 GPX 파일을 로드
         mMap.setOnCameraIdleListener {
             val visibleRegion = mMap.projection.visibleRegion.latLngBounds
-
-            // 가시성 영역의 북동쪽과 남서쪽 좌표를 가져옵니다.
-            val northEast = visibleRegion.northeast
-            val southWest = visibleRegion.southwest
-
-            // GPX 파일 로드 함수 호출
-            loadGpxFiles(northEast, southWest)
+            loadGpxFiles(visibleRegion.northeast, visibleRegion.southwest)
         }
 
-        // `isExerciseMap`에 따라 다르게 동작 설정
+        // 지도 설정 (운동 모드에 따라 다르게 설정)
         if (isExerciseMap) {
-            // `exercisemap` 모드인 경우
-            setupPolyline() // 폴리라인 설정
+            setupPolyline()
             setupMap()
             observeRecordingState()
         } else {
-            // `nearby` 모드인 경우 GPX 파일 로드
             setupMap()
-            loadGpxFromFirebase() // GPX 파일을 Firebase에서 불러오기
-
+            loadGpxFromFirebase()
         }
     }
 
+    // GPX 파일을 Firebase에서 로드하는 함수
     private fun loadGpxFiles(northEast: LatLng, southWest: LatLng) {
         val storage = FirebaseStorage.getInstance()
         val storageRef = storage.reference.child("gpxfiles/")
@@ -195,14 +239,11 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                         val inputStream = bytes.inputStream()
                         val gpxParser = GpxParser()
                         val (coordinates, elevationData) = gpxParser.parse(inputStream)
-
-                        // 산 이름, 고도 및 거리 정보 추출
-                        val mountainName = item.name.substringBefore("_") // 파일 이름에서 산 이름 추출
+                        val mountainName = item.name.substringBefore("_")
                         val highestElevation = elevationData.first
                         val totalDistance = elevationData.second
-
-                        // 폴리라인 그리기 및 클릭 리스너 설정
-                        drawPolylineOnMap(coordinates, mountainName, highestElevation, totalDistance)
+                        val exerciseType = extractExerciseTypeFromFileName(item.name)
+                        drawPolylineOnMap(coordinates, mountainName, highestElevation, totalDistance, exerciseType)
                     }.addOnFailureListener { exception ->
                         Log.e("MapFragment", "Failed to load GPX file: ${exception.message}")
                     }
@@ -213,117 +254,22 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
-//    private fun addMarkers(coordinates: List<LatLng>, highestElevation: Int, totalDistance: Double, fileName: String) {
-//        if (coordinates.isNotEmpty()) {
-//            val startPoint = coordinates.first() // 시작점 좌표
-//            val mountainName = fileName.substringBefore("_") // 파일 이름에서 산 이름 추출
-//
-//            // 마커 추가
-//            mMap.addMarker(
-//                MarkerOptions()
-//                    .position(startPoint)
-//                    .title(mountainName)
-//                    .snippet("${highestElevation}m / ${"%.1f".format(totalDistance)}km")
-//            )
-//        }
-//    }
-
-    // 폴리라인을 설정하는 함수
-    private fun setupPolyline() {
-        // 운동 타입에 따른 폴리라인 설정
-        val currentExerciseType = getExerciseTypeFromPreferences()
-        polylineOptions = getPolylineOptionsByExerciseType(currentExerciseType)
-        polyline = mMap.addPolyline(polylineOptions)
+    // 파일 이름에서 운동 타입 추출
+    private fun extractExerciseTypeFromFileName(fileName: String): String {
+        return fileName.substringBeforeLast(".gpx").substringAfter("_")
     }
 
-    // 녹화 상태에 따른 폴리라인 관리
-    private fun observeRecordingState() {
-        recordViewModel.isRecording.observe(viewLifecycleOwner, Observer { isRecording ->
-            if (isExerciseMap && isRecording) {
-                startDrawingPolyline()
-            } else {
-                hidePolyline()
-            }
-        })
-    }
-
-    // 지도에 폴리라인을 그리기 시작하는 함수
-    private fun startDrawingPolyline() {
-        // `SharedPreferences`에서 운동 타입 가져오기
-        val currentExerciseType = getExerciseTypeFromPreferences()
-        polylineOptions = PolylineHelper.getPolylineOptionsByExerciseType(currentExerciseType)
-
-        // 폴리라인 추가
-        polyline = mMap.addPolyline(polylineOptions)
-
-        // 위치 업데이트 콜백 설정
-        locationCallback = object : LocationCallback() {
-            override fun onLocationResult(locationResult: LocationResult) {
-                if (isExerciseMap) {
-                    for (location in locationResult.locations) {
-                        val latLng = LatLng(location.latitude, location.longitude)
-                        if (shouldAddPoint(latLng)) {
-                            recordViewModel.addRoutePoint(latLng)
-                            val points = polyline.points
-                            points.add(latLng)
-                            polyline.points = points
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-
-    private fun shouldAddPoint(latLng: LatLng): Boolean {
-        // 간격에 따른 필터링 로직 구현 (예: 시간, 거리, 위치 변경량 등을 기준으로)
-        // 예시로 간단하게 타이머 또는 거리 차이로 필터링할 수 있습니다.
-        // return true만 추가해도 기본적으로 작동됩니다.
-        return true
-    }
-
-    private fun loadGpxFromFirebase() {
-        val storage = FirebaseStorage.getInstance()
-        val storageRef = storage.reference.child("gpxfiles") // gpxfiles 폴더 참조
-
-        // 폴더 내의 모든 파일 목록 가져오기
-        storageRef.listAll().addOnSuccessListener { listResult ->
-            // 최상위 파일 처리
-            for (item in listResult.items) {
-                // 각 파일의 다운로드 URL을 가져와서 GPX 파일 다운로드
-                item.getBytes(Long.MAX_VALUE).addOnSuccessListener { bytes ->
-                    val inputStream = bytes.inputStream()
-                    val gpxParser = GpxParser()
-                    val (coordinates, elevationData) = gpxParser.parse(inputStream) // GPX 파싱
-
-                    drawPolylineOnMap(coordinates) // 폴리라인 그리기
-//                    addMarkers(coordinates, elevationData.first, elevationData.second, item.name)
-                }.addOnFailureListener { exception ->
-                    Log.e("MapFragment", "Failed to load GPX file: ${exception.message}")
-                }
-            }
-        }.addOnFailureListener { exception ->
-            Log.e("MapFragment", "Failed to list files: ${exception.message}")
-        }
-    }
-
-    private fun drawPolylineOnMap(coordinates: List<LatLng>) {
-        val simplifiedCoordinates = PolylineHelper.simplifyCoordinates(coordinates)
-        val polylineOptions = PolylineHelper.getPolylineOptionsByExerciseType(getExerciseTypeFromPreferences())
-            .addAll(simplifiedCoordinates)
-        mMap.addPolyline(polylineOptions)
-    }
-
-
+    // 지도 설정 함수
     private fun setupMap() {
         // 현재 위치 권한 확인
-        if (ActivityCompat.checkSelfPermission(
-                requireContext(), android.Manifest.permission.ACCESS_FINE_LOCATION
-            ) != android.content.pm.PackageManager.PERMISSION_GRANTED
+        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+            != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
         ) {
             ActivityCompat.requestPermissions(
                 requireActivity(),
-                arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
                 LOCATION_PERMISSION_REQUEST_CODE
             )
             return
@@ -335,7 +281,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         mMap.uiSettings.isMapToolbarEnabled = true
         mMap.uiSettings.isScrollGesturesEnabledDuringRotateOrZoom = true
 
-        // 현재 위치 요청
+        // 현재 위치로 카메라 이동
         fusedLocationClient.lastLocation.addOnSuccessListener { location ->
             if (location != null) {
                 val currentLocation = LatLng(location.latitude, location.longitude)
@@ -344,24 +290,247 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int, permissions: Array<out String>, grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
-            if (grantResults.isNotEmpty() && grantResults[0] == android.content.pm.PackageManager.PERMISSION_GRANTED) {
-                setupMap()
+    // 폴리라인을 그리는 함수
+    private fun drawPolylineOnMap(coordinates: List<LatLng>, mountainName: String, highestElevation: Int, totalDistance: Double, exerciseType: String?) {
+        val simplifiedCoordinates = PolylineHelper.simplifyCoordinates(coordinates)
+        val polylineOptions = PolylineHelper.getPolylineOptionsByExerciseType(exerciseType ?: getExerciseTypeFromPreferences())
+            .addAll(simplifiedCoordinates)
+        val polyline = mMap.addPolyline(polylineOptions)
+        polyline.isClickable = true
+        polylineList.add(Pair(mountainName, polyline)) // 폴리라인정보를 리스트에 저장
+        polyline.tag = mapOf("coordinates" to coordinates, "mountainName" to mountainName, "highestElevation" to highestElevation, "totalDistance" to totalDistance)
+    }
+
+    // 운동 모드에 따른 폴리라인 설정 함수
+    private fun setupPolyline() {
+        val currentExerciseType = getExerciseTypeFromPreferences()
+        polylineOptions = PolylineHelper.getPolylineOptionsByExerciseType(currentExerciseType)
+        polyline = mMap.addPolyline(polylineOptions)
+
+        // 위치 업데이트 콜백 설정
+        locationCallback = object : LocationCallback() {
+            override fun onLocationResult(locationResult: LocationResult) {
+                if (isExerciseMap) {
+                    for (location in locationResult.locations) {
+                        val latLng = LatLng(location.latitude, location.longitude)
+                        if (shouldAddPoint(latLng)) {
+                            recordViewModel.addRoutePoint(latLng)
+                            updatePolyline(latLng)
+                        }
+                    }
+                }
             }
+        }
+    }
+
+    // 녹화 상태에 따른 폴리라인 관리 함수
+    private fun observeRecordingState() {
+        recordViewModel.isRecording.observe(viewLifecycleOwner, Observer { isRecording ->
+            if (isExerciseMap && isRecording) {
+                setupPolyline()
+            } else {
+                hidePolyline()
+            }
+        })
+    }
+
+    // 폴리라인 제거 함수
+    private fun hidePolyline() {
+        if (this::polyline.isInitialized) {
+            polyline.remove()
+        }
+    }
+
+    private fun shouldAddPoint(latLng: LatLng): Boolean {
+        return true
+    }
+
+    // Firebase에서 GPX 파일 로드 함수
+    private fun loadGpxFromFirebase() {
+        val storage = FirebaseStorage.getInstance()
+        val storageRef = storage.reference.child("gpxfiles")
+
+        storageRef.listAll().addOnSuccessListener { listResult ->
+            for (item in listResult.items) {
+                if (item.name.endsWith(".gpx")) {
+                    item.getBytes(Long.MAX_VALUE).addOnSuccessListener { bytes ->
+                        val inputStream = bytes.inputStream()
+                        val gpxParser = GpxParser()
+                        val (coordinates, elevationData) = gpxParser.parse(inputStream)
+                        drawPolylineOnMap(coordinates, "GPX Route", elevationData.first, elevationData.second, null)
+                    }.addOnFailureListener { exception ->
+                        Log.e("MapFragment", "Failed to load GPX file: ${exception.message}")
+                    }
+                }
+            }
+        }.addOnFailureListener { exception ->
+            Log.e("MapFragment", "Failed to list GPX files: ${exception.message}")
+        }
+    }
+
+    private fun getExerciseTypeFromPreferences(): String {
+        val sharedPreferences = context?.getSharedPreferences("activityPickSave", Context.MODE_PRIVATE)
+        return sharedPreferences?.getString("selected_icon", "running") ?: "running"
+    }
+
+    private fun searchPolylineAndMoveCamera(query: String){
+        val matchedPolyline = polylineList.firstOrNull{ it.first.contains(query, ignoreCase = true)}
+        if (matchedPolyline != null) {
+            // 폴리라인의 첫 번째 좌표로 카메라 이동
+            val coordinates = matchedPolyline.second.points
+            if (coordinates.isNotEmpty()) {
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(coordinates.first(), 16f))
+            }
+        } else {
+            Log.e("MapFragment", "No matching polyline found for $query")
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (isExerciseMap && !isRequestingLocationUpdates) {
+            startLocationUpdates()
         }
     }
 
     override fun onPause() {
         super.onPause()
-        fusedLocationClient.removeLocationUpdates(locationCallback)
+        // 위치 업데이트 중단
+        if (isRequestingLocationUpdates) {
+            fusedLocationClient.removeLocationUpdates(locationCallback)
+            isRequestingLocationUpdates = false
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        // 지도 자원 해제
+        if (this::mMap.isInitialized) {
+            mMap.clear()
+        }
+        val mapFragment = childFragmentManager.findFragmentById(R.id.map) as? SupportMapFragment
+        if (mapFragment != null) {
+            childFragmentManager.beginTransaction().remove(mapFragment).commitAllowingStateLoss()
+        }
+    }
+
+    private fun startLocationUpdates() {
+        val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 10000)
+            .apply { setMinUpdateIntervalMillis(5000) }
+            .build()
+
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            )
+            == PackageManager.PERMISSION_GRANTED
+        ) {
+            fusedLocationClient.requestLocationUpdates(
+                locationRequest,
+                locationCallback,
+                Looper.getMainLooper()
+            )
+            isRequestingLocationUpdates = true
+        }
+    }
+
+    // 폴리라인을 실시간으로 갱신하는 메서드 추가
+    private fun updatePolyline(newLatLng: LatLng) {
+        if (this::polyline.isInitialized) {
+            val currentPoints = polyline.points.toMutableList()
+            currentPoints.add(newLatLng)
+            polyline.points = currentPoints
+        }
+    }
+
+    fun capturePolylineOnly(onCaptureComplete: () -> Unit) {
+        val width = 800
+        val height = 800
+        val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+        val paint = Paint().apply {
+            color = Color.BLUE
+            strokeWidth = 10f
+            style = Paint.Style.STROKE
+            isAntiAlias = true
+        }
+
+        recordViewModel.routePoints.value?.let { routePoints ->
+            val path = Path()
+            routePoints.forEachIndexed { index, latLng ->
+                val x = index * (width / routePoints.size)
+                val y = height / 2
+                if (index == 0) {
+                    path.moveTo(x.toFloat(), y.toFloat())
+                } else {
+                    path.lineTo(x.toFloat(), y.toFloat())
+                }
+            }
+            canvas.drawPath(path, paint)
+        }
+
+        val filePath = saveBitmapToFile(bitmap, "polyline_only.png")
+        if (filePath != null) {
+            recordViewModel.setPolylineCapturePath(filePath)
+
+        } else {
+
+        }
+
+        // 캡처 완료 시 콜백 호출
+        onCaptureComplete()
+    }
+
+    fun captureMapWithPolyline(onCaptureComplete: () -> Unit) {
+        val boundsBuilder = LatLngBounds.Builder()
+        recordViewModel.routePoints.value?.forEach { latLng ->
+            boundsBuilder.include(latLng)
+        }
+        val bounds = boundsBuilder.build()
+
+        // 패딩 값을 추가
+        val padding = 250 // 기본보다 더 큰 패딩 설정
+
+        // LatLngBounds로 카메라 이동
+        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, padding))
+
+        // OnMapLoadedCallback을 사용해 지도 로드가 완료된 후에 캡처 실행
+        mMap.setOnMapLoadedCallback {
+            // 지도의 줌 레벨을 강제 조정 (예: 13.5f)
+            mMap.moveCamera(CameraUpdateFactory.zoomTo(13.5f))
+
+            // 약간의 딜레이 추가 (예: 500ms) 후에 캡처
+            Handler(Looper.getMainLooper()).postDelayed({
+                mMap.snapshot { bitmap ->
+                    if (bitmap != null) {
+                        val filePath = saveBitmapToFile(bitmap, "map_with_polyline.png")
+                        if (filePath != null) {
+                            recordViewModel.setMapWithPolylineCapturePath(filePath)
+                        }
+                    }
+
+                    onCaptureComplete()
+                }
+            }, 500) // 0.5초 딜레이
+        }
+    }
+
+    private fun saveBitmapToFile(bitmap: Bitmap, fileName: String): String? {
+        val file = File(requireContext().getExternalFilesDir(null), fileName)
+        return try {
+            val outputStream = FileOutputStream(file)
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+            outputStream.flush()
+            outputStream.close()
+            file.absolutePath
+        } catch (e: IOException) {
+            e.printStackTrace()
+            null
+        }
     }
 
     companion object {
-        // MapFragment의 인스턴스를 생성할 때 `isExerciseMap` 전달
+        // newInstance 메서드로 isExerciseMap 값을 전달
         fun newInstance(isExerciseMap: Boolean): MapFragment {
             val fragment = MapFragment()
             val args = Bundle()
@@ -373,27 +542,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         const val LOCATION_PERMISSION_REQUEST_CODE = 1
     }
 
-    private fun getExerciseTypeFromPreferences(): String {
-        // `SharedPreferences`에서 `activityPickSave`에 저장된 운동 타입 가져오기
-        val sharedPreferences = requireContext().getSharedPreferences("activityPickSave", Context.MODE_PRIVATE)
-        // 저장된 운동 타입을 가져오고, 없을 경우 기본값은 "running"
-        return sharedPreferences.getString("selected_icon", "running") ?: "running"
-    }
 
-    private fun hidePolyline() {
-        if (this::polyline.isInitialized) {
-            polyline.remove()
-        }
-    }
-    private fun drawPolylineOnMap(coordinates: List<LatLng>, mountainName: String, highestElevation: Int, totalDistance: Double) {
-        val simplifiedCoordinates = PolylineHelper.simplifyCoordinates(coordinates)
-        val polylineOptions = PolylineHelper.getPolylineOptionsByExerciseType(getExerciseTypeFromPreferences())
-            .addAll(simplifiedCoordinates)
-
-        val polyline = mMap.addPolyline(polylineOptions)
-        polyline.isClickable = true
-        // 태그로 폴리라인의 식별 정보를 저장
-        polyline.tag = mapOf("coordinates" to coordinates, "mountainName" to mountainName, "highestElevation" to highestElevation, "totalDistance" to totalDistance)
-    }
 
 }

@@ -22,6 +22,7 @@ class NearByFragment : Fragment() {
 
         // `MapFragment`를 폴리라인 없이 `nearby` 모드로 사용
         val nearbyMapFragment = MapFragment.newInstance(false)
+
         childFragmentManager.beginTransaction()
             .replace(R.id.map_fragment_container, nearbyMapFragment)
             .commit()
