@@ -13,7 +13,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.kisayo.sspurt.Adapter.HomeFragmentAdapter
 import com.kisayo.sspurt.activities.TrackingSaveActivity
-import com.kisayo.sspurt.activities.TrackingStartActivity
+import com.kisayo.sspurt.activities.SelectExerciseActivity
 import com.kisayo.sspurt.data.ExerciseRecord
 import com.kisayo.sspurt.databinding.FragmentHomeBinding
 import com.kisayo.sspurt.utils.UserRepository
@@ -49,7 +49,7 @@ class HomeFragment : Fragment() {
 
         // 플로팅버튼 "Start" 클릭리스너
         binding.startFab.setOnClickListener {
-            val intent = Intent(requireContext(), TrackingStartActivity::class.java)
+            val intent = Intent(requireContext(), SelectExerciseActivity::class.java)
             startActivity(intent)
         }
     }

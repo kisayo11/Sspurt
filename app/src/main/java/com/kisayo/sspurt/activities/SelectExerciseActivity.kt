@@ -11,15 +11,16 @@ import android.view.animation.DecelerateInterpolator
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.kisayo.sspurt.R
-import com.kisayo.sspurt.databinding.ActivityTrackingStartBinding
+import com.kisayo.sspurt.databinding.ActivitySelectExerciseBinding
 
-class TrackingStartActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityTrackingStartBinding
+class SelectExerciseActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivitySelectExerciseBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityTrackingStartBinding.inflate(layoutInflater)
+        binding = ActivitySelectExerciseBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         // 앱 시작 시 최근 선택한 아이콘 불러오기

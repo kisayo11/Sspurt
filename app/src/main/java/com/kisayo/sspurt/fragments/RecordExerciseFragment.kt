@@ -7,11 +7,7 @@ import android.animation.ValueAnimator
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
-import android.graphics.Canvas
 import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.Path
 import android.graphics.PorterDuff
 import android.location.Location
 import android.os.Build
@@ -36,23 +32,22 @@ import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.PolylineOptions
 import com.google.firebase.Timestamp
 import com.kisayo.sspurt.Helpers.FirestoreHelper
 import com.kisayo.sspurt.Location.ExerciseTracker
 import com.kisayo.sspurt.R
 import com.kisayo.sspurt.activities.TrackingSaveActivity
-import com.kisayo.sspurt.activities.TrackingService
+import com.kisayo.sspurt.Location.TrackingService
 import com.kisayo.sspurt.data.ExerciseRecord
 import com.kisayo.sspurt.data.LatLngWrapper
 import com.kisayo.sspurt.data.RealTimeData
-import com.kisayo.sspurt.databinding.FragmentHealthRecordBinding
+import com.kisayo.sspurt.databinding.FragmentRecordExerciseBinding
 import com.kisayo.sspurt.utils.RecordViewModel
 import com.kisayo.sspurt.utils.UserRepository
 
-class HealthRecordFragment : Fragment() {
+class RecordExerciseFragment : Fragment() {
 
-    private lateinit var binding: FragmentHealthRecordBinding
+    private lateinit var binding: FragmentRecordExerciseBinding
     private var exerciseData = ExerciseRecord() // 통합된 운동 데이터
     private var recordingTimer: CountDownTimer? = null
     private val firestoreHelper = FirestoreHelper() // FirestoreHelper 인스턴스
@@ -75,7 +70,7 @@ class HealthRecordFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        binding = FragmentHealthRecordBinding.inflate(inflater, container, false)
+        binding = FragmentRecordExerciseBinding.inflate(inflater, container, false)
         fusedLocationClient =
             LocationServices.getFusedLocationProviderClient(requireActivity()) // 초기화
         healthConnectClient = HealthConnectClient.getOrCreate(requireContext())
@@ -267,7 +262,7 @@ class HealthRecordFragment : Fragment() {
                 }
             }
         } catch (e: Exception) {
-            Log.e("HealthRecordFragment", "Error in stopRecording: ${e.message}")
+            Log.e("RecordExerciseFragment", "Error in stopRecording: ${e.message}")
             Toast.makeText(requireContext(), "운동 기록 저장 실패: ${e.message}", Toast.LENGTH_SHORT).show()
         }
     }

@@ -56,13 +56,9 @@ class RecordDataFragment : Fragment() {
             binding.ExerciseimageView.visibility = View.VISIBLE
         }
 
-
         if(sourceFragment == "HealthRecord"){
             binding.ExerciseimageView.visibility = View.GONE
         }
-
-
-
 
         userRepository = UserRepository(requireContext())
         barChart = binding.barChartAvgspeedpermin
@@ -79,6 +75,8 @@ class RecordDataFragment : Fragment() {
             Log.e("RecordDataFragment", "No exerciseRecordId provided")
             // `exerciseRecordId`가 없는 상황에 대한 에러 처리 (발생하지 않는다면 이 부분은 필요 없음)
         }
+
+
         // save button
         binding.postBtn.setOnClickListener {
             val dialog = PostDialogFragment()

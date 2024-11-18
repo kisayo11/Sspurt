@@ -46,7 +46,7 @@
             android:launchMode="singleTop"
             android:exported="true" />
         <activity
-            android:name=".activities.TrackingStartActivity"
+            android:name=".activities.SelectExerciseActivity"
             android:exported="false" />
         <activity
             android:name=".activities.login.CreateAccountActivity"
@@ -82,7 +82,7 @@
             </intent-filter>
         </activity> <!-- TrackingService 등록 -->
         <service
-            android:name=".activities.TrackingService"
+            android:name=".Location.TrackingService"
             android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="location" />

@@ -9,14 +9,14 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.appbar.AppBarLayout
 import com.kisayo.sspurt.R
 import com.kisayo.sspurt.databinding.ActivityGpsConfirmBinding
-import com.kisayo.sspurt.fragments.HealthRecordFragment
+import com.kisayo.sspurt.fragments.RecordExerciseFragment
 import com.kisayo.sspurt.fragments.MapFragment
 import com.kisayo.sspurt.utils.RecordViewModel
 
 class GpsConfirmActivity : AppCompatActivity() {
     private lateinit var binding: ActivityGpsConfirmBinding
     private lateinit var mapFragment: MapFragment
-    private lateinit var healthRecordFragment: HealthRecordFragment
+    private lateinit var recordExerciseFragment: RecordExerciseFragment
     private lateinit var sharedPreferences: SharedPreferences
     private val recordViewModel : RecordViewModel by viewModels()
 
@@ -29,7 +29,7 @@ class GpsConfirmActivity : AppCompatActivity() {
         //sharedPrefernce 초기화
         sharedPreferences = getSharedPreferences("my_preferences", MODE_PRIVATE)
         mapFragment = MapFragment()
-        healthRecordFragment = HealthRecordFragment()
+        recordExerciseFragment = RecordExerciseFragment()
 
         // MapFragment 초기화 및 추가
         mapFragment = MapFragment.newInstance(true)
@@ -42,7 +42,7 @@ class GpsConfirmActivity : AppCompatActivity() {
 
         supportFragmentManager.beginTransaction()
             .replace(R.id.map_fragment_container, mapFragment)
-            .replace(R.id.healthRecord_container, healthRecordFragment)
+            .replace(R.id.healthRecord_container, recordExerciseFragment)
             .commitNow()
 
                 //맵 표시 스위치 리스너

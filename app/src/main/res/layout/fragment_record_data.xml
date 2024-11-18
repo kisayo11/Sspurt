@@ -94,8 +94,8 @@
                     <ImageView
                         android:layout_width="match_parent"
                         android:layout_height="70dp"
-                        android:layout_margin="4dp"
-                        android:background="#fff9f9"
+                        android:layout_margin="8dp"
+                        android:background="@color/white"
                         android:padding="16dp"
                         android:scaleType="fitCenter"
                         android:src="@drawable/timer_50" />
@@ -113,6 +113,8 @@
                 <LinearLayout
                     android:id="@+id/second"
                     android:layout_width="0dp"
+                    android:layout_margin="8dp"
+                    android:background="@drawable/rectangle_banner"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:orientation="vertical">
@@ -120,8 +122,8 @@
                     <ImageView
                         android:layout_width="match_parent"
                         android:layout_height="70dp"
-                        android:layout_margin="4dp"
-                        android:background="#fff9f9"
+                        android:layout_margin="8dp"
+                        android:background="@color/white"
                         android:padding="16dp"
                         android:scaleType="fitCenter"
                         android:src="@drawable/distance50" />
@@ -139,6 +141,8 @@
                 <LinearLayout
                     android:id="@+id/third"
                     android:layout_width="0dp"
+                    android:layout_margin="8dp"
+                    android:background="@drawable/rectangle_banner"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:orientation="vertical">
@@ -146,8 +150,8 @@
                     <ImageView
                         android:layout_width="match_parent"
                         android:layout_height="70dp"
-                        android:layout_margin="4dp"
-                        android:background="#fff9f9"
+                        android:layout_margin="8dp"
+                        android:background="@color/white"
                         android:padding="16dp"
                         android:scaleType="fitCenter"
                         android:src="@drawable/icons_speed50" />
@@ -173,6 +177,8 @@
                 <LinearLayout
                     android:id="@+id/fourth"
                     android:layout_width="0dp"
+                    android:layout_margin="8dp"
+                    android:background="@drawable/rectangle_banner"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:orientation="vertical">
@@ -180,8 +186,8 @@
                     <ImageView
                         android:layout_width="match_parent"
                         android:layout_height="70dp"
-                        android:layout_margin="4dp"
-                        android:background="#fff9f9"
+                        android:layout_margin="8dp"
+                        android:background="@color/white"
                         android:padding="16dp"
                         android:scaleType="fitCenter"
                         android:src="@drawable/icons_maxspeed50" />
@@ -199,6 +205,8 @@
                 <LinearLayout
                     android:id="@+id/fifth"
                     android:layout_width="0dp"
+                    android:layout_margin="8dp"
+                    android:background="@drawable/rectangle_banner"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:orientation="vertical">
@@ -206,8 +214,8 @@
                     <ImageView
                         android:layout_width="match_parent"
                         android:layout_height="70dp"
-                        android:layout_margin="4dp"
-                        android:background="#fff9f9"
+                        android:layout_margin="8dp"
+                        android:background="@color/white"
                         android:padding="16dp"
                         android:scaleType="fitCenter"
                         android:src="@drawable/icons_heart50" />
@@ -225,6 +233,8 @@
                 <LinearLayout
                     android:id="@+id/sixth"
                     android:layout_width="0dp"
+                    android:layout_margin="8dp"
+                    android:background="@drawable/rectangle_banner"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:orientation="vertical">
@@ -232,8 +242,8 @@
                     <ImageView
                         android:layout_width="match_parent"
                         android:layout_height="70dp"
-                        android:layout_margin="4dp"
-                        android:background="#fff9f9"
+                        android:layout_margin="8dp"
+                        android:background="@color/white"
                         android:padding="16dp"
                         android:scaleType="fitCenter"
                         android:src="@drawable/icons_calorie" />
@@ -254,6 +264,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
+            android:background="@color/black"
+            android:textColor="@color/white"
             android:text="운동 경로"
             android:textSize="24sp" />
 
@@ -269,6 +281,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
+            android:background="@color/black"
+            android:textColor="@color/white"
             android:text="분당 페이스"
             android:textSize="24sp" />
 
@@ -282,6 +296,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
+            android:background="@color/black"
+            android:textColor="@color/white"
             android:text="고도 그래프"
             android:textSize="24sp" />
 
